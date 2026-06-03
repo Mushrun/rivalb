@@ -37,7 +37,7 @@ class MatchService
 
         // Email à l'adversaire dans les deux sens
         Mail::to($opponent->email)
-            ->send(new AdversairePretMail($opponent, $user->username, $match->id));
+            ->queue(new AdversairePretMail($opponent, $user->username, $match->id));
 
         if ($match->player1_ready && $match->player2_ready) {
             $this->start($match);
