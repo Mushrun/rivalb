@@ -1,0 +1,661 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rivalbet — Feuille de route complète</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #fff;
+            color: #1a1a1a;
+            font-size: 13px;
+            line-height: 1.5;
+        }
+
+        .page {
+            max-width: 820px;
+            margin: 0 auto;
+            padding: 40px 48px;
+        }
+
+        /* Header */
+        .header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 3px solid #FF3B30;
+            padding-bottom: 20px;
+            margin-bottom: 32px;
+        }
+        .header-left h1 {
+            font-size: 28px;
+            font-weight: 900;
+            color: #FF3B30;
+            letter-spacing: -0.5px;
+        }
+        .header-left p {
+            color: #888;
+            font-size: 12px;
+            margin-top: 4px;
+        }
+        .header-right {
+            text-align: right;
+        }
+        .header-right .badge {
+            display: inline-block;
+            background: #FF3B30;
+            color: #fff;
+            font-size: 11px;
+            font-weight: 700;
+            padding: 4px 10px;
+            border-radius: 20px;
+            letter-spacing: 1px;
+        }
+        .header-right .date {
+            color: #aaa;
+            font-size: 11px;
+            margin-top: 4px;
+        }
+
+        /* Summary bar */
+        .summary {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+            margin-bottom: 32px;
+        }
+        .summary-card {
+            border-radius: 10px;
+            padding: 14px 16px;
+            text-align: center;
+        }
+        .summary-card.done   { background: #f0fdf4; border: 1px solid #86efac; }
+        .summary-card.todo   { background: #fef9f0; border: 1px solid #fcd34d; }
+        .summary-card.total  { background: #f8f8f8; border: 1px solid #e5e5e5; }
+        .summary-card .num   { font-size: 28px; font-weight: 900; }
+        .summary-card.done .num  { color: #16a34a; }
+        .summary-card.todo .num  { color: #d97706; }
+        .summary-card.total .num { color: #555; }
+        .summary-card .lbl   { font-size: 11px; font-weight: 600; color: #888; margin-top: 2px; letter-spacing: 1px; }
+
+        /* Phase title */
+        .phase-title {
+            font-size: 10px;
+            font-weight: 700;
+            letter-spacing: 2px;
+            color: #aaa;
+            text-transform: uppercase;
+            margin: 28px 0 10px;
+            padding-bottom: 6px;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        /* Step row */
+        .step {
+            display: flex;
+            align-items: flex-start;
+            gap: 14px;
+            padding: 10px 0;
+            border-bottom: 1px solid #f5f5f5;
+        }
+        .step:last-child { border-bottom: none; }
+
+        .step-num {
+            flex-shrink: 0;
+            width: 28px;
+            height: 28px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 11px;
+            font-weight: 800;
+        }
+        .step-num.done { background: #dcfce7; color: #16a34a; }
+        .step-num.todo { background: #fef3c7; color: #d97706; }
+
+        .step-content { flex: 1; }
+
+        .step-header {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 3px;
+        }
+
+        .step-title {
+            font-weight: 700;
+            font-size: 13px;
+            color: #1a1a1a;
+        }
+
+        .step-badge {
+            font-size: 9px;
+            font-weight: 700;
+            padding: 2px 7px;
+            border-radius: 10px;
+            letter-spacing: 0.5px;
+        }
+        .step-badge.done { background: #dcfce7; color: #16a34a; }
+        .step-badge.todo { background: #fef3c7; color: #d97706; }
+
+        .step-items {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        .step-items li {
+            font-size: 11.5px;
+            color: #666;
+            padding: 1px 0;
+            display: flex;
+            align-items: flex-start;
+            gap: 6px;
+        }
+        .step-items li::before {
+            content: '·';
+            color: #ccc;
+            font-size: 14px;
+            line-height: 1.3;
+            flex-shrink: 0;
+        }
+
+        /* Tech tags */
+        .tech-tag {
+            display: inline-block;
+            background: #f3f4f6;
+            color: #555;
+            font-size: 10px;
+            padding: 1px 6px;
+            border-radius: 4px;
+            font-weight: 600;
+        }
+
+        /* Stack section */
+        .stack {
+            margin-top: 32px;
+            padding-top: 24px;
+            border-top: 2px solid #f0f0f0;
+        }
+        .stack h3 {
+            font-size: 10px;
+            font-weight: 700;
+            letter-spacing: 2px;
+            color: #aaa;
+            text-transform: uppercase;
+            margin-bottom: 12px;
+        }
+        .stack-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 8px;
+        }
+        .stack-item {
+            background: #f8f8f8;
+            border: 1px solid #eee;
+            border-radius: 8px;
+            padding: 8px 10px;
+        }
+        .stack-item .layer { font-size: 9px; color: #aaa; font-weight: 600; letter-spacing: 1px; }
+        .stack-item .tech  { font-size: 11px; font-weight: 700; color: #333; margin-top: 2px; }
+
+        /* Footer */
+        .footer {
+            margin-top: 32px;
+            padding-top: 16px;
+            border-top: 1px solid #f0f0f0;
+            display: flex;
+            justify-content: space-between;
+            color: #bbb;
+            font-size: 10px;
+        }
+
+        /* Print */
+        @media print {
+            body { font-size: 12px; }
+            .page { padding: 24px 32px; }
+            .phase-title { page-break-before: auto; }
+            .step { break-inside: avoid; }
+        }
+    </style>
+</head>
+<body>
+<div class="page">
+
+    <!-- Header -->
+    <div class="header">
+        <div class="header-left">
+            <h1>RIVALBET</h1>
+            <p>Plateforme de défis compétitifs P2P · Laravel 13 + Inertia v3 + React</p>
+        </div>
+        <div class="header-right">
+            <div class="badge">FEUILLE DE ROUTE</div>
+            <div class="date">Mai 2026</div>
+        </div>
+    </div>
+
+    <!-- Summary -->
+    <div class="summary">
+        <div class="summary-card done">
+            <div class="num">21</div>
+            <div class="lbl">Étapes terminées</div>
+        </div>
+        <div class="summary-card todo">
+            <div class="num">2</div>
+            <div class="lbl">Étapes restantes</div>
+        </div>
+        <div class="summary-card total">
+            <div class="num">23</div>
+            <div class="lbl">Étapes totales</div>
+        </div>
+    </div>
+
+    <!-- Phase 1 : Infrastructure -->
+    <div class="phase-title">Phase 1 — Infrastructure & Fondations</div>
+
+    <div class="step">
+        <div class="step-num done">1</div>
+        <div class="step-content">
+            <div class="step-header">
+                <span class="step-title">Initialisation du projet</span>
+                <span class="step-badge done">✓ TERMINÉ</span>
+            </div>
+            <ul class="step-items">
+                <li>Laravel 13 + Inertia.js v3 + React + Vite + Tailwind CSS v4</li>
+                <li>Configuration multi-guard auth : <span class="tech-tag">web</span> (joueurs) + <span class="tech-tag">admin</span></li>
+                <li>Structure des dossiers, autoload PSR-4, scripts Composer</li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="step">
+        <div class="step-num done">2</div>
+        <div class="step-content">
+            <div class="step-header">
+                <span class="step-title">Migrations & schéma base de données</span>
+                <span class="step-badge done">✓ TERMINÉ</span>
+            </div>
+            <ul class="step-items">
+                <li>Tables : users, admins, challenges, matches, match_results, disputes</li>
+                <li>Tables : messages, transactions, reviews, notifications, ai_logs</li>
+                <li>Tables Spatie Permission : roles, permissions, model_has_roles</li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="step">
+        <div class="step-num done">3</div>
+        <div class="step-content">
+            <div class="step-header">
+                <span class="step-title">Modèles Eloquent</span>
+                <span class="step-badge done">✓ TERMINÉ</span>
+            </div>
+            <ul class="step-items">
+                <li>User, Admin, Challenge, GameMatch, MatchResult, Dispute</li>
+                <li>Message, Transaction, Review, Notification, AiLog</li>
+                <li>Relations, casts, fillable, scopes</li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="step">
+        <div class="step-num done">4</div>
+        <div class="step-content">
+            <div class="step-header">
+                <span class="step-title">Authentification utilisateurs</span>
+                <span class="step-badge done">✓ TERMINÉ</span>
+            </div>
+            <ul class="step-items">
+                <li>Inscription (RegisterController) avec assignation du rôle <span class="tech-tag">player</span></li>
+                <li>Connexion / déconnexion (LoginController)</li>
+                <li>Réinitialisation de mot de passe (PasswordResetController)</li>
+                <li>Middleware <span class="tech-tag">auth</span> et <span class="tech-tag">guest</span></li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="step">
+        <div class="step-num done">5</div>
+        <div class="step-content">
+            <div class="step-header">
+                <span class="step-title">Authentification admin</span>
+                <span class="step-badge done">✓ TERMINÉ</span>
+            </div>
+            <ul class="step-items">
+                <li>Guard séparé <span class="tech-tag">admin</span> avec modèle Admin</li>
+                <li>AdminLoginController + page Admin/Login</li>
+                <li>Toutes les routes admin protégées par <span class="tech-tag">auth:admin</span></li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- Phase 2 : Core Business -->
+    <div class="phase-title">Phase 2 — Logique Métier Cœur</div>
+
+    <div class="step">
+        <div class="step-num done">6</div>
+        <div class="step-content">
+            <div class="step-header">
+                <span class="step-title">Système de défis (Challenges)</span>
+                <span class="step-badge done">✓ TERMINÉ</span>
+            </div>
+            <ul class="step-items">
+                <li>ChallengeController : create, store, show, join, cancel</li>
+                <li>ChallengeService : création avec débit des mises, validation des règles</li>
+                <li>Pages : Battle (liste), Challenge/Step1→6 (création), Defi/Show</li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="step">
+        <div class="step-num done">7</div>
+        <div class="step-content">
+            <div class="step-header">
+                <span class="step-title">Système de matchs</span>
+                <span class="step-badge done">✓ TERMINÉ</span>
+            </div>
+            <ul class="step-items">
+                <li>MatchController : show, setReady, submitResult</li>
+                <li>MatchService : gestion des phases (waiting → playing → submit → done)</li>
+                <li>Confirmation automatique si résultats cohérents, litige si contradiction</li>
+                <li>Page Match avec 6 phases visuelles (StepBar)</li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="step">
+        <div class="step-num done">8</div>
+        <div class="step-content">
+            <div class="step-header">
+                <span class="step-title">Système de litiges (Disputes)</span>
+                <span class="step-badge done">✓ TERMINÉ</span>
+            </div>
+            <ul class="step-items">
+                <li>DisputeService : open, resolve (avec redistribution des mises), cancelMatch</li>
+                <li>DisputeController : show, uploadVideo</li>
+                <li>Admin/DisputeController : index, resolve avec note admin</li>
+                <li>Page Dispute/Show avec upload vidéo de preuve</li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="step">
+        <div class="step-num done">9</div>
+        <div class="step-content">
+            <div class="step-header">
+                <span class="step-title">ShadowCoinService & Transactions</span>
+                <span class="step-badge done">✓ TERMINÉ</span>
+            </div>
+            <ul class="step-items">
+                <li>ShadowCoinService : credit, debit — toutes les transactions tracées</li>
+                <li>Opérations atomiques via <span class="tech-tag">DB::transaction</span></li>
+                <li>Types : match_gain, match_loss, deposit, withdraw, dispute_refund</li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="step">
+        <div class="step-num done">10</div>
+        <div class="step-content">
+            <div class="step-header">
+                <span class="step-title">Messagerie (Chat)</span>
+                <span class="step-badge done">✓ TERMINÉ</span>
+            </div>
+            <ul class="step-items">
+                <li>MessageController : index (liste des conversations), show, store</li>
+                <li>Messages liés à un match, lecture automatique à l'ouverture</li>
+                <li>Pages Chat/Index et Chat/Show</li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="step">
+        <div class="step-num done">11</div>
+        <div class="step-content">
+            <div class="step-header">
+                <span class="step-title">Portefeuille MetaMask (Wallet)</span>
+                <span class="step-badge done">✓ TERMINÉ</span>
+            </div>
+            <ul class="step-items">
+                <li>Signature ECDSA : nonce généré côté serveur, vérifié côté PHP</li>
+                <li>WalletController : nonce, verify, unlink</li>
+                <li>Librairies : simplito/elliptic-php + web3p/web3.php</li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="step">
+        <div class="step-num done">12</div>
+        <div class="step-content">
+            <div class="step-header">
+                <span class="step-title">Admin Panel (base)</span>
+                <span class="step-badge done">✓ TERMINÉ</span>
+            </div>
+            <ul class="step-items">
+                <li>AdminLayout, Dashboard, navigation admin</li>
+                <li>Pages : Défis, Combattants, vue statique initiale</li>
+                <li>Shared props Inertia : auth.admin</li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- Phase 3 : Fonctionnalités Utilisateur -->
+    <div class="phase-title">Phase 3 — Fonctionnalités Utilisateur</div>
+
+    <div class="step">
+        <div class="step-num done">13</div>
+        <div class="step-content">
+            <div class="step-header">
+                <span class="step-title">Dépôts & Retraits crypto</span>
+                <span class="step-badge done">✓ TERMINÉ</span>
+            </div>
+            <ul class="step-items">
+                <li>DepositController : soumission de tx_hash + montant, validation regex ETH</li>
+                <li>WithdrawController : débit immédiat, validation adresse ETH</li>
+                <li>Admin/TransactionController : approve / reject avec credit/remboursement</li>
+                <li>Pages Recharge et Retrait avec presets et historique</li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="step">
+        <div class="step-num done">14</div>
+        <div class="step-content">
+            <div class="step-header">
+                <span class="step-title">Profil utilisateur</span>
+                <span class="step-badge done">✓ TERMINÉ</span>
+            </div>
+            <ul class="step-items">
+                <li>ProfileController : index, show, update (username/bio), uploadAvatar, updatePassword</li>
+                <li>Pages Profil/Index, Profil/Show (onglets INFOS / ADS / FEEDBACK)</li>
+                <li>Settings avec modales fonctionnelles (pseudo, bio, photo, mot de passe)</li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="step">
+        <div class="step-num done">15</div>
+        <div class="step-content">
+            <div class="step-header">
+                <span class="step-title">Notifications in-app</span>
+                <span class="step-badge done">✓ TERMINÉ</span>
+            </div>
+            <ul class="step-items">
+                <li>NotificationController : index, markRead, markAllRead</li>
+                <li>Lien dérivé du type + data JSON (pas de colonne link en BDD)</li>
+                <li>Compteur non-lus dans shared props Inertia (unread_count)</li>
+                <li>Page Notifications groupée par date</li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="step">
+        <div class="step-num done">16</div>
+        <div class="step-content">
+            <div class="step-header">
+                <span class="step-title">Avis & Reviews</span>
+                <span class="step-badge done">✓ TERMINÉ</span>
+            </div>
+            <ul class="step-items">
+                <li>ReviewController : store (validation match terminé, pas de double avis)</li>
+                <li>Sentiment positif/négatif + commentaire optionnel</li>
+                <li>AvisModal dans Match.jsx avec état has_reviewed server-driven</li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- Phase 4 : Architecture Avancée -->
+    <div class="phase-title">Phase 4 — Architecture Avancée</div>
+
+    <div class="step">
+        <div class="step-num done">17</div>
+        <div class="step-content">
+            <div class="step-header">
+                <span class="step-title">Events & Listeners post-match</span>
+                <span class="step-badge done">✓ TERMINÉ</span>
+            </div>
+            <ul class="step-items">
+                <li>Event <span class="tech-tag">MatchTermine</span> dispatché après commit de transaction</li>
+                <li>EnvoyerNotificationsMatch : notifs in-app gagnant + perdant</li>
+                <li>MettreAJourFiabilite : +2 pts gagnant / -3 pts perdant (clamped 0–100)</li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="step">
+        <div class="step-num done">18</div>
+        <div class="step-content">
+            <div class="step-header">
+                <span class="step-title">Admin Controllers CRUD</span>
+                <span class="step-badge done">✓ TERMINÉ</span>
+            </div>
+            <ul class="step-items">
+                <li>Admin/UserController : liste paginée + filtres, updateStatus (actif/suspendu/banni)</li>
+                <li>Admin/MatchController : liste paginée + filtres statut, cancel</li>
+                <li>Admin/AdminController : index, store, toggleActive, destroy</li>
+                <li>Pages Admin/Users, Admin/Matchs, Admin/Admins reécrites avec données réelles</li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="step">
+        <div class="step-num done">19</div>
+        <div class="step-content">
+            <div class="step-header">
+                <span class="step-title">Uploads de fichiers</span>
+                <span class="step-badge done">✓ TERMINÉ</span>
+            </div>
+            <ul class="step-items">
+                <li>Screenshots résultat : jpg/png/webp, max 5 MB → storage/public/screenshots</li>
+                <li>Vidéos litige : mp4/mov, max 100 MB → storage/public/dispute-videos</li>
+                <li>Affichage capture dans PhaseValidating (Match.jsx)</li>
+                <li>Captures côte à côte dans la modal admin de décision de litige</li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="step">
+        <div class="step-num done">20</div>
+        <div class="step-content">
+            <div class="step-header">
+                <span class="step-title">Services IA (Claude)</span>
+                <span class="step-badge done">✓ TERMINÉ</span>
+            </div>
+            <ul class="step-items">
+                <li>ResultValidationService : analyse screenshot via Claude Vision (Haiku), score 0–100</li>
+                <li>FraudDetectionService : analyse profil joueur via Claude Sonnet, score de risque</li>
+                <li>ChatModerationService : modère messages avant envoi (fail-open si API indispo)</li>
+                <li>Toutes les décisions loggées dans la table <span class="tech-tag">ai_logs</span></li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="step">
+        <div class="step-num done">21</div>
+        <div class="step-content">
+            <div class="step-header">
+                <span class="step-title">Jobs & Queues</span>
+                <span class="step-badge done">✓ TERMINÉ</span>
+            </div>
+            <ul class="step-items">
+                <li>ValidateResultJob : IA en async (validation + fraude hors du cycle HTTP)</li>
+                <li>SendMatchResultNotificationJob : email résultat gagnant/perdant</li>
+                <li>SendWelcomeEmailJob : email de bienvenue après inscription</li>
+                <li>Queue driver : <span class="tech-tag">database</span> — lancer avec <code>php artisan queue:work</code></li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- Phase 5 : Qualité & Production -->
+    <div class="phase-title">Phase 5 — Qualité & Production</div>
+
+    <div class="step">
+        <div class="step-num todo">22</div>
+        <div class="step-content">
+            <div class="step-header">
+                <span class="step-title">Tests automatisés</span>
+                <span class="step-badge todo">À FAIRE</span>
+            </div>
+            <ul class="step-items">
+                <li>Tests unitaires : MatchService, ShadowCoinService, DisputeService</li>
+                <li>Tests de fonctionnalité : login, submitResult, deposit, dispute resolve</li>
+                <li>PHPUnit + Laravel TestCase</li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="step">
+        <div class="step-num todo">23</div>
+        <div class="step-content">
+            <div class="step-header">
+                <span class="step-title">Déploiement production</span>
+                <span class="step-badge todo">À FAIRE</span>
+            </div>
+            <ul class="step-items">
+                <li>Configuration .env production (S3, SMTP SendGrid, Stripe/Coinbase)</li>
+                <li>php artisan storage:link + migrate --force + config:cache + route:cache</li>
+                <li>Setup Nginx + PHP-FPM + SSL (Let's Encrypt)</li>
+                <li>Queue worker en daemon (Supervisor) + Laravel Scheduler</li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- Stack -->
+    <div class="stack">
+        <h3>Stack technique</h3>
+        <div class="stack-grid">
+            <div class="stack-item"><div class="layer">BACKEND</div><div class="tech">Laravel 13</div></div>
+            <div class="stack-item"><div class="layer">FRONTEND</div><div class="tech">Inertia v3 + React</div></div>
+            <div class="stack-item"><div class="layer">CSS</div><div class="tech">Tailwind CSS v4</div></div>
+            <div class="stack-item"><div class="layer">BASE DE DONNÉES</div><div class="tech">MySQL 8</div></div>
+            <div class="stack-item"><div class="layer">AUTH</div><div class="tech">Multi-guard Laravel</div></div>
+            <div class="stack-item"><div class="layer">PERMISSIONS</div><div class="tech">Spatie Permission</div></div>
+            <div class="stack-item"><div class="layer">IA</div><div class="tech">Anthropic Claude</div></div>
+            <div class="stack-item"><div class="layer">WALLET</div><div class="tech">MetaMask ECDSA</div></div>
+            <div class="stack-item"><div class="layer">FICHIERS</div><div class="tech">Laravel Storage / S3</div></div>
+            <div class="stack-item"><div class="layer">QUEUES</div><div class="tech">Laravel Queue (DB)</div></div>
+            <div class="stack-item"><div class="layer">EMAILS</div><div class="tech">Laravel Mail / SendGrid</div></div>
+            <div class="stack-item"><div class="layer">BUILD</div><div class="tech">Vite 8</div></div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <div class="footer">
+        <span>Rivalbet · Plateforme P2P de défis compétitifs</span>
+        <span>21 / 23 étapes complétées · Mai 2026</span>
+    </div>
+
+</div>
+
+<script>
+    // Auto-print dialog on load if ?print in URL
+    if (window.location.search.includes('print')) {
+        window.print();
+    }
+</script>
+
+</body>
+</html>
