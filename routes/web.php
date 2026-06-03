@@ -99,7 +99,8 @@ Route::middleware('auth')->group(function () {
     Route::get('/challenge/create/3', fn() => Inertia::render('Challenge/Step3'));
     Route::get('/challenge/create/4', fn() => Inertia::render('Challenge/Step4'));
     Route::get('/challenge/create/5', fn() => Inertia::render('Challenge/Step5', [
-        'balance' => auth()->user()->balance_rb,
+        'balance'      => auth()->user()->balance_rb,
+        'balance_usdt' => auth()->user()->balance_usdt,
     ]));
     Route::get('/challenge/create/6', fn() => Inertia::render('Challenge/Step6'));
 });

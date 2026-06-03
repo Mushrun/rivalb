@@ -61,6 +61,7 @@ class HandleInertiaRequests extends Middleware
                     'username'          => $request->user()->username,
                     'email'             => $request->user()->email,
                     'balance_rb'        => $request->user()->balance_rb,
+                    'balance_usdt'      => $request->user()->balance_usdt,
                     'reliability_score' => $request->user()->reliability_score,
                     'avatar_path'       => $request->user()->avatar_path,
                     'bio'              => $request->user()->bio,

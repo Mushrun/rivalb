@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class Challenge extends Model
 {
     protected $fillable = [
-        'creator_id', 'type', 'game', 'bet_amount',
+        'creator_id', 'type', 'game', 'bet_amount', 'currency',
         'status', 'rules', 'visibility',
     ];
 

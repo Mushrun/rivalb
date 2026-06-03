@@ -137,6 +137,7 @@ class MessageController extends Controller
                 'opp_result'      => $oppResult?->claimed_result,
                 'opp_screenshot'  => $screenshotUrl($oppResult?->screenshot_path),
                 'winner_id'       => $match->winner_id,
+                'currency'        => $match->challenge->currency ?? 'rb',
                 'my_fighter'      => $isPlayer1 ? $p1FighterName : $p2FighterName,
                 'opp_fighter'     => $isPlayer1 ? $p2FighterName : $p1FighterName,
             ],

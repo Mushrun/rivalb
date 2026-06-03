@@ -33,8 +33,9 @@ export default function TopBar() {
     const target    = isGuest ? '/login' : '/battle';
     const unread    = unread_count ?? 0;
     const price     = useRBPrice();
-    const balance   = auth?.user?.balance_rb ?? 0;
-    const usdValue  = price !== null ? balance * price : null;
+    const balance     = auth?.user?.balance_rb   ?? 0;
+    const balanceUsdt = auth?.user?.balance_usdt ?? 0;
+    const usdValue    = price !== null ? balance * price : null;
 
     const fmtUsd = (v) => v < 0.01 ? `$${v.toFixed(4)}` : `$${v.toFixed(2)}`;
 
@@ -46,16 +47,18 @@ export default function TopBar() {
                 <Link href={target} className="text-[#FF3B30] font-black text-xl tracking-widest">
                     RIVALBET
                 </Link>
-                {!isGuest && price !== null && (
+                {!isGuest && (
                     <div className="flex items-center gap-2 mt-0.5">
                         <span className="text-[10px] font-bold px-2 py-0.5 rounded-lg"
                             style={{ background: 'rgba(255,170,136,0.12)', color: '#FFAA88' }}>
-                            RB ${price < 0.001 ? price.toExponential(2) : price.toFixed(6)}
+                            {balance.toLocaleString()} RB
                         </span>
-                        <span className="text-[10px] font-bold px-2 py-0.5 rounded-lg"
-                            style={{ background: 'rgba(76,217,100,0.1)', color: '#4CD964' }}>
-                            {fmtUsd(usdValue ?? 0)}
-                        </span>
+                        {balanceUsdt > 0 && (
+                            <span className="text-[10px] font-bold px-2 py-0.5 rounded-lg"
+                                style={{ background: 'rgba(76,217,100,0.1)', color: '#4CD964' }}>
+                                {parseFloat(balanceUsdt).toFixed(2)} USDT
+                            </span>
+                        )}
                     </div>
                 )}
             </div>

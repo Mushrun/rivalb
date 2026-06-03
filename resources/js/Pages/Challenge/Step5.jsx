@@ -14,15 +14,22 @@ function StepProgress({ current, total }) {
 }
 
 export default function ChallengeStep5() {
-    const { balance = 300 } = usePage().props;
-    const max = balance;
-    const [raw,   setRaw]   = useState('30');
-    const value  = parseInt(raw, 10) || 0;
-    const valid  = value >= 1 && value <= max;
+    const { balance = 0, balance_usdt = 0 } = usePage().props;
+
+    const [currency, setCurrency] = useState('rb');
+    const [raw,      setRaw]      = useState('');
+
+    const max   = currency === 'usdt' ? parseFloat(balance_usdt) : balance;
+    const value = parseInt(raw, 10) || 0;
+    const valid = value >= 1 && value <= max;
 
     const handleChange = (e) => {
-        const v = e.target.value.replace(/[^0-9]/g, '');
-        setRaw(v);
+        setRaw(e.target.value.replace(/[^0-9]/g, ''));
+    };
+
+    const handleCurrency = (c) => {
+        setCurrency(c);
+        setRaw('');
     };
 
     return (
@@ -51,7 +58,21 @@ export default function ChallengeStep5() {
                 <div className="mx-4 rounded-3xl p-6" style={{ background: '#1A0A0A' }}>
                     <h2 className="text-white font-black text-2xl text-center mb-5">Définir la mise</h2>
 
-                    {/* Saisie du montant */}
+                    {/* Sélection devise */}
+                    <div className="flex rounded-xl p-1 gap-1 mb-5" style={{ background: '#0D0505' }}>
+                        {[{ key: 'rb', label: '🪙 RB' }, { key: 'usdt', label: '💵 USDT' }].map(t => (
+                            <button key={t.key} onClick={() => handleCurrency(t.key)}
+                                className="flex-1 py-2 rounded-lg text-sm font-bold transition-all"
+                                style={{
+                                    background: currency === t.key ? '#FF3B30' : 'transparent',
+                                    color:      currency === t.key ? '#FFF'    : '#555',
+                                }}>
+                                {t.label}
+                            </button>
+                        ))}
+                    </div>
+
+                    {/* Saisie montant */}
                     <div className="rounded-2xl px-4 py-3 flex items-center justify-center gap-2 mb-3"
                         style={{ background: '#0D0505', border: `1.5px solid ${valid ? '#FF7766' : '#3A1A1A'}` }}>
                         <input
@@ -63,15 +84,19 @@ export default function ChallengeStep5() {
                             className="bg-transparent text-center font-black text-3xl outline-none w-28"
                             style={{ color: '#FF7766' }}
                         />
-                        <span className="font-black text-2xl" style={{ color: '#FF7766' }}>RB</span>
+                        <span className="font-black text-2xl" style={{ color: '#FF7766' }}>
+                            {currency === 'usdt' ? 'USDT' : 'RB'}
+                        </span>
                     </div>
 
                     {/* Solde dispo */}
                     <p className="text-center text-[#666] text-xs mb-4">
-                        Solde disponible : <span className="text-[#FF7766] font-bold">{max} RB</span>
+                        Solde disponible :{' '}
+                        <span className="text-[#FF7766] font-bold">
+                            {currency === 'usdt' ? `${parseFloat(balance_usdt).toFixed(2)} USDT` : `${balance} RB`}
+                        </span>
                     </p>
 
-                    {/* Erreur montant invalide */}
                     {raw !== '' && !valid && (
                         <div className="flex items-center justify-center gap-2 mb-4">
                             <div className="flex items-center gap-2 px-3 py-1.5 rounded-full"
@@ -82,13 +107,12 @@ export default function ChallengeStep5() {
                                     <line x1="12" y1="17" x2="12.01" y2="17"/>
                                 </svg>
                                 <span className="text-[#FF7766] text-xs">
-                                    {value < 1 ? 'Minimum 1 RB' : `Maximum ${max} RB (ton solde)`}
+                                    {value < 1 ? 'Minimum 1' : `Maximum ${max} (ton solde)`}
                                 </span>
                             </div>
                         </div>
                     )}
 
-                    {/* Warning normal */}
                     {valid && (
                         <div className="flex items-center justify-center gap-2 mb-4">
                             <div className="flex items-center gap-2 px-3 py-1.5 rounded-full"
@@ -112,6 +136,7 @@ export default function ChallengeStep5() {
                         disabled={!valid}
                         onClick={() => {
                             sessionStorage.setItem('ch_bet', value);
+                            sessionStorage.setItem('ch_currency', currency);
                             sessionStorage.setItem('ch_visibility', 'public');
                             router.visit('/challenge/create/6');
                         }}

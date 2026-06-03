@@ -40,11 +40,9 @@ class VerifyDepositJob implements ShouldQueue
         );
 
         if ($transaction->currency === 'usdt') {
-            $result    = $service->verifyUsdtTransfer($transaction->tx_hash, (float) $transaction->amount_usdt);
-            $creditedRb = (int) $transaction->amount_usdt * config('services.bscscan.rb_per_usdt', 500);
+            $result = $service->verifyUsdtTransfer($transaction->tx_hash, (float) $transaction->amount_usdt);
         } else {
-            $result    = $service->verifyRbTransfer($transaction->tx_hash, $transaction->amount_rb);
-            $creditedRb = $transaction->amount_rb;
+            $result = $service->verifyRbTransfer($transaction->tx_hash, $transaction->amount_rb);
         }
 
         if ($result->isPending()) {
@@ -53,12 +51,21 @@ class VerifyDepositJob implements ShouldQueue
         }
 
         if ($result->isValid()) {
-            DB::transaction(function () use ($transaction, $creditedRb) {
-                $transaction->user->increment('balance_rb', $creditedRb);
-                $transaction->update(['status' => 'valide', 'amount_rb' => $creditedRb]);
+            DB::transaction(function () use ($transaction) {
+                if ($transaction->currency === 'usdt') {
+                    $transaction->user->increment('balance_usdt', (float) $transaction->amount_usdt);
+                    $transaction->update(['status' => 'valide']);
+                } else {
+                    $transaction->user->increment('balance_rb', $transaction->amount_rb);
+                    $transaction->update(['status' => 'valide']);
+                }
             });
 
-            $notifService->depotValide($transaction->user, $creditedRb);
+            if ($transaction->currency === 'usdt') {
+                $notifService->depotValide($transaction->user, 0, (float) $transaction->amount_usdt);
+            } else {
+                $notifService->depotValide($transaction->user, $transaction->amount_rb);
+            }
             return;
         }
 

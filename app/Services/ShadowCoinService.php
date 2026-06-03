@@ -67,4 +67,28 @@ class ShadowCoinService
     {
         return $user->balance_rb >= $amount;
     }
+
+    public function hasEnoughUsdt(User $user, int $amount): bool
+    {
+        return $user->balance_usdt >= $amount;
+    }
+
+    public function debitUsdt(User $user, int $amount, string $type, array $meta = []): void
+    {
+        DB::transaction(function () use ($user, $amount, $type, $meta) {
+            $fresh = User::lockForUpdate()->findOrFail($user->id);
+            if ($fresh->balance_usdt < $amount) {
+                throw new \RuntimeException('Solde USDT insuffisant.');
+            }
+            $fresh->decrement('balance_usdt', $amount);
+            $user->balance_usdt = $fresh->balance_usdt;
+        });
+    }
+
+    public function creditUsdt(User $user, int $amount, string $type): void
+    {
+        DB::transaction(function () use ($user, $amount) {
+            $user->increment('balance_usdt', $amount);
+        });
+    }
 }

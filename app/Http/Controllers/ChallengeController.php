@@ -28,6 +28,7 @@ class ChallengeController extends Controller
                 'type'       => $c->type,
                 'game'       => $c->game,
                 'bet_amount' => $c->bet_amount,
+                'currency'   => $c->currency ?? 'rb',
                 'created_at' => $c->created_at->diffForHumans(),
                 'creator'    => [
                     'id'                => $c->creator->id,
@@ -71,6 +72,7 @@ class ChallengeController extends Controller
                 'type'       => strtoupper($challenge->type),
                 'game'       => $challenge->game,
                 'bet_amount' => $challenge->bet_amount,
+                'currency'   => $challenge->currency ?? 'rb',
                 'visibility' => $challenge->visibility === 'public' ? 'Publique' : 'Privée',
                 'rules'      => $challenge->rules ?? [],
                 'created_at' => $challenge->created_at->diffForHumans(),
@@ -86,7 +88,10 @@ class ChallengeController extends Controller
             ],
             'canJoin' => $challenge->status === 'ouvert'
                 && $challenge->creator_id !== $user->id
-                && $user->balance_rb >= $challenge->bet_amount,
+                && (
+                    ($challenge->currency === 'usdt' && $user->balance_usdt >= $challenge->bet_amount)
+                    || ($challenge->currency !== 'usdt' && $user->balance_rb >= $challenge->bet_amount)
+                ),
         ]);
     }
 

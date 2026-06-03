@@ -26,6 +26,7 @@ export default function ChallengeStep6() {
                 game:       sessionStorage.getItem('ch_game')       || 'Shadow Fight 4: Arena',
                 bet_amount: parseInt(sessionStorage.getItem('ch_bet') || '10'),
                 visibility: sessionStorage.getItem('ch_visibility') || 'public',
+                currency: sessionStorage.getItem('ch_currency') || 'rb',
                 rules: {
                     ...baseRules,
                     fighter:       sessionStorage.getItem('ch_fighter') || '',
@@ -111,7 +112,9 @@ export default function ChallengeStep6() {
                 {/* Bet */}
                 <div className="mx-4 rounded-2xl p-4 mb-3 flex flex-col items-center" style={{ background: '#1A0A0A' }}>
                     <p className="text-[#888888] text-[10px] tracking-widest font-semibold mb-1">MA MISE</p>
-                    <p className="text-white font-black text-3xl mb-2">{data.bet_amount} RB</p>
+                    <p className="text-white font-black text-3xl mb-2">
+                        {data.bet_amount} {data.currency === 'usdt' ? 'USDT' : 'RB'}
+                    </p>
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#888" strokeWidth="1.5">
                         <path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/>
                         <path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/>

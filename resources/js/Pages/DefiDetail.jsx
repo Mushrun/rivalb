@@ -144,7 +144,9 @@ export default function DefiDetail() {
                             <p className="text-[#888] text-xs">Chaque joueur mise ce montant</p>
                         </div>
                     </div>
-                    <span className="text-[#FF3B30] font-black text-2xl">{challenge.bet_amount} RB</span>
+                    <span className="text-[#FF3B30] font-black text-2xl">
+                        {challenge.bet_amount} {challenge.currency === 'usdt' ? 'USDT' : 'RB'}
+                    </span>
                 </div>
 
                 {/* Fighter du créateur */}
@@ -272,7 +274,7 @@ export default function DefiDetail() {
                                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
                                         <polyline points="20 6 9 17 4 12"/>
                                     </svg>
-                                    ACCEPTER LE DÉFI — {challenge.bet_amount} RB
+                                    ACCEPTER LE DÉFI — {challenge.bet_amount} {challenge.currency === 'usdt' ? 'USDT' : 'RB'}
                                 </>
                             )}
                         </button>
@@ -290,7 +292,7 @@ export default function DefiDetail() {
                         <p className="text-[#888] text-sm">
                             {challenge.status !== 'ouvert'
                                 ? 'Ce défi n\'est plus disponible.'
-                                : 'Solde insuffisant pour rejoindre ce défi.'}
+                                : `Solde ${challenge.currency === 'usdt' ? 'USDT' : 'RB'} insuffisant pour rejoindre ce défi.`}
                         </p>
                     </div>
                 )}

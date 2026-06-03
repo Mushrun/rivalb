@@ -81,7 +81,9 @@ export default function Battle() {
 
                             {/* Amount + button */}
                             <div className="flex flex-col items-end gap-2">
-                                <span className="text-[#FF3B30] font-black text-lg">{c.bet_amount} RB</span>
+                                <span className="text-[#FF3B30] font-black text-lg">
+                                    {c.bet_amount} {c.currency === 'usdt' ? 'USDT' : 'RB'}
+                                </span>
                                 <Link href={`/defis/${c.id}`}
                                     className="px-3 py-1.5 rounded-lg font-bold text-xs"
                                     style={{ background: '#2A2A2A', color: '#CCCCCC', border: '1px solid #3A3A3A' }}>

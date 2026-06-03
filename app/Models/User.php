@@ -36,6 +36,7 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password'          => 'hashed',
             'balance_rb'        => 'integer',
+            'balance_usdt'      => 'decimal:6',
             'reliability_score' => 'integer',
         ];
     }

@@ -108,6 +108,7 @@ class MatchService
 
     private function confirmResult(GameMatch $match, int $winnerId): void
     {
+        $currency   = $match->challenge->currency ?? 'rb';
         $bet        = $match->challenge->bet_amount;
         $totalPot   = $bet * 2;
         $commission = (int) round($totalPot * self::PLATFORM_FEE_RATE);
@@ -115,15 +116,19 @@ class MatchService
         $winner     = User::findOrFail($winnerId);
         $loser      = $match->player1_id === $winnerId ? $match->player2 : $match->player1;
 
-        DB::transaction(function () use ($match, $winner, $prize, $commission, $winnerId) {
-            $this->coinService->credit($winner, $prize, 'match_gain');
+        DB::transaction(function () use ($match, $winner, $prize, $commission, $winnerId, $currency) {
+            if ($currency === 'usdt') {
+                $this->coinService->creditUsdt($winner, $prize, 'match_gain');
+            } else {
+                $this->coinService->credit($winner, $prize, 'match_gain');
+            }
 
-            // Enregistrer la commission plateforme
             if ($commission > 0) {
                 \App\Models\Transaction::create([
                     'user_id'   => $winnerId,
                     'type'      => 'match_perte',
-                    'amount_rb' => $commission,
+                    'currency'  => $currency,
+                    'amount_rb' => $currency === 'rb' ? $commission : 0,
                     'status'    => 'valide',
                 ]);
             }

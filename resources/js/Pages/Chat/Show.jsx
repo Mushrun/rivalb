@@ -638,7 +638,7 @@ export default function ChatShow() {
 
                     <div className="flex-1 min-w-0">
                         <p className="text-white font-bold text-sm">{opponent.username}</p>
-                        <p className="text-[#888] text-xs">{match.game} · {match.bet_amount} RB</p>
+                        <p className="text-[#888] text-xs">{match.game} · {match.bet_amount} {match.currency === 'usdt' ? 'USDT' : 'RB'}</p>
                     </div>
                 </div>
 

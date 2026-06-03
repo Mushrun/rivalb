@@ -80,11 +80,14 @@ class NotificationService
         }
     }
 
-    public function depotValide(User $user, int $amountRb, float $amountCrypto = 0): void
+    public function depotValide(User $user, int $amountRb, float $amountUsdt = 0): void
     {
-        $this->send($user, 'depot_valide', 'Dépôt confirmé',
-            "{$amountRb} RB ont été crédités sur ton compte.",
-            ['amount_rb' => $amountRb, 'amount_crypto' => $amountCrypto]
+        $message = $amountUsdt > 0
+            ? "{$amountUsdt} USDT ont été crédités sur ton compte."
+            : "{$amountRb} RB ont été crédités sur ton compte.";
+
+        $this->send($user, 'depot_valide', 'Dépôt confirmé', $message,
+            ['amount_rb' => $amountRb, 'amount_usdt' => $amountUsdt]
         );
     }
 

@@ -18,20 +18,26 @@ class ChallengeService
     {
         return DB::transaction(function () use ($creator, $data) {
             $betAmount = (int) $data['bet_amount'];
+            $currency  = $data['currency'] ?? 'rb';
 
-            if (! $this->coinService->hasEnough($creator, $betAmount)) {
-                throw new \RuntimeException('Solde insuffisant pour créer ce défi.');
+            if ($currency === 'usdt') {
+                if (! $this->coinService->hasEnoughUsdt($creator, $betAmount)) {
+                    throw new \RuntimeException('Solde USDT insuffisant pour créer ce défi.');
+                }
+                $this->coinService->debitUsdt($creator, $betAmount, 'match_perte');
+            } else {
+                if (! $this->coinService->hasEnough($creator, $betAmount)) {
+                    throw new \RuntimeException('Solde insuffisant pour créer ce défi.');
+                }
+                $this->coinService->debit($creator, $betAmount, 'match_perte', ['status' => 'en_attente']);
             }
-
-            $this->coinService->debit($creator, $betAmount, 'match_perte', [
-                'status' => 'en_attente',
-            ]);
 
             return Challenge::create([
                 'creator_id' => $creator->id,
                 'type'       => $data['type']       ?? '1v1',
                 'game'       => $data['game']        ?? 'shadow_fight',
                 'bet_amount' => $betAmount,
+                'currency'   => $currency,
                 'status'     => 'ouvert',
                 'rules'      => $data['rules']       ?? [],
                 'visibility' => $data['visibility']  ?? 'public',
@@ -50,13 +56,19 @@ class ChallengeService
                 throw new \RuntimeException('Tu ne peux pas rejoindre ton propre défi.');
             }
 
-            if (! $this->coinService->hasEnough($opponent, $challenge->bet_amount)) {
-                throw new \RuntimeException('Solde insuffisant pour rejoindre ce défi.');
-            }
+            $currency = $challenge->currency ?? 'rb';
 
-            $this->coinService->debit($opponent, $challenge->bet_amount, 'match_perte', [
-                'status' => 'en_attente',
-            ]);
+            if ($currency === 'usdt') {
+                if (! $this->coinService->hasEnoughUsdt($opponent, $challenge->bet_amount)) {
+                    throw new \RuntimeException('Solde USDT insuffisant pour rejoindre ce défi.');
+                }
+                $this->coinService->debitUsdt($opponent, $challenge->bet_amount, 'match_perte');
+            } else {
+                if (! $this->coinService->hasEnough($opponent, $challenge->bet_amount)) {
+                    throw new \RuntimeException('Solde insuffisant pour rejoindre ce défi.');
+                }
+                $this->coinService->debit($opponent, $challenge->bet_amount, 'match_perte', ['status' => 'en_attente']);
+            }
 
             $challenge->update(['status' => 'en_cours']);
 
@@ -103,7 +115,11 @@ class ChallengeService
                 throw new \RuntimeException('Ce défi ne peut plus être annulé.');
             }
 
-            $this->coinService->credit($user, $challenge->bet_amount, 'remboursement');
+            if (($challenge->currency ?? 'rb') === 'usdt') {
+                $this->coinService->creditUsdt($user, $challenge->bet_amount, 'remboursement');
+            } else {
+                $this->coinService->credit($user, $challenge->bet_amount, 'remboursement');
+            }
 
             $challenge->update(['status' => 'annule']);
 
