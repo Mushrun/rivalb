@@ -221,7 +221,7 @@ class MessageController extends Controller
         // Notifier l'adversaire
         $match->load('player1', 'player2');
         $opponent = $match->player1_id === $user->id ? $match->player2 : $match->player1;
-        $this->notifService->nouveauMessage($opponent, $matchId, $user->username);
+        $this->notifService->nouveauMessage($opponent, $matchId, $user->username, $validated['body']);
 
         return response()->json([
             'message' => [

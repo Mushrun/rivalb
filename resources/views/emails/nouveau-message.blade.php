@@ -3,12 +3,14 @@
 
 Bonjour **{{ $recipient->username }}**,
 
-**{{ $senderUsername }}** t'a envoyé un message dans le **Match #{{ $matchId }}**.
+**{{ $senderUsername }}** t'a envoyé un message dans le **Match #{{ $matchId }}** :
 
-Ouvre le chat pour lire et répondre.
+<x-mail::panel>
+{{ $messageBody }}
+</x-mail::panel>
 
 <x-mail::button :url="$chatUrl" color="red">
-Voir le message
+Répondre dans le chat
 </x-mail::button>
 
 **L'équipe RIVALBET**

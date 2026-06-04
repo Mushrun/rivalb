@@ -125,7 +125,7 @@ class NotificationService
         );
     }
 
-    public function nouveauMessage(User $user, int $matchId, string $senderUsername): void
+    public function nouveauMessage(User $user, int $matchId, string $senderUsername, string $messageBody = ''): void
     {
         $this->send($user, 'nouveau_message', 'Nouveau message',
             "{$senderUsername} t'a envoyé un message.",
@@ -133,6 +133,6 @@ class NotificationService
         );
 
         \Illuminate\Support\Facades\Mail::to($user->email)
-            ->queue(new \App\Mail\NouveauMessageMail($user, $senderUsername, $matchId));
+            ->queue(new \App\Mail\NouveauMessageMail($user, $senderUsername, $matchId, $messageBody));
     }
 }

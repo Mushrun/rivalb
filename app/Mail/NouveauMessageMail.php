@@ -17,6 +17,7 @@ class NouveauMessageMail extends Mailable
         public User   $recipient,
         public string $senderUsername,
         public int    $matchId,
+        public string $messageBody = '',
     ) {}
 
     public function envelope(): Envelope
@@ -31,10 +32,11 @@ class NouveauMessageMail extends Mailable
         return new Content(
             markdown: 'emails.nouveau-message',
             with: [
-                'recipient'       => $this->recipient,
-                'senderUsername'  => $this->senderUsername,
-                'matchId'         => $this->matchId,
-                'chatUrl'         => url("/chat/{$this->matchId}"),
+                'recipient'      => $this->recipient,
+                'senderUsername' => $this->senderUsername,
+                'matchId'        => $this->matchId,
+                'messageBody'    => $this->messageBody,
+                'chatUrl'        => url("/chat/{$this->matchId}"),
             ],
         );
     }
