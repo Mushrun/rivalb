@@ -9,7 +9,8 @@ function ReliabilityDot({ value }) {
 
 export default function Battle() {
     const { challenges = [], auth } = usePage().props;
-    const balance = auth?.user?.balance_rb ?? 0;
+    const balance     = auth?.user?.balance_rb   ?? 0;
+    const balanceUsdt = auth?.user?.balance_usdt ?? 0;
 
     return (
         <AppLayout>
@@ -20,7 +21,10 @@ export default function Battle() {
                 <div className="flex items-center justify-between mb-3">
                     <div>
                         <p className="text-[#888888] text-xs mb-0.5">Solde disponible :</p>
-                        <p className="text-white font-bold text-lg">{balance} RB</p>
+                        <p className="text-white font-bold text-lg">{balance.toLocaleString()} RB</p>
+                        {parseFloat(balanceUsdt) > 0 && (
+                            <p className="text-[#4CD964] font-bold text-sm">{parseFloat(balanceUsdt).toFixed(2)} USDT</p>
+                        )}
                     </div>
                     <Link href="/challenge/create/1"
                         className="px-3 py-2 rounded-xl text-white font-bold text-xs"
