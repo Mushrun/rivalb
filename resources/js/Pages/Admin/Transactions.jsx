@@ -128,7 +128,10 @@ export default function AdminTransactions() {
                                     <td className="px-4 py-3">
                                         <span className="font-bold text-sm"
                                             style={{ color: t.type === 'depot' ? '#4CD964' : '#FF3B30' }}>
-                                            {t.type === 'depot' ? '+' : '-'}{t.amount_rb.toLocaleString()} RB
+                                            {t.type === 'depot' ? '+' : '-'}
+                                            {t.currency === 'usdt'
+                                                ? `${t.amount_usdt} USDT`
+                                                : `${t.amount_rb.toLocaleString()} RB`}
                                         </span>
                                     </td>
                                     <td className="px-4 py-3">
@@ -181,7 +184,8 @@ export default function AdminTransactions() {
                             { label: 'Utilisateur', value: selected.user },
                             { label: 'Email',        value: selected.email },
                             { label: 'Type',         value: selected.type === 'depot' ? 'Dépôt' : 'Retrait' },
-                            { label: 'Montant',      value: `${selected.type === 'depot' ? '+' : '-'}${selected.amount_rb.toLocaleString()} RB` },
+                            { label: 'Montant', value: `${selected.type === 'depot' ? '+' : '-'}${selected.currency === 'usdt' ? `${selected.amount_usdt} USDT` : `${selected.amount_rb.toLocaleString()} RB`}` },
+                            { label: 'Devise',  value: (selected.currency ?? 'rb').toUpperCase() },
                             { label: 'Hash TX',      value: selected.tx_hash ?? '—' },
                             { label: 'Wallet',       value: selected.wallet_address ?? '—' },
                             { label: 'Statut',       value: statusLabel[selected.status] ?? selected.status },
