@@ -45,9 +45,12 @@ class TransactionController extends Controller
 
         DB::transaction(function () use ($transaction) {
             if ($transaction->type === 'depot') {
-                $transaction->user->increment('balance_rb', $transaction->amount_rb);
+                if (($transaction->currency ?? 'rb') === 'usdt') {
+                    $transaction->user->increment('balance_usdt', (float) $transaction->amount_usdt);
+                } else {
+                    $transaction->user->increment('balance_rb', $transaction->amount_rb);
+                }
             }
-            // For retrait: balance was already deducted on request — just mark as validated
             $transaction->update(['status' => 'valide']);
         });
 
