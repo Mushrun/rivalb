@@ -602,7 +602,10 @@ export default function ChatShow() {
             });
             const real = response.data.message;
             lastIdRef.current = real.id;
-            setMessages(prev => prev.map(m => m.id === tempId ? { ...real } : m));
+            setMessages(prev => {
+                const withoutDupes = prev.filter(m => m.id !== tempId && m.id !== real.id);
+                return [...withoutDupes, { ...real }];
+            });
         } catch {
             setMessages(prev => prev.filter(m => m.id !== tempId));
         } finally {
