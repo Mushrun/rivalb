@@ -138,6 +138,7 @@ class MessageController extends Controller
                 'opp_screenshot'  => $screenshotUrl($oppResult?->screenshot_path),
                 'winner_id'       => $match->winner_id,
                 'currency'        => $match->challenge->currency ?? 'rb',
+                'has_reviewed'    => \App\Models\Review::where('reviewer_id', $user->id)->where('match_id', $matchId)->exists(),
                 'my_fighter'      => $isPlayer1 ? $p1FighterName : $p2FighterName,
                 'opp_fighter'     => $isPlayer1 ? $p2FighterName : $p1FighterName,
             ],

@@ -536,6 +536,91 @@ function ResultMessage({ msg, opponent }) {
     );
 }
 
+function AvisBlock({ matchId, opponent, hasReviewed }) {
+    const [sentiment, setSentiment] = useState(null);
+    const [comment,   setComment]   = useState('');
+    const [done,      setDone]      = useState(hasReviewed);
+    const [sending,   setSending]   = useState(false);
+
+    if (done) {
+        return (
+            <div className="mx-4 mt-3 rounded-2xl p-4 flex items-center gap-3"
+                style={{ background: '#0D0D14', border: '1px solid #1E1E2A' }}>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#4CD964" strokeWidth="2.5" strokeLinecap="round">
+                    <polyline points="20 6 9 17 4 12"/>
+                </svg>
+                <p className="text-[#4CD964] text-sm font-semibold">Avis envoyé pour ce match.</p>
+            </div>
+        );
+    }
+
+    const handleSubmit = () => {
+        if (!sentiment || sending) return;
+        setSending(true);
+        router.post(`/match/${matchId}/review`, { sentiment, comment }, {
+            onSuccess: () => setDone(true),
+            onFinish:  () => setSending(false),
+        });
+    };
+
+    return (
+        <div className="mx-4 mt-3 rounded-2xl overflow-hidden flex-shrink-0"
+            style={{ background: '#111118', border: '1px solid #1E1E2A' }}>
+
+            <div className="px-4 py-2.5" style={{ background: '#0D0D14', borderBottom: '1px solid #1E1E2A' }}>
+                <p className="text-[#555] text-[9px] tracking-widest font-semibold">
+                    ÉVALUER {opponent.username.toUpperCase()}
+                </p>
+            </div>
+
+            <div className="px-4 py-3 flex flex-col gap-3">
+                <div className="flex gap-2">
+                    <button onClick={() => setSentiment('positive')}
+                        className="flex-1 rounded-xl py-2.5 font-bold text-sm flex items-center justify-center gap-2"
+                        style={{
+                            background: sentiment === 'positive' ? 'rgba(76,217,100,0.15)' : '#0D0D14',
+                            border:     `1.5px solid ${sentiment === 'positive' ? '#4CD964' : '#2A2A3A'}`,
+                            color:      sentiment === 'positive' ? '#4CD964' : '#555',
+                        }}>
+                        👍 Positif
+                    </button>
+                    <button onClick={() => setSentiment('negative')}
+                        className="flex-1 rounded-xl py-2.5 font-bold text-sm flex items-center justify-center gap-2"
+                        style={{
+                            background: sentiment === 'negative' ? 'rgba(255,59,48,0.15)' : '#0D0D14',
+                            border:     `1.5px solid ${sentiment === 'negative' ? '#FF3B30' : '#2A2A3A'}`,
+                            color:      sentiment === 'negative' ? '#FF3B30' : '#555',
+                        }}>
+                        👎 Négatif
+                    </button>
+                </div>
+
+                <textarea
+                    value={comment}
+                    onChange={e => setComment(e.target.value)}
+                    placeholder="Laisse un commentaire (optionnel)..."
+                    rows={2}
+                    maxLength={500}
+                    className="w-full rounded-xl px-3 py-2.5 text-white text-sm outline-none resize-none"
+                    style={{ background: '#0D0D14', border: '1px solid #2A2A3A' }}
+                />
+
+                <button onClick={handleSubmit} disabled={!sentiment || sending}
+                    className="w-full rounded-xl py-2.5 font-bold text-sm flex items-center justify-center gap-2"
+                    style={{
+                        background: sentiment && !sending ? '#FF3B30' : '#1A1A2A',
+                        color:      sentiment && !sending ? '#FFF'    : '#444',
+                    }}>
+                    {sending
+                        ? <svg className="animate-spin" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M21 12a9 9 0 1 1-6.219-8.56"/></svg>
+                        : 'Envoyer mon avis'
+                    }
+                </button>
+            </div>
+        </div>
+    );
+}
+
 export default function ChatShow() {
     const { match, opponent, messages: initialMessages } = usePage().props;
 
@@ -650,6 +735,15 @@ export default function ChatShow() {
 
                 {/* Match card */}
                 <MatchCard match={match} opponent={opponent} />
+
+                {/* Avis — visible quand le match est terminé */}
+                {match.status === 'termine' && (
+                    <AvisBlock
+                        matchId={match.id}
+                        opponent={opponent}
+                        hasReviewed={match.has_reviewed}
+                    />
+                )}
 
                 {/* Messages */}
                 <div className="flex-1 px-4 py-4 flex flex-col gap-2 overflow-y-auto min-h-0">
