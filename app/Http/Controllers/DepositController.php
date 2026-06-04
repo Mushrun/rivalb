@@ -31,9 +31,9 @@ class DepositController extends Controller
             ]);
 
         return Inertia::render('Recharge', [
-            'balance'    => $user->balance_rb,
-            'history'    => $history,
-            'rb_per_usdt'=> config('services.bscscan.rb_per_usdt', 500),
+            'balance'      => $user->balance_rb,
+            'balance_usdt' => $user->balance_usdt,
+            'history'      => $history,
         ]);
     }
 
@@ -52,13 +52,11 @@ class DepositController extends Controller
                 'amount_usdt.min'  => 'Montant minimum : 1 USDT.',
             ]);
 
-            $rbToCredit = (int) floor($validated['amount_usdt']) * config('services.bscscan.rb_per_usdt', 500);
-
             $transaction = Transaction::create([
                 'user_id'     => $user->id,
                 'type'        => 'depot',
                 'currency'    => 'usdt',
-                'amount_rb'   => $rbToCredit,
+                'amount_rb'   => 0,
                 'amount_usdt' => $validated['amount_usdt'],
                 'tx_hash'     => $validated['tx_hash'],
                 'status'      => 'en_attente',

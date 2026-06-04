@@ -9,44 +9,40 @@ const statusColor = { en_attente: '#FF9500', valide: '#4CD964', refuse: '#FF3B30
 const statusBg    = { en_attente: 'rgba(255,149,0,0.12)', valide: 'rgba(76,217,100,0.12)', refuse: 'rgba(255,59,48,0.12)' };
 
 export default function Recharge() {
-    const { balance, history, flash, auth, rb_per_usdt } = usePage().props;
+    const { balance, balance_usdt, history, flash, auth } = usePage().props;
     const walletConnected = !!auth?.user?.wallet_address;
 
-    const [tab,     setTab]     = useState('rb');   // 'rb' | 'usdt'
+    const [tab,     setTab]     = useState('rb');
     const [amount,  setAmount]  = useState('');
     const [sending, setSending] = useState(false);
     const [success, setSuccess] = useState('');
 
     const rb   = useRBDeposit();
     const usdt = useUSDTDeposit();
-
     const hook = tab === 'usdt' ? usdt : rb;
 
     const numVal   = parseFloat(amount) || 0;
     const minOk    = tab === 'usdt' ? numVal >= 1 : numVal >= 500;
     const formValid = minOk && walletConnected;
 
-    const rbPreview = tab === 'usdt' ? Math.floor(numVal) * (rb_per_usdt ?? 500) : numVal;
-
     const handleDeposit = async () => {
         if (!formValid || sending) return;
         setSending(true);
         setSuccess('');
 
-        let result;
         if (tab === 'usdt') {
-            result = await usdt.deposit(numVal);
+            const result = await usdt.deposit(numVal);
             if (!result) { setSending(false); return; }
             router.post('/recharge', { tx_hash: result.hash, amount_usdt: result.amountUSDT, currency: 'usdt' }, {
-                onSuccess: () => { setSuccess('Dépôt soumis ! Vérification en cours.'); setAmount(''); usdt.reset(); },
+                onSuccess: () => { setSuccess('Dépôt USDT soumis ! Vérification en cours.'); setAmount(''); usdt.reset(); },
                 onError:   () => usdt.reset(),
                 onFinish:  () => setSending(false),
             });
         } else {
-            result = await rb.deposit(numVal);
+            const result = await rb.deposit(numVal);
             if (!result) { setSending(false); return; }
             router.post('/recharge', { tx_hash: result.hash, amount_rb: result.amountRB, currency: 'rb' }, {
-                onSuccess: () => { setSuccess('Dépôt soumis ! Vérification en cours.'); setAmount(''); rb.reset(); },
+                onSuccess: () => { setSuccess('Dépôt RB soumis ! Vérification en cours.'); setAmount(''); rb.reset(); },
                 onError:   () => rb.reset(),
                 onFinish:  () => setSending(false),
             });
@@ -55,7 +51,6 @@ export default function Recharge() {
 
     return (
         <AppLayout>
-            {/* Header */}
             <div className="flex items-center gap-3 px-4 pt-5 pb-4">
                 <Link href="/historique">
                     <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#FFF" strokeWidth="2.5" strokeLinecap="round">
@@ -67,7 +62,6 @@ export default function Recharge() {
 
             <div className="px-4 flex flex-col gap-5 pb-10">
 
-                {/* Flash */}
                 {(flash?.success || success) && (
                     <div className="rounded-xl px-4 py-3 flex items-center gap-2"
                         style={{ background: 'rgba(76,217,100,0.12)', border: '1px solid rgba(76,217,100,0.25)' }}>
@@ -78,15 +72,15 @@ export default function Recharge() {
                     </div>
                 )}
 
-                {/* Solde */}
-                <div className="rounded-2xl p-4 flex items-center justify-between" style={{ background: '#1A1A1A' }}>
-                    <div>
-                        <p className="text-[#888] text-xs mb-0.5">Solde actuel</p>
-                        <p className="text-white font-black text-2xl">{(balance ?? 0).toLocaleString()} RB</p>
+                {/* Soldes */}
+                <div className="flex gap-3">
+                    <div className="flex-1 rounded-2xl p-4" style={{ background: '#1A1A1A' }}>
+                        <p className="text-[#888] text-xs mb-0.5">Solde RB</p>
+                        <p className="text-white font-black text-xl">{(balance ?? 0).toLocaleString()} RB</p>
                     </div>
-                    <div className="text-right">
-                        <p className="text-[#555] text-xs mb-0.5">Taux</p>
-                        <p className="text-[#888] text-sm font-bold">1 USDT = {rb_per_usdt ?? 500} RB</p>
+                    <div className="flex-1 rounded-2xl p-4" style={{ background: '#1A1A1A' }}>
+                        <p className="text-[#888] text-xs mb-0.5">Solde USDT</p>
+                        <p className="text-white font-black text-xl">{parseFloat(balance_usdt ?? 0).toFixed(2)} USDT</p>
                     </div>
                 </div>
 
@@ -140,22 +134,12 @@ export default function Recharge() {
                         </span>
                     </div>
 
-                    {/* Aperçu conversion USDT → RB */}
-                    {tab === 'usdt' && numVal >= 1 && (
-                        <div className="mt-2 px-3 py-2 rounded-lg flex items-center justify-between"
-                            style={{ background: 'rgba(76,217,100,0.08)', border: '1px solid rgba(76,217,100,0.15)' }}>
-                            <span className="text-[#888] text-xs">{numVal} USDT =</span>
-                            <span className="text-[#4CD964] font-black text-sm">{rbPreview.toLocaleString()} RB</span>
-                        </div>
-                    )}
-
                     {numVal > 0 && !minOk && (
                         <p className="text-[#FF9500] text-xs mt-1.5">
                             {tab === 'usdt' ? 'Minimum 1 USDT' : 'Minimum 500 RB'}
                         </p>
                     )}
 
-                    {/* Raccourcis */}
                     <div className="flex gap-2 mt-3">
                         {(tab === 'usdt' ? [1, 5, 10, 50] : [500, 1000, 2500, 5000]).map(v => (
                             <button key={v} onClick={() => setAmount(String(v))}
@@ -171,7 +155,6 @@ export default function Recharge() {
                     </div>
                 </div>
 
-                {/* Erreur MetaMask */}
                 {hook.error && (
                     <div className="rounded-xl px-4 py-3"
                         style={{ background: 'rgba(255,59,48,0.08)', border: '1px solid rgba(255,59,48,0.2)' }}>
@@ -179,7 +162,6 @@ export default function Recharge() {
                     </div>
                 )}
 
-                {/* Tx soumise */}
                 {hook.status === 'submitted' && hook.txHash && (
                     <div className="rounded-xl px-4 py-3"
                         style={{ background: 'rgba(76,217,100,0.08)', border: '1px solid rgba(76,217,100,0.2)' }}>
@@ -188,16 +170,14 @@ export default function Recharge() {
                     </div>
                 )}
 
-                {/* Info */}
                 <div className="rounded-xl p-3" style={{ background: 'rgba(255,149,0,0.08)', border: '1px solid rgba(255,149,0,0.2)' }}>
                     <p className="text-[#FF9500] text-xs text-center">
                         {tab === 'usdt'
-                            ? `Envoie des USDT (BSC BEP-20) depuis MetaMask. Converti en RB automatiquement.`
-                            : 'Envoie des tokens RB depuis ton wallet MetaMask. Crédité automatiquement.'}
+                            ? 'Envoie des USDT (BSC BEP-20) depuis MetaMask. Crédité sur ton solde USDT.'
+                            : 'Envoie des tokens RB (BSC BEP-20) depuis MetaMask. Crédité sur ton solde RB.'}
                     </p>
                 </div>
 
-                {/* Bouton */}
                 <button onClick={handleDeposit} disabled={!formValid || sending}
                     className="w-full rounded-2xl py-4 font-black text-sm flex items-center justify-center gap-2"
                     style={{
@@ -215,7 +195,6 @@ export default function Recharge() {
                         : `🦊 DÉPOSER ${tab === 'usdt' ? 'EN USDT' : 'EN RB'}`}
                 </button>
 
-                {/* Historique */}
                 {history?.length > 0 && (
                     <div>
                         <p className="text-[#888] text-xs font-semibold tracking-wider mb-3">HISTORIQUE DES DÉPÔTS</p>
@@ -224,13 +203,10 @@ export default function Recharge() {
                                 <div key={tx.id} className="flex items-center justify-between px-4 py-3.5"
                                     style={{ borderBottom: i < history.length - 1 ? '1px solid #0D0D0D' : 'none' }}>
                                     <div className="flex-1 min-w-0">
-                                        <p className="text-[#4CD964] font-bold text-sm">
-                                            +{tx.amount_rb.toLocaleString()} RB
-                                            {tx.currency === 'usdt' && tx.amount_usdt && (
-                                                <span className="text-[#666] font-normal text-xs ml-1">
-                                                    ({tx.amount_usdt} USDT)
-                                                </span>
-                                            )}
+                                        <p className="font-bold text-sm" style={{ color: tx.currency === 'usdt' ? '#4CD964' : '#FFAA88' }}>
+                                            +{tx.currency === 'usdt'
+                                                ? `${tx.amount_usdt} USDT`
+                                                : `${tx.amount_rb.toLocaleString()} RB`}
                                         </p>
                                         <p className="text-[#555] text-[10px] font-mono truncate">{tx.tx_hash}</p>
                                     </div>
