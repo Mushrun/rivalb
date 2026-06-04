@@ -131,5 +131,8 @@ class NotificationService
             "{$senderUsername} t'a envoyé un message.",
             ['match_id' => $matchId]
         );
+
+        \Illuminate\Support\Facades\Mail::to($user->email)
+            ->queue(new \App\Mail\NouveauMessageMail($user, $senderUsername, $matchId));
     }
 }
