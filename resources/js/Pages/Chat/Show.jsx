@@ -180,28 +180,14 @@ function ResultRow({ label, result, screenshot }) {
 
 function ResultForm({ matchId }) {
     const [result,     setResult]     = useState(null);
-    const [screenshot, setScreenshot] = useState(null);
-    const [preview,    setPreview]    = useState(null);
     const [submitting, setSubmitting] = useState(false);
-
-    const handleFile = (file) => {
-        if (!file) return;
-        setScreenshot(file);
-        const reader = new FileReader();
-        reader.onload = (e) => setPreview(e.target.result);
-        reader.readAsDataURL(file);
-    };
 
     const canSubmit = result && !submitting;
 
     const handleSubmit = () => {
         if (!canSubmit) return;
         setSubmitting(true);
-        const data = new FormData();
-        data.append('claimed_result', result);
-        if (screenshot) data.append('screenshot', screenshot);
-        router.post(`/match/${matchId}/result`, data, {
-            forceFormData: true,
+        router.post(`/match/${matchId}/result`, { claimed_result: result }, {
             onFinish: () => setSubmitting(false),
         });
     };
@@ -229,29 +215,6 @@ function ResultForm({ matchId }) {
                     💀 Défaite
                 </button>
             </div>
-            {preview ? (
-                <label className="relative cursor-pointer rounded-xl overflow-hidden block"
-                    style={{ border: '1px solid #4CD964' }}>
-                    <img src={preview} alt="Aperçu" className="w-full object-cover rounded-xl" style={{ maxHeight: '180px' }} />
-                    <div className="absolute inset-0 flex items-center justify-center opacity-0 hover:opacity-100 transition-opacity rounded-xl"
-                        style={{ background: 'rgba(0,0,0,0.55)' }}>
-                        <span className="text-white text-xs font-semibold">Changer</span>
-                    </div>
-                    <input type="file" accept="image/*" className="hidden"
-                        onChange={e => handleFile(e.target.files[0] ?? null)} />
-                </label>
-            ) : (
-                <label className="flex items-center gap-2 px-3 py-2 rounded-xl text-xs cursor-pointer"
-                    style={{ background: '#0D0D14', border: '1px solid #FF3B30', color: '#FF6B6B' }}>
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                        <rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/>
-                        <polyline points="21 15 16 10 5 21"/>
-                    </svg>
-                    <span className="flex-1">Capture d'écran (optionnelle)</span>
-                    <input type="file" accept="image/*" className="hidden"
-                        onChange={e => handleFile(e.target.files[0] ?? null)} />
-                </label>
-            )}
             <button onClick={handleSubmit} disabled={!canSubmit}
                 className="w-full rounded-xl py-2.5 font-bold text-sm flex items-center justify-center gap-2"
                 style={{

@@ -43,13 +43,9 @@ class MatchController extends Controller
     {
         $request->validate([
             'claimed_result' => ['required', 'in:win,loss'],
-            'screenshot'     => ['nullable', 'file', 'image', 'mimes:jpg,jpeg,png,webp', 'max:5120'],
         ]);
 
         $screenshotPath = null;
-        if ($request->hasFile('screenshot')) {
-            $screenshotPath = $request->file('screenshot')->store('screenshots', 'public');
-        }
 
         $user  = Auth::user();
         $match = GameMatch::findOrFail($id);
