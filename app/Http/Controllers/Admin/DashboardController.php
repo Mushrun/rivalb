@@ -40,15 +40,15 @@ class DashboardController extends Controller
             ->sum('amount_rb');
 
         // Litiges récents
-        $recentLitiges = Dispute::with(['match.player1', 'match.player2', 'match.challenge'])
+        $recentLitiges = Dispute::with(['gameMatch.player1', 'gameMatch.player2', 'gameMatch.challenge'])
             ->where('status', 'ouvert')
             ->latest()
             ->limit(5)
             ->get()
             ->map(fn($d) => [
                 'id'      => $d->id,
-                'players' => ($d->match->player1->username ?? '?') . ' vs ' . ($d->match->player2->username ?? '?'),
-                'bet'     => ($d->match->challenge->bet_amount ?? 0) . ' RB',
+                'players' => ($d->gameMatch->player1->username ?? '?') . ' vs ' . ($d->gameMatch->player2->username ?? '?'),
+                'bet'     => ($d->gameMatch->challenge->bet_amount ?? 0) . ' RB',
                 'date'    => $d->created_at->diffForHumans(),
                 'urgency' => $d->created_at->diffInHours(now()) >= 24 ? 'haute' : 'normale',
             ]);
