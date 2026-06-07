@@ -192,14 +192,14 @@ function ResultForm({ matchId }) {
         reader.readAsDataURL(file);
     };
 
-    const canSubmit = result && screenshot && !submitting;
+    const canSubmit = result && !submitting;
 
     const handleSubmit = () => {
         if (!canSubmit) return;
         setSubmitting(true);
         const data = new FormData();
         data.append('claimed_result', result);
-        data.append('screenshot', screenshot);
+        if (screenshot) data.append('screenshot', screenshot);
         router.post(`/match/${matchId}/result`, data, {
             forceFormData: true,
             onFinish: () => setSubmitting(false),
@@ -247,7 +247,7 @@ function ResultForm({ matchId }) {
                         <rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/>
                         <polyline points="21 15 16 10 5 21"/>
                     </svg>
-                    <span className="flex-1">Capture d'écran obligatoire *</span>
+                    <span className="flex-1">Capture d'écran (optionnelle)</span>
                     <input type="file" accept="image/*" className="hidden"
                         onChange={e => handleFile(e.target.files[0] ?? null)} />
                 </label>

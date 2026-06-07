@@ -43,7 +43,7 @@ class MatchController extends Controller
     {
         $request->validate([
             'claimed_result' => ['required', 'in:win,loss'],
-            'screenshot'     => ['required', 'file', 'image', 'mimes:jpg,jpeg,png,webp', 'max:5120'],
+            'screenshot'     => ['nullable', 'file', 'image', 'mimes:jpg,jpeg,png,webp', 'max:5120'],
         ]);
 
         $screenshotPath = null;
