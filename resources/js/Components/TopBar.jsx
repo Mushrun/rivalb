@@ -1,5 +1,22 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Link, usePage } from '@inertiajs/react';
+
+function playNotifSound() {
+    try {
+        const ctx  = new (window.AudioContext || window.webkitAudioContext)();
+        const osc  = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(880, ctx.currentTime);
+        osc.frequency.setValueAtTime(1100, ctx.currentTime + 0.12);
+        gain.gain.setValueAtTime(0.25, ctx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.35);
+        osc.start(ctx.currentTime);
+        osc.stop(ctx.currentTime + 0.35);
+    } catch {}
+}
 
 const RB_TOKEN   = '0x8a56f2e7a05b27fab201ee879b35b2f235ff37c2';
 const DEXSCREENER = `https://api.dexscreener.com/latest/dex/tokens/${RB_TOKEN}`;
@@ -31,8 +48,16 @@ export default function TopBar() {
     const authPages = ['/login', '/register', '/forgot-password', '/reset-password'];
     const isGuest   = authPages.some(p => url.startsWith(p));
     const target    = isGuest ? '/login' : '/battle';
-    const unread    = unread_count ?? 0;
-    const price     = useRBPrice();
+    const unread     = unread_count ?? 0;
+    const prevUnread = useRef(unread);
+    const price      = useRBPrice();
+
+    useEffect(() => {
+        if (unread > prevUnread.current) {
+            playNotifSound();
+        }
+        prevUnread.current = unread;
+    }, [unread]);
     const balance     = auth?.user?.balance_rb   ?? 0;
     const balanceUsdt = auth?.user?.balance_usdt ?? 0;
     const usdValue    = price !== null ? balance * price : null;
