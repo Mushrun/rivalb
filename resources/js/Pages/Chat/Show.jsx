@@ -67,14 +67,7 @@ function PlayersCard({ match, opponent }) {
     const p2Fighter  = match.is_player1 ? match.opp_fighter : match.my_fighter;
 
     return (
-        <div className="flex-shrink-0 mx-4 mt-3 rounded-2xl overflow-hidden"
-            style={{ background: '#111118', border: '1px solid #1E1E2A' }}>
-
-            <div className="px-4 py-2.5 flex flex-col gap-1"
-                style={{ background: '#0D0D14', borderBottom: '1px solid #1E1E2A' }}>
-                <p className="text-[#555] text-[9px] tracking-widest font-semibold">COMBATTANTS</p>
-            </div>
-
+        <div style={{ background: '#111118' }}>
             <div className="px-4 py-3 flex flex-col gap-3">
                 {/* Joueur 1 */}
                 <div className="flex items-start justify-between gap-2">
@@ -305,21 +298,7 @@ function MatchCard({ match, opponent }) {
     };
 
     return (
-        <div className="flex-shrink-0 mx-4 mt-3 mb-1 rounded-2xl overflow-hidden"
-            style={{ background: '#111118', border: '1px solid #1E1E2A' }}>
-
-            <div className="flex items-center justify-between px-4 py-2.5"
-                style={{ background: '#0D0D14', borderBottom: '1px solid #1E1E2A' }}>
-                <span className="text-[#666] text-[10px] tracking-widest font-semibold">MATCH #{match.id}</span>
-                <span className="text-[10px] font-bold px-2 py-0.5 rounded-lg"
-                    style={{
-                        background: match.status === 'en_cours' ? 'rgba(76,217,100,0.15)'  : 'rgba(255,149,0,0.15)',
-                        color:      match.status === 'en_cours' ? '#4CD964'                 : '#FF9500',
-                    }}>
-                    {statusLabel[match.status] ?? match.status}
-                </span>
-            </div>
-
+        <div style={{ background: '#111118' }}>
             <div className="px-4 py-3 flex flex-col gap-3">
 
                 {match.status === 'en_attente' && (
@@ -668,6 +647,9 @@ export default function ChatShow() {
         }
     };
 
+    const [openCombattants, setOpenCombattants] = useState(false);
+    const [openMatch,       setOpenMatch]       = useState(false);
+
     return (
         <div className="flex justify-center" style={{ background: '#0A0A0F', height: '100dvh' }}>
             <div className="w-full max-w-[430px] flex flex-col" style={{ background: '#0A0A0F', height: '100dvh' }}>
@@ -693,11 +675,44 @@ export default function ChatShow() {
                     </div>
                 </div>
 
-                {/* Combattants — toujours visible */}
-                <PlayersCard match={match} opponent={opponent} />
+                {/* Accordéon Combattants */}
+                <div className="flex-shrink-0 mx-4 mt-2 rounded-2xl overflow-hidden" style={{ border: '1px solid #1E1E2A' }}>
+                    <button onClick={() => setOpenCombattants(o => !o)}
+                        className="w-full flex items-center justify-between px-4 py-2.5"
+                        style={{ background: '#0D0D14' }}>
+                        <span className="text-[#555] text-[10px] tracking-widest font-semibold">COMBATTANTS</span>
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#555" strokeWidth="2.5" strokeLinecap="round"
+                            style={{ transform: openCombattants ? 'rotate(180deg)' : 'rotate(0deg)', transition: 'transform 0.2s' }}>
+                            <polyline points="6 9 12 15 18 9"/>
+                        </svg>
+                    </button>
+                    {openCombattants && <PlayersCard match={match} opponent={opponent} />}
+                </div>
 
-                {/* Match card */}
-                <MatchCard match={match} opponent={opponent} />
+                {/* Accordéon Match */}
+                {match.status !== 'termine' && match.status !== 'annule' && (
+                    <div className="flex-shrink-0 mx-4 mt-1 rounded-2xl overflow-hidden" style={{ border: '1px solid #1E1E2A' }}>
+                        <button onClick={() => setOpenMatch(o => !o)}
+                            className="w-full flex items-center justify-between px-4 py-2.5"
+                            style={{ background: '#0D0D14' }}>
+                            <span className="text-[#555] text-[10px] tracking-widest font-semibold">MATCH #{match.id}</span>
+                            <div className="flex items-center gap-2">
+                                <span className="text-[10px] font-bold px-2 py-0.5 rounded-lg"
+                                    style={{
+                                        background: match.status === 'en_cours' ? 'rgba(76,217,100,0.15)' : match.status === 'litige' ? 'rgba(255,59,48,0.15)' : 'rgba(255,149,0,0.15)',
+                                        color:      match.status === 'en_cours' ? '#4CD964'               : match.status === 'litige' ? '#FF3B30'               : '#FF9500',
+                                    }}>
+                                    {statusLabel[match.status] ?? match.status}
+                                </span>
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#555" strokeWidth="2.5" strokeLinecap="round"
+                                    style={{ transform: openMatch ? 'rotate(180deg)' : 'rotate(0deg)', transition: 'transform 0.2s' }}>
+                                    <polyline points="6 9 12 15 18 9"/>
+                                </svg>
+                            </div>
+                        </button>
+                        {openMatch && <MatchCard match={match} opponent={opponent} />}
+                    </div>
+                )}
 
                 {/* Avis — visible quand le match est terminé */}
                 {match.status === 'termine' && (
