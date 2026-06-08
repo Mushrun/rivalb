@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { Link, router, usePage } from '@inertiajs/react';
+import { useTranslation } from 'react-i18next';
 import AppLayout from '../Components/AppLayout';
 
 const statusLabel = { en_attente: 'EN ATTENTE', valide: 'VALIDÉ', refuse: 'REFUSÉ' };
@@ -8,6 +9,7 @@ const statusBg    = { en_attente: 'rgba(255,149,0,0.12)', valide: 'rgba(76,217,1
 
 export default function Retrait() {
     const { balance, minAmount, rate, history, errors, flash, auth } = usePage().props;
+    const { t } = useTranslation();
 
     const walletAddress = auth?.user?.wallet_address ?? '';
     const walletConnected = !!walletAddress;
@@ -37,7 +39,7 @@ export default function Retrait() {
                         <polyline points="15 18 9 12 15 6"/>
                     </svg>
                 </Link>
-                <h1 className="text-white font-black text-lg">Retirer mes RB</h1>
+                <h1 className="text-white font-black text-lg">{t('retrait.title')}</h1>
             </div>
 
             <div className="px-4 flex flex-col gap-5 pb-10">
@@ -57,11 +59,11 @@ export default function Retrait() {
                 <div className="rounded-2xl p-4 flex items-center justify-between"
                     style={{ background: '#1A1A1A' }}>
                     <div>
-                        <p className="text-[#888] text-xs mb-0.5">Solde disponible</p>
+                        <p className="text-[#888] text-xs mb-0.5">{t('retrait.available')}</p>
                         <p className="text-white font-black text-2xl">{(balance ?? 0).toLocaleString()} RB</p>
                     </div>
                     <div className="text-right">
-                        <p className="text-[#555] text-xs mb-0.5">Minimum</p>
+                        <p className="text-[#555] text-xs mb-0.5">{t('retrait.min_amount')}</p>
                         <p className="text-[#888] text-sm font-bold">{minAmount ?? 500} RB</p>
                     </div>
                 </div>
@@ -75,10 +77,10 @@ export default function Retrait() {
                             <line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/>
                         </svg>
                         <div>
-                            <p className="text-[#FF9500] text-sm font-bold mb-1">Wallet non connecté</p>
-                            <p className="text-[#888] text-xs">Tu dois connecter ton MetaMask dans les paramètres pour retirer.</p>
+                            <p className="text-[#FF9500] text-sm font-bold mb-1">{t('recharge.wallet_not_connected')}</p>
+                            <p className="text-[#888] text-xs">{t('retrait.wallet_hint_full')}</p>
                             <Link href="/settings" className="text-[#FF9500] text-xs font-bold underline mt-1 inline-block">
-                                Connecter MetaMask →
+                                {t('recharge.connect_metamask')}
                             </Link>
                         </div>
                     </div>
@@ -94,16 +96,16 @@ export default function Retrait() {
                             <circle cx="17" cy="14" r="1" fill="#4CD964" stroke="none"/>
                         </svg>
                         <div className="flex-1 min-w-0">
-                            <p className="text-[#4CD964] text-[10px] font-bold tracking-wider">WALLET DE RÉCEPTION</p>
+                            <p className="text-[#4CD964] text-[10px] font-bold tracking-wider">{t('retrait.wallet_reception')}</p>
                             <p className="text-white text-xs font-mono truncate">{walletAddress}</p>
                         </div>
-                        <Link href="/settings" className="text-[#555] text-[10px] underline flex-shrink-0">Changer</Link>
+                        <Link href="/settings" className="text-[#555] text-[10px] underline flex-shrink-0">{t('retrait.change')}</Link>
                     </div>
                 )}
 
                 {/* Montant */}
                 <div>
-                    <p className="text-[#888] text-xs font-semibold tracking-wider mb-2">MONTANT À RETIRER</p>
+                    <p className="text-[#888] text-xs font-semibold tracking-wider mb-2">{t('retrait.amount_label')}</p>
                     <div className="relative">
                         <input
                             type="number" value={amount}
@@ -115,7 +117,7 @@ export default function Retrait() {
                         />
                         <span className="absolute right-4 top-1/2 -translate-y-1/2 text-[#555] text-sm font-semibold">RB</span>
                     </div>
-                    {rb > (balance ?? 0) && <p className="text-[#FF3B30] text-xs mt-1.5">Solde insuffisant</p>}
+                    {rb > (balance ?? 0) && <p className="text-[#FF3B30] text-xs mt-1.5">{t('retrait.insufficient')}</p>}
                     {rb > 0 && rb < (minAmount ?? 500) && <p className="text-[#FF9500] text-xs mt-1.5">Minimum {minAmount ?? 500} RB</p>}
                     {errors?.amount_rb && <p className="text-[#FF3B30] text-xs mt-1">{errors.amount_rb}</p>}
 
@@ -138,12 +140,12 @@ export default function Retrait() {
                 {amountValid && (
                     <div className="rounded-2xl p-4" style={{ background: '#1A1A1A' }}>
                         <div className="flex items-center justify-between mb-2">
-                            <span className="text-[#888] text-xs">RB retirés</span>
+                            <span className="text-[#888] text-xs">{t('retrait.rb_withdrawn')}</span>
                             <span className="text-[#FF3B30] font-bold text-sm">-{rb.toLocaleString()} RB</span>
                         </div>
                         <div className="h-px my-2" style={{ background: '#2A2A2A' }} />
                         <div className="flex items-center justify-between">
-                            <span className="text-[#888] text-xs">Tu recevras environ</span>
+                            <span className="text-[#888] text-xs">{t('retrait.you_receive')}</span>
                             <span className="text-[#4CD964] font-black text-lg">~{usdt} USDT</span>
                         </div>
                     </div>
@@ -163,13 +165,13 @@ export default function Retrait() {
                         color: formValid && !sending ? '#FFF' : '#333',
                         transition: 'background 0.15s',
                     }}>
-                    {sending ? 'ENVOI...' : 'CONFIRMER LE RETRAIT'}
+                    {sending ? t('retrait.processing') : t('retrait.confirm_btn')}
                 </button>
 
                 {/* Historique */}
                 {history?.length > 0 && (
                     <div>
-                        <p className="text-[#888] text-xs font-semibold tracking-wider mb-3">HISTORIQUE DES RETRAITS</p>
+                        <p className="text-[#888] text-xs font-semibold tracking-wider mb-3">{t('retrait.history_title')}</p>
                         <div className="rounded-2xl overflow-hidden" style={{ background: '#1A1A1A' }}>
                             {history.map((tx, i) => (
                                 <div key={tx.id} className="flex items-center justify-between px-4 py-3.5"

@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { Link, router, usePage } from '@inertiajs/react';
+import { useTranslation } from 'react-i18next';
 import AppLayout from '../Components/AppLayout';
 import TopBar from '../Components/TopBar';
 import FIGHTERS from '../data/fighters';
@@ -17,6 +18,7 @@ function StatBox({ label, value, color }) {
 
 export default function DefiDetail() {
     const { challenge, canJoin } = usePage().props;
+    const { t } = useTranslation();
     const [selected,  setSelected]  = useState(new Set());
     const [accepting, setAccepting] = useState(false);
     const [done,      setDone]      = useState(false);
@@ -80,7 +82,7 @@ export default function DefiDetail() {
                     </svg>
                 </Link>
                 <div className="flex-1">
-                    <h1 className="text-white font-black text-lg">Détails du défi</h1>
+                    <h1 className="text-white font-black text-lg">{t('defi.title')}</h1>
                 </div>
                 <span className="text-[#666] text-xs">{challenge.created_at}</span>
             </div>
@@ -100,7 +102,7 @@ export default function DefiDetail() {
 
                 {/* Creator card */}
                 <div className="rounded-2xl p-4" style={{ background: '#1A1A1A' }}>
-                    <p className="text-[#666] text-[10px] tracking-widest font-semibold mb-3">CRÉATEUR DU DÉFI</p>
+                    <p className="text-[#666] text-[10px] tracking-widest font-semibold mb-3">{t('defi.creator')}</p>
                     <div className="flex items-center gap-3 mb-4">
                         <div className="w-14 h-14 rounded-xl flex items-center justify-center font-black text-white text-xl flex-shrink-0"
                             style={{ background: '#FF3B30' }}>
@@ -122,9 +124,9 @@ export default function DefiDetail() {
                         </Link>
                     </div>
                     <div className="flex gap-2">
-                        <StatBox label="VICTOIRES" value={creator.wins}                         color="#4CD964" />
-                        <StatBox label="DÉFAITES"  value={creator.losses}                       color="#FF3B30" />
-                        <StatBox label="COMBATS"   value={creator.wins + creator.losses}        color="#FFFFFF" />
+                        <StatBox label={t('defi.wins')}   value={creator.wins}                  color="#4CD964" />
+                        <StatBox label={t('defi.losses')} value={creator.losses}                color="#FF3B30" />
+                        <StatBox label={t('defi.fights')} value={creator.wins + creator.losses} color="#FFFFFF" />
                     </div>
                 </div>
 
@@ -140,8 +142,8 @@ export default function DefiDetail() {
                             <path d="M18 2H6v7a6 6 0 0 0 12 0V2z"/>
                         </svg>
                         <div>
-                            <p className="text-[#666] text-[10px] tracking-widest font-semibold">MISE DU DÉFI</p>
-                            <p className="text-[#888] text-xs">Chaque joueur mise ce montant</p>
+                            <p className="text-[#666] text-[10px] tracking-widest font-semibold">{t('defi.bet')}</p>
+                            <p className="text-[#888] text-xs">{t('defi.bet_subtitle')}</p>
                         </div>
                     </div>
                     <span className="text-[#FF3B30] font-black text-2xl">
@@ -253,8 +255,8 @@ export default function DefiDetail() {
                         <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#4CD964" strokeWidth="2.5" strokeLinecap="round">
                             <polyline points="20 6 9 17 4 12"/>
                         </svg>
-                        <p className="text-[#4CD964] font-bold text-sm">Défi accepté !</p>
-                        <p className="text-[#888] text-xs text-center">Le créateur a été notifié. Rendez-vous en jeu.</p>
+                        <p className="text-[#4CD964] font-bold text-sm">{t('defi.accepted')}</p>
+                        <p className="text-[#888] text-xs text-center">{t('defi.accepted_subtitle')}</p>
                     </div>
                 ) : canJoin ? (
                     <>

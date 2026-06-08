@@ -1,13 +1,15 @@
 import { useEffect, useState } from 'react';
 import { Link, router, useForm, usePage } from '@inertiajs/react';
+import { useTranslation } from 'react-i18next';
 
 export default function Login() {
     const { auth } = usePage().props;
+    const { t } = useTranslation();
     useEffect(() => {
         if (auth?.user) router.replace('/battle');
     }, []);
     const [showPassword,  setShowPassword]  = useState(false);
-    const [metaMaskState, setMetaMaskState] = useState('idle'); // idle | loading | error
+    const [metaMaskState, setMetaMaskState] = useState('idle');
     const [metaMaskError, setMetaMaskError] = useState('');
 
     const { data, setData, post, processing, errors } = useForm({
@@ -108,10 +110,10 @@ export default function Login() {
                         </svg>
                     </div>
                     <h1 className="text-[28px] font-bold text-white text-center leading-tight">
-                        Entre dans l'arène
+                        {t('auth.login_title')}
                     </h1>
                     <p className="text-[#888888] text-sm text-center mt-2">
-                        Affronte de vrais joueurs. Chaque combat compte.
+                        {t('auth.login_subtitle')}
                     </p>
                 </div>
 
@@ -159,7 +161,7 @@ export default function Login() {
                                 MOT DE PASSE
                             </label>
                             <Link href="/forgot-password" className="text-[12px] text-[#888888]">
-                                Mot de passe oublié ?
+                                {t('auth.forgot_password')}
                             </Link>
                         </div>
                         <div className="relative">
@@ -195,7 +197,7 @@ export default function Login() {
                         disabled={processing}
                         className="w-full rounded-xl py-3 font-bold text-sm tracking-widest text-white text-center mt-1 disabled:opacity-60"
                         style={{ background: '#FF3B30' }}>
-                        {processing ? 'CONNEXION...' : 'SE CONNECTER'}
+                        {processing ? t('auth.login_processing') : t('auth.login_btn')}
                     </button>
 
                     {/* Divider */}
@@ -220,7 +222,7 @@ export default function Login() {
                                 <path d="M21 2H3v16h5v4l4-4h5l4-4V2zm-10 9V7m4 4V7"/>
                             </svg>
                         )}
-                        {metaMaskState === 'loading' ? 'CONNEXION...' : 'SE CONNECTER AVEC METAMASK'}
+                        {metaMaskState === 'loading' ? t('auth.login_processing') : t('auth.login_metamask')}
                     </button>
 
                     {/* MetaMask error */}
@@ -239,8 +241,8 @@ export default function Login() {
 
                 {/* Sign up link */}
                 <p className="text-center text-sm text-[#888888] mt-5">
-                    Pas encore de compte ?{' '}
-                    <Link href="/register" className="text-[#FF3B30] font-semibold">S'inscrire</Link>
+                    {t('auth.no_account')}{' '}
+                    <Link href="/register" className="text-[#FF3B30] font-semibold">{t('auth.register')}</Link>
                 </p>
 
                 {/* Compte suspendu / banni */}

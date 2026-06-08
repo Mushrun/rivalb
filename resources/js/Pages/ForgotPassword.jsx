@@ -1,8 +1,10 @@
 import { useEffect } from 'react';
 import { Link, router, useForm, usePage } from '@inertiajs/react';
+import { useTranslation } from 'react-i18next';
 
 export default function ForgotPassword() {
     const { props, props: { auth } } = usePage();
+    const { t } = useTranslation();
     const sent = props.flash?.status === true;
 
     useEffect(() => {
@@ -32,7 +34,7 @@ export default function ForgotPassword() {
                         <line x1="19" y1="12" x2="5" y2="12"/>
                         <polyline points="12 19 5 12 12 5"/>
                     </svg>
-                    <span className="text-[#888888] text-sm">Retour</span>
+                    <span className="text-[#888888] text-sm">{t('common.back')}</span>
                 </Link>
 
                 {!sent ? (
@@ -47,10 +49,10 @@ export default function ForgotPassword() {
                                 </svg>
                             </div>
                             <h1 className="text-[24px] font-bold text-white text-center">
-                                Mot de passe oublié ?
+                                {t('auth.forgot_password_title')}
                             </h1>
                             <p className="text-[#888888] text-sm text-center mt-2 leading-relaxed">
-                                Saisis ton adresse email et on t'envoie un lien pour réinitialiser ton mot de passe.
+                                {t('auth.forgot_subtitle')}
                             </p>
                         </div>
 
@@ -83,7 +85,7 @@ export default function ForgotPassword() {
                                 disabled={processing}
                                 className="w-full rounded-xl py-3 font-bold text-sm tracking-widest text-white text-center disabled:opacity-60"
                                 style={{ background: '#FF3B30' }}>
-                                {processing ? 'ENVOI...' : 'ENVOYER LE LIEN'}
+                                {processing ? t('auth.sending') : t('auth.send_link_btn')}
                             </button>
                         </form>
                     </>
@@ -96,23 +98,23 @@ export default function ForgotPassword() {
                                 <polyline points="20 6 9 17 4 12"/>
                             </svg>
                         </div>
-                        <h2 className="text-white font-bold text-2xl text-center mb-3">Email envoyé !</h2>
+                        <h2 className="text-white font-bold text-2xl text-center mb-3">{t('auth.email_sent')}</h2>
                         <p className="text-[#888888] text-sm text-center leading-relaxed px-4 mb-8">
-                            Vérifie ta boîte mail. Le lien est valable pendant <span className="text-white font-semibold">15 minutes</span>.
+                            {t('auth.email_sent_subtitle')}
                         </p>
                         <div className="w-full rounded-2xl p-4 mb-4"
                             style={{ background: '#1A1A1A', border: '1px solid #2A2A2A' }}>
                             <p className="text-[#888888] text-xs text-center">
-                                Tu n'as pas reçu d'email ?{' '}
+                                {t('auth.no_email')}{' '}
                                 <Link href="/forgot-password" className="text-[#FF3B30] font-semibold">
-                                    Renvoyer
+                                    {t('auth.resend')}
                                 </Link>
                             </p>
                         </div>
                         <Link href="/login"
                             className="w-full rounded-xl py-3 font-bold text-sm tracking-widest text-white text-center"
                             style={{ background: '#FF3B30' }}>
-                            RETOUR À LA CONNEXION
+                            {t('auth.back_to_login')}
                         </Link>
                     </div>
                 )}

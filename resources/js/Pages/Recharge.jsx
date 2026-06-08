@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { Link, router, usePage } from '@inertiajs/react';
+import { useTranslation } from 'react-i18next';
 import AppLayout from '../Components/AppLayout';
 import { useRBDeposit }   from '../hooks/useRBDeposit';
 import { useUSDTDeposit } from '../hooks/useUSDTDeposit';
@@ -10,6 +11,7 @@ const statusBg    = { en_attente: 'rgba(255,149,0,0.12)', valide: 'rgba(76,217,1
 
 export default function Recharge() {
     const { balance, balance_usdt, history, flash, auth } = usePage().props;
+    const { t } = useTranslation();
     const walletConnected = !!auth?.user?.wallet_address;
 
     const [tab,     setTab]     = useState('rb');
@@ -57,7 +59,7 @@ export default function Recharge() {
                         <polyline points="15 18 9 12 15 6"/>
                     </svg>
                 </Link>
-                <h1 className="text-white font-black text-lg">Recharger</h1>
+                <h1 className="text-white font-black text-lg">{t('recharge.title')}</h1>
             </div>
 
             <div className="px-4 flex flex-col gap-5 pb-10">
@@ -75,11 +77,11 @@ export default function Recharge() {
                 {/* Soldes */}
                 <div className="flex gap-3">
                     <div className="flex-1 rounded-2xl p-4" style={{ background: '#1A1A1A' }}>
-                        <p className="text-[#888] text-xs mb-0.5">Solde RB</p>
+                        <p className="text-[#888] text-xs mb-0.5">{t('recharge.rb_balance')}</p>
                         <p className="text-white font-black text-xl">{(balance ?? 0).toLocaleString()} RB</p>
                     </div>
                     <div className="flex-1 rounded-2xl p-4" style={{ background: '#1A1A1A' }}>
-                        <p className="text-[#888] text-xs mb-0.5">Solde USDT</p>
+                        <p className="text-[#888] text-xs mb-0.5">{t('recharge.usdt_balance')}</p>
                         <p className="text-white font-black text-xl">{parseFloat(balance_usdt ?? 0).toFixed(2)} USDT</p>
                     </div>
                 </div>
@@ -107,10 +109,10 @@ export default function Recharge() {
                             <line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/>
                         </svg>
                         <div>
-                            <p className="text-[#FF9500] text-sm font-bold mb-1">Wallet non connecté</p>
-                            <p className="text-[#888] text-xs">Connecte ton MetaMask dans les paramètres.</p>
+                            <p className="text-[#FF9500] text-sm font-bold mb-1">{t('recharge.wallet_not_connected')}</p>
+                            <p className="text-[#888] text-xs">{t('recharge.wallet_hint')}</p>
                             <Link href="/settings" className="text-[#FF9500] text-xs font-bold underline mt-1 inline-block">
-                                Connecter MetaMask →
+                                {t('recharge.connect_metamask')}
                             </Link>
                         </div>
                     </div>
@@ -119,7 +121,7 @@ export default function Recharge() {
                 {/* Montant */}
                 <div>
                     <p className="text-[#888] text-xs font-semibold tracking-wider mb-2">
-                        {tab === 'usdt' ? 'MONTANT EN USDT' : 'MONTANT EN RB'}
+                        {tab === 'usdt' ? t('recharge.amount_usdt') : t('recharge.amount_rb')}
                     </p>
                     <div className="relative">
                         <input
@@ -136,7 +138,7 @@ export default function Recharge() {
 
                     {numVal > 0 && !minOk && (
                         <p className="text-[#FF9500] text-xs mt-1.5">
-                            {tab === 'usdt' ? 'Minimum 1 USDT' : 'Minimum 500 RB'}
+                            {tab === 'usdt' ? t('recharge.min_usdt_error') : t('recharge.min_rb_error')}
                         </p>
                     )}
 
@@ -172,9 +174,7 @@ export default function Recharge() {
 
                 <div className="rounded-xl p-3" style={{ background: 'rgba(255,149,0,0.08)', border: '1px solid rgba(255,149,0,0.2)' }}>
                     <p className="text-[#FF9500] text-xs text-center">
-                        {tab === 'usdt'
-                            ? 'Envoie des USDT (BSC BEP-20) depuis MetaMask. Crédité sur ton solde USDT.'
-                            : 'Envoie des tokens RB (BSC BEP-20) depuis MetaMask. Crédité sur ton solde RB.'}
+                        {tab === 'usdt' ? t('recharge.bep20_usdt') : t('recharge.bep20_rb')}
                     </p>
                 </div>
 
@@ -191,13 +191,13 @@ export default function Recharge() {
                         </svg>
                     )}
                     {hook.status === 'pending'
-                        ? 'Confirme dans MetaMask...'
-                        : `🦊 DÉPOSER ${tab === 'usdt' ? 'EN USDT' : 'EN RB'}`}
+                        ? t('recharge.confirming')
+                        : `🦊 ${tab === 'usdt' ? t('recharge.deposit_usdt') : t('recharge.deposit_rb')}`}
                 </button>
 
                 {history?.length > 0 && (
                     <div>
-                        <p className="text-[#888] text-xs font-semibold tracking-wider mb-3">HISTORIQUE DES DÉPÔTS</p>
+                        <p className="text-[#888] text-xs font-semibold tracking-wider mb-3">{t('recharge.history')}</p>
                         <div className="rounded-2xl overflow-hidden" style={{ background: '#1A1A1A' }}>
                             {history.map((tx, i) => (
                                 <div key={tx.id} className="flex items-center justify-between px-4 py-3.5"

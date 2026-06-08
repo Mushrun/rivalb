@@ -1,4 +1,5 @@
 import { Link, usePage } from '@inertiajs/react';
+import { useTranslation } from 'react-i18next';
 
 const BattleIcon = () => (
     <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -55,17 +56,18 @@ const ProfileIcon = () => (
     </svg>
 );
 
-const tabs = [
-    { name: 'DÉFIS', href: '/battle', icon: SwordsIcon },
-    { name: 'HISTORIQUE', href: '/historique', icon: HistoriqueIcon },
-    { name: 'MES DÉFIS', href: '/ads', icon: AdsIcon },
-    { name: 'CHAT', href: '/chat', icon: ChatIcon },
-    { name: 'PROFIL', href: '/profil', icon: ProfileIcon },
-];
-
 export default function BottomNav() {
     const { url, props } = usePage();
+    const { t } = useTranslation();
     const unreadChat = props.unread_chat ?? 0;
+
+    const tabs = [
+        { name: t('nav.defis').toUpperCase(),      href: '/battle',     icon: SwordsIcon },
+        { name: t('nav.historique').toUpperCase(), href: '/historique', icon: HistoriqueIcon },
+        { name: t('nav.mes_defis').toUpperCase(),  href: '/ads',        icon: AdsIcon },
+        { name: t('nav.chat').toUpperCase(),       href: '/chat',       icon: ChatIcon },
+        { name: t('nav.profil').toUpperCase(),     href: '/profil',     icon: ProfileIcon },
+    ];
 
     return (
         <nav className="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-[430px] z-50"

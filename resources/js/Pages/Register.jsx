@@ -1,8 +1,10 @@
 import { useEffect, useState } from 'react';
 import { Link, router, useForm, usePage } from '@inertiajs/react';
+import { useTranslation } from 'react-i18next';
 
 export default function Register() {
     const { auth } = usePage().props;
+    const { t } = useTranslation();
     useEffect(() => {
         if (auth?.user) router.replace('/battle');
     }, []);
@@ -46,10 +48,10 @@ export default function Register() {
                         </svg>
                     </div>
                     <h1 className="text-[26px] font-bold text-white text-center leading-tight">
-                        Rejoins l'arène
+                        {t('auth.register_title')}
                     </h1>
                     <p className="text-[#888888] text-sm text-center mt-2">
-                        Crée ton compte et commence à te battre.
+                        {t('auth.register_subtitle')}
                     </p>
                 </div>
 
@@ -185,7 +187,7 @@ export default function Register() {
                         disabled={processing}
                         className="w-full rounded-xl py-3 font-bold text-sm tracking-widest text-white text-center mt-1 disabled:opacity-60"
                         style={{ background: '#FF3B30' }}>
-                        {processing ? 'CRÉATION...' : 'CRÉER MON COMPTE'}
+                        {processing ? t('auth.register_processing') : t('auth.register_btn')}
                     </button>
 
                     {/* Divider */}
@@ -204,14 +206,14 @@ export default function Register() {
                             <line x1="8" y1="21" x2="16" y2="21"/>
                             <line x1="12" y1="17" x2="12" y2="21"/>
                         </svg>
-                        S'INSCRIRE AVEC METAMASK
+                        {t('auth.register_metamask')}
                     </button>
                 </form>
 
                 {/* Login link */}
                 <p className="text-center text-sm text-[#888888] mt-5">
-                    Déjà un compte ?{' '}
-                    <Link href="/login" className="text-[#FF3B30] font-semibold">Se connecter</Link>
+                    {t('auth.already_account')}{' '}
+                    <Link href="/login" className="text-[#FF3B30] font-semibold">{t('auth.login')}</Link>
                 </p>
             </div>
         </div>
