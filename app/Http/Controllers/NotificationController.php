@@ -58,8 +58,8 @@ class NotificationController extends Controller
         return match(true) {
             in_array($type, ['defi_recu', 'defi_rejoint', 'defi_annule'])
                 => '/defis/'   . ($data['challenge_id'] ?? ''),
-            in_array($type, ['match_demarre', 'match_gagne', 'match_perdu'])
-                => '/match/'   . ($data['match_id'] ?? ''),
+            in_array($type, ['match_demarre', 'match_gagne', 'match_perdu', 'joueur_pret', 'nouveau_message'])
+                => '/chat/'    . ($data['match_id'] ?? ''),
             in_array($type, ['litige_ouvert', 'litige_gagne', 'litige_perdu'])
                 => '/litiges/' . ($data['dispute_id'] ?? ''),
             default => '/historique',
