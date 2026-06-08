@@ -8,27 +8,40 @@ const statusColor = { en_attente: '#FF9500', valide: '#4CD964', refuse: '#FF3B30
 const statusBg    = { en_attente: 'rgba(255,149,0,0.12)', valide: 'rgba(76,217,100,0.12)', refuse: 'rgba(255,59,48,0.12)' };
 
 export default function Retrait() {
-    const { balance, minAmount, rate, history, errors, flash, auth } = usePage().props;
+    const { balance_rb, balance_usdt, minAmountRb, minAmountUsdt, rate, history, errors, flash, auth } = usePage().props;
     const { t } = useTranslation();
 
-    const walletAddress = auth?.user?.wallet_address ?? '';
+    const walletAddress   = auth?.user?.wallet_address ?? '';
     const walletConnected = !!walletAddress;
 
+    const [tab,     setTab]     = useState('rb');
     const [amount,  setAmount]  = useState('');
     const [sending, setSending] = useState(false);
 
-    const rb          = parseInt(amount) || 0;
-    const usdt        = rb > 0 ? (rb / (rate ?? 500)).toFixed(4) : '0.0000';
-    const amountValid = rb >= (minAmount ?? 500) && rb <= (balance ?? 0);
-    const formValid   = amountValid && walletConnected;
+    const isUsdt   = tab === 'usdt';
+    const numVal   = parseFloat(amount) || 0;
+    const minRb    = minAmountRb  ?? 500;
+    const minUsdt  = minAmountUsdt ?? 1;
+
+    const rbVal    = isUsdt ? 0 : (parseInt(amount) || 0);
+    const usdtVal  = isUsdt ? numVal : (rbVal > 0 ? rbVal / (rate ?? 500) : 0);
+
+    const amountOk = isUsdt
+        ? (numVal >= minUsdt && numVal <= (parseFloat(balance_usdt) || 0))
+        : (rbVal  >= minRb   && rbVal  <= (balance_rb ?? 0));
+
+    const formValid = amountOk && walletConnected;
 
     const handleSubmit = () => {
         if (!formValid || sending) return;
         setSending(true);
-        router.post('/retrait', { amount_rb: rb, wallet_address: walletAddress }, {
-            onFinish: () => setSending(false),
-        });
+        const payload = isUsdt
+            ? { currency: 'usdt', amount_usdt: numVal, wallet_address: walletAddress }
+            : { currency: 'rb',   amount_rb: rbVal,    wallet_address: walletAddress };
+        router.post('/retrait', payload, { onFinish: () => setSending(false) });
     };
+
+    const switchTab = (t) => { setTab(t); setAmount(''); };
 
     return (
         <AppLayout>
@@ -55,17 +68,30 @@ export default function Retrait() {
                     </div>
                 )}
 
-                {/* Solde */}
-                <div className="rounded-2xl p-4 flex items-center justify-between"
-                    style={{ background: '#1A1A1A' }}>
-                    <div>
-                        <p className="text-[#888] text-xs mb-0.5">{t('retrait.available')}</p>
-                        <p className="text-white font-black text-2xl">{(balance ?? 0).toLocaleString()} RB</p>
+                {/* Soldes */}
+                <div className="flex gap-3">
+                    <div className="flex-1 rounded-2xl p-4" style={{ background: '#1A1A1A' }}>
+                        <p className="text-[#888] text-xs mb-0.5">{t('retrait.available_rb')}</p>
+                        <p className="text-white font-black text-xl">{(balance_rb ?? 0).toLocaleString()} RB</p>
                     </div>
-                    <div className="text-right">
-                        <p className="text-[#555] text-xs mb-0.5">{t('retrait.min_amount')}</p>
-                        <p className="text-[#888] text-sm font-bold">{minAmount ?? 500} RB</p>
+                    <div className="flex-1 rounded-2xl p-4" style={{ background: '#1A1A1A' }}>
+                        <p className="text-[#888] text-xs mb-0.5">{t('retrait.available_usdt')}</p>
+                        <p className="text-white font-black text-xl">{parseFloat(balance_usdt ?? 0).toFixed(2)} USDT</p>
                     </div>
+                </div>
+
+                {/* Tabs */}
+                <div className="flex rounded-xl p-1 gap-1" style={{ background: '#1A1A1A' }}>
+                    {[{ key: 'rb', label: t('retrait.tab_rb') }, { key: 'usdt', label: t('retrait.tab_usdt') }].map(item => (
+                        <button key={item.key} onClick={() => switchTab(item.key)}
+                            className="flex-1 py-2.5 rounded-lg text-sm font-bold transition-all"
+                            style={{
+                                background: tab === item.key ? '#FF3B30' : 'transparent',
+                                color:      tab === item.key ? '#FFF'    : '#555',
+                            }}>
+                            {item.label}
+                        </button>
+                    ))}
                 </div>
 
                 {/* Wallet non connecté */}
@@ -86,7 +112,7 @@ export default function Retrait() {
                     </div>
                 )}
 
-                {/* Wallet connecté — affichage adresse */}
+                {/* Wallet connecté */}
                 {walletConnected && (
                     <div className="rounded-xl px-4 py-3 flex items-center gap-3"
                         style={{ background: 'rgba(76,217,100,0.08)', border: '1px solid rgba(76,217,100,0.2)' }}>
@@ -105,48 +131,101 @@ export default function Retrait() {
 
                 {/* Montant */}
                 <div>
-                    <p className="text-[#888] text-xs font-semibold tracking-wider mb-2">{t('retrait.amount_label')}</p>
+                    <p className="text-[#888] text-xs font-semibold tracking-wider mb-2">
+                        {isUsdt ? t('retrait.amount_label_usdt') : t('retrait.amount_label')}
+                    </p>
                     <div className="relative">
                         <input
                             type="number" value={amount}
                             onChange={e => setAmount(e.target.value)}
-                            placeholder={`Min ${minAmount ?? 500} RB`}
-                            max={balance ?? 0}
-                            className="w-full px-4 py-3.5 rounded-xl text-white text-sm outline-none pr-14"
-                            style={{ background: '#1A1A1A', border: `1px solid ${errors?.amount_rb || rb > (balance ?? 0) ? '#FF3B30' : '#2A2A2A'}` }}
+                            placeholder={isUsdt ? `Min ${minUsdt} USDT` : `Min ${minRb} RB`}
+                            max={isUsdt ? (parseFloat(balance_usdt) || 0) : (balance_rb ?? 0)}
+                            className="w-full px-4 py-3.5 rounded-xl text-white text-sm outline-none pr-16"
+                            style={{
+                                background: '#1A1A1A',
+                                border: `1px solid ${
+                                    (isUsdt && numVal > (parseFloat(balance_usdt) || 0)) ||
+                                    (!isUsdt && rbVal > (balance_rb ?? 0))
+                                        ? '#FF3B30' : '#2A2A2A'
+                                }`,
+                            }}
                         />
-                        <span className="absolute right-4 top-1/2 -translate-y-1/2 text-[#555] text-sm font-semibold">RB</span>
+                        <span className="absolute right-4 top-1/2 -translate-y-1/2 text-[#555] text-sm font-semibold">
+                            {isUsdt ? 'USDT' : 'RB'}
+                        </span>
                     </div>
-                    {rb > (balance ?? 0) && <p className="text-[#FF3B30] text-xs mt-1.5">{t('retrait.insufficient')}</p>}
-                    {rb > 0 && rb < (minAmount ?? 500) && <p className="text-[#FF9500] text-xs mt-1.5">Minimum {minAmount ?? 500} RB</p>}
-                    {errors?.amount_rb && <p className="text-[#FF3B30] text-xs mt-1">{errors.amount_rb}</p>}
+
+                    {/* Erreurs */}
+                    {isUsdt ? (
+                        <>
+                            {numVal > (parseFloat(balance_usdt) || 0) && numVal > 0 && (
+                                <p className="text-[#FF3B30] text-xs mt-1.5">{t('retrait.insufficient_usdt')}</p>
+                            )}
+                            {numVal > 0 && numVal < minUsdt && (
+                                <p className="text-[#FF9500] text-xs mt-1.5">{t('retrait.min_amount_usdt')}</p>
+                            )}
+                        </>
+                    ) : (
+                        <>
+                            {rbVal > (balance_rb ?? 0) && rbVal > 0 && (
+                                <p className="text-[#FF3B30] text-xs mt-1.5">{t('retrait.insufficient')}</p>
+                            )}
+                            {rbVal > 0 && rbVal < minRb && (
+                                <p className="text-[#FF9500] text-xs mt-1.5">Minimum {minRb} RB</p>
+                            )}
+                            {errors?.amount_rb && <p className="text-[#FF3B30] text-xs mt-1">{errors.amount_rb}</p>}
+                        </>
+                    )}
 
                     {/* Raccourcis */}
                     <div className="flex gap-2 mt-3">
-                        {[25, 50, 100].map(pct => {
-                            const v = Math.floor((balance ?? 0) * pct / 100);
-                            return (
-                                <button key={pct} onClick={() => setAmount(String(v))}
+                        {isUsdt
+                            ? [1, 5, 10, 50].map(v => (
+                                <button key={v} onClick={() => setAmount(String(v))}
                                     className="flex-1 rounded-xl py-2 text-xs font-bold"
-                                    style={{ background: '#1A1A1A', border: '1px solid #2A2A2A', color: '#888' }}>
-                                    {pct}% ({v.toLocaleString()} RB)
+                                    style={{
+                                        background: amount == v ? 'rgba(255,59,48,0.15)' : '#1A1A1A',
+                                        border: `1px solid ${amount == v ? '#FF3B30' : '#2A2A2A'}`,
+                                        color: amount == v ? '#FF3B30' : '#888',
+                                    }}>
+                                    {v}$
                                 </button>
-                            );
-                        })}
+                            ))
+                            : [25, 50, 100].map(pct => {
+                                const v = Math.floor((balance_rb ?? 0) * pct / 100);
+                                return (
+                                    <button key={pct} onClick={() => setAmount(String(v))}
+                                        className="flex-1 rounded-xl py-2 text-xs font-bold"
+                                        style={{ background: '#1A1A1A', border: '1px solid #2A2A2A', color: '#888' }}>
+                                        {pct}% ({v.toLocaleString()} RB)
+                                    </button>
+                                );
+                            })
+                        }
                     </div>
                 </div>
 
-                {/* Conversion */}
-                {amountValid && (
+                {/* Récap conversion (RB → USDT) */}
+                {!isUsdt && amountOk && (
                     <div className="rounded-2xl p-4" style={{ background: '#1A1A1A' }}>
                         <div className="flex items-center justify-between mb-2">
                             <span className="text-[#888] text-xs">{t('retrait.rb_withdrawn')}</span>
-                            <span className="text-[#FF3B30] font-bold text-sm">-{rb.toLocaleString()} RB</span>
+                            <span className="text-[#FF3B30] font-bold text-sm">-{rbVal.toLocaleString()} RB</span>
                         </div>
                         <div className="h-px my-2" style={{ background: '#2A2A2A' }} />
                         <div className="flex items-center justify-between">
                             <span className="text-[#888] text-xs">{t('retrait.you_receive')}</span>
-                            <span className="text-[#4CD964] font-black text-lg">~{usdt} USDT</span>
+                            <span className="text-[#4CD964] font-black text-lg">~{usdtVal.toFixed(4)} USDT</span>
+                        </div>
+                    </div>
+                )}
+
+                {/* Récap USDT direct */}
+                {isUsdt && amountOk && (
+                    <div className="rounded-2xl p-4" style={{ background: '#1A1A1A' }}>
+                        <div className="flex items-center justify-between">
+                            <span className="text-[#888] text-xs">{t('retrait.usdt_withdrawn')}</span>
+                            <span className="text-[#FF3B30] font-bold text-lg">-{numVal.toFixed(2)} USDT</span>
                         </div>
                     </div>
                 )}
@@ -154,7 +233,7 @@ export default function Retrait() {
                 {/* Info */}
                 <div className="rounded-xl p-3" style={{ background: 'rgba(255,149,0,0.08)', border: '1px solid rgba(255,149,0,0.2)' }}>
                     <p className="text-[#FF9500] text-xs text-center">
-                        Les RB sont réservés immédiatement. Envoi des tokens RB sur ton wallet sous 24h.
+                        {isUsdt ? t('retrait.info_usdt') : t('retrait.info')}
                     </p>
                 </div>
 
@@ -177,7 +256,11 @@ export default function Retrait() {
                                 <div key={tx.id} className="flex items-center justify-between px-4 py-3.5"
                                     style={{ borderBottom: i < history.length - 1 ? '1px solid #0D0D0D' : 'none' }}>
                                     <div className="flex-1 min-w-0">
-                                        <p className="text-[#FF3B30] font-bold text-sm">-{tx.amount_rb.toLocaleString()} RB</p>
+                                        <p className="font-bold text-sm" style={{ color: tx.currency === 'usdt' ? '#FF9500' : '#FF3B30' }}>
+                                            -{tx.currency === 'usdt'
+                                                ? `${parseFloat(tx.amount_usdt ?? 0).toFixed(2)} USDT`
+                                                : `${(tx.amount_rb ?? 0).toLocaleString()} RB`}
+                                        </p>
                                         <p className="text-[#555] text-[10px] font-mono truncate">{tx.wallet_address}</p>
                                     </div>
                                     <div className="flex flex-col items-end gap-1 ml-3 flex-shrink-0">

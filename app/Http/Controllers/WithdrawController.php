@@ -10,8 +10,9 @@ use Inertia\Inertia;
 
 class WithdrawController extends Controller
 {
-    private const MIN_AMOUNT       = 500;
-    private const RATE_RB_PER_USDT = 500; // 1 USDT = 500 RB
+    private const MIN_RB           = 500;
+    private const MIN_USDT         = 1.0;
+    private const RATE_RB_PER_USDT = 500;
 
     public function show()
     {
@@ -24,53 +25,92 @@ class WithdrawController extends Controller
             ->get()
             ->map(fn($t) => [
                 'id'             => $t->id,
+                'currency'       => $t->currency ?? 'rb',
                 'amount_rb'      => $t->amount_rb,
+                'amount_usdt'    => $t->amount_usdt,
                 'wallet_address' => $t->wallet_address,
                 'status'         => $t->status,
                 'created_at'     => $t->created_at->format('d/m H:i'),
             ]);
 
         return Inertia::render('Retrait', [
-            'balance'    => $user->balance_rb,
-            'minAmount'  => self::MIN_AMOUNT,
-            'rate'       => self::RATE_RB_PER_USDT,
-            'history'    => $history,
+            'balance_rb'   => $user->balance_rb,
+            'balance_usdt' => $user->balance_usdt,
+            'minAmountRb'  => self::MIN_RB,
+            'minAmountUsdt'=> self::MIN_USDT,
+            'rate'         => self::RATE_RB_PER_USDT,
+            'history'      => $history,
         ]);
     }
 
     public function store(Request $request)
     {
-        $user = Auth::user();
+        $user     = Auth::user();
+        $currency = $request->input('currency', 'rb');
 
         if (!$user->wallet_address) {
-            return back()->withErrors(['amount_rb' => 'Tu dois connecter ton MetaMask dans les paramètres.']);
+            return back()->withErrors(['amount' => 'Tu dois connecter ton MetaMask dans les paramètres.']);
         }
 
-        $validated = $request->validate([
-            'amount_rb' => ['required', 'integer', 'min:' . self::MIN_AMOUNT],
+        if ($currency === 'usdt') {
+            $request->validate([
+                'amount_usdt' => ['required', 'numeric', 'min:' . self::MIN_USDT],
+            ], [
+                'amount_usdt.min' => 'Montant minimum : ' . self::MIN_USDT . ' USDT.',
+            ]);
+
+            $amount = (float) $request->input('amount_usdt');
+
+            DB::transaction(function () use ($user, $amount) {
+                $fresh = \App\Models\User::lockForUpdate()->findOrFail($user->id);
+
+                if ((float) $fresh->balance_usdt < $amount) {
+                    throw new \RuntimeException('Solde USDT insuffisant.');
+                }
+
+                $fresh->decrement('balance_usdt', $amount);
+
+                Transaction::create([
+                    'user_id'        => $user->id,
+                    'type'           => 'retrait',
+                    'currency'       => 'usdt',
+                    'amount_usdt'    => $amount,
+                    'wallet_address' => $user->wallet_address,
+                    'status'         => 'en_attente',
+                ]);
+            });
+
+            return back()->with('flash', ['success' => 'Demande de retrait USDT soumise ! Traitement sous 24h.']);
+        }
+
+        // RB
+        $request->validate([
+            'amount_rb' => ['required', 'integer', 'min:' . self::MIN_RB],
         ], [
-            'amount_rb.min' => 'Montant minimum : ' . self::MIN_AMOUNT . ' RB.',
+            'amount_rb.min' => 'Montant minimum : ' . self::MIN_RB . ' RB.',
         ]);
 
-        DB::transaction(function () use ($user, $validated) {
-            // Verrou pessimiste — empêche deux retraits simultanés sur le même compte
+        $amountRb = (int) $request->input('amount_rb');
+
+        DB::transaction(function () use ($user, $amountRb) {
             $fresh = \App\Models\User::lockForUpdate()->findOrFail($user->id);
 
-            if ($fresh->balance_rb < $validated['amount_rb']) {
-                throw new \RuntimeException('Solde insuffisant.');
+            if ($fresh->balance_rb < $amountRb) {
+                throw new \RuntimeException('Solde RB insuffisant.');
             }
 
-            $fresh->decrement('balance_rb', $validated['amount_rb']);
+            $fresh->decrement('balance_rb', $amountRb);
 
             Transaction::create([
                 'user_id'        => $user->id,
                 'type'           => 'retrait',
-                'amount_rb'      => $validated['amount_rb'],
+                'currency'       => 'rb',
+                'amount_rb'      => $amountRb,
                 'wallet_address' => $user->wallet_address,
                 'status'         => 'en_attente',
             ]);
         });
 
-        return back()->with('flash', ['success' => 'Demande de retrait soumise ! Traitement sous 24h.']);
+        return back()->with('flash', ['success' => 'Demande de retrait RB soumise ! Traitement sous 24h.']);
     }
 }

@@ -67,8 +67,11 @@ class TransactionController extends Controller
 
         DB::transaction(function () use ($transaction) {
             if ($transaction->type === 'retrait') {
-                // Refund the held RB back to the user
-                $transaction->user->increment('balance_rb', $transaction->amount_rb);
+                if (($transaction->currency ?? 'rb') === 'usdt') {
+                    $transaction->user->increment('balance_usdt', (float) $transaction->amount_usdt);
+                } else {
+                    $transaction->user->increment('balance_rb', $transaction->amount_rb);
+                }
             }
             $transaction->update(['status' => 'refuse']);
         });
