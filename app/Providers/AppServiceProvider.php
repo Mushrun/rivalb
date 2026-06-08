@@ -29,10 +29,13 @@ class AppServiceProvider extends ServiceProvider
             );
         });
 
+        $this->app->singleton(\App\Services\TelegramService::class);
+
         $this->app->singleton(\App\Services\DisputeService::class, function ($app) {
             return new \App\Services\DisputeService(
                 $app->make(\App\Services\ShadowCoinService::class),
                 $app->make(\App\Services\NotificationService::class),
+                $app->make(\App\Services\TelegramService::class),
             );
         });
 
