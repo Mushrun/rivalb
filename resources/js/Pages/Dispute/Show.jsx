@@ -1,5 +1,5 @@
-import { useRef, useState } from 'react';
-import { Link, router, usePage } from '@inertiajs/react';
+import { useState } from 'react';
+import { Link, usePage } from '@inertiajs/react';
 import AppLayout from '../../Components/AppLayout';
 import TopBar from '../../Components/TopBar';
 
@@ -22,13 +22,8 @@ function ResultBadge({ result }) {
 }
 
 export default function DisputeShow() {
-    const { dispute, match, my_result, opponent_result, has_video, auth } = usePage().props;
+    const { dispute, match, auth } = usePage().props;
     const userId = auth?.user?.id;
-
-    const [videoFile,  setVideoFile]  = useState(null);
-    const [uploading,  setUploading]  = useState(false);
-    const [uploadErr,  setUploadErr]  = useState('');
-    const fileRef = useRef();
 
     const s           = statusConfig[dispute.status] ?? statusConfig.ouvert;
     const isPlayer1   = match.player1.id === userId;
@@ -36,29 +31,6 @@ export default function DisputeShow() {
     const isResolved  = dispute.status === 'resolu';
     const isCancelled = dispute.status === 'annule';
     const iWon        = isResolved && dispute.winner?.id === userId;
-
-    const handleVideoChange = (e) => {
-        const f = e.target.files[0];
-        if (!f) return;
-        setVideoFile(f);
-        setUploadErr('');
-    };
-
-    const handleUpload = () => {
-        if (!videoFile) return;
-        setUploading(true);
-        setUploadErr('');
-        const form = new FormData();
-        form.append('video', videoFile);
-        router.post(`/litiges/${dispute.id}/video`, form, {
-            forceFormData: true,
-            onError: (errors) => {
-                setUploadErr(Object.values(errors)[0] || 'Erreur lors de l\'upload.');
-                setUploading(false);
-            },
-            onSuccess: () => setUploading(false),
-        });
-    };
 
     return (
         <AppLayout>
@@ -141,7 +113,7 @@ export default function DisputeShow() {
                     </div>
                 </div>
 
-                {/* Statut en cours */}
+                {/* Vote communautaire Telegram */}
                 {dispute.status === 'ouvert' && (
                     <div className="rounded-2xl p-4" style={{ background: 'rgba(255,149,0,0.08)', border: '1px solid rgba(255,149,0,0.25)' }}>
                         <div className="flex items-center gap-2 mb-2">
@@ -149,70 +121,19 @@ export default function DisputeShow() {
                                 <circle cx="12" cy="12" r="10"/>
                                 <polyline points="12 6 12 12 16 14"/>
                             </svg>
-                            <p className="text-[#FF9500] font-bold text-sm">En attente de décision admin</p>
+                            <p className="text-[#FF9500] font-bold text-sm">Vote communautaire en cours</p>
                         </div>
-                        <p className="text-[#888] text-xs">Un administrateur examine les preuves. Décision sous 24h.</p>
-                    </div>
-                )}
-
-                {/* Upload vidéo */}
-                {dispute.status === 'ouvert' && (
-                    <div className="rounded-2xl p-4" style={{ background: '#1A1A1A' }}>
-                        <p className="text-[#888] text-[10px] tracking-widest font-semibold mb-1">PREUVE VIDÉO</p>
-                        <p className="text-[#555] text-xs mb-3">Optionnel — Envoie une vidéo du match pour renforcer ton dossier</p>
-
-                        {uploadErr && (
-                            <p className="text-[#FF3B30] text-xs mb-2">{uploadErr}</p>
-                        )}
-
-                        {has_video ? (
-                            <div className="flex items-center gap-2 rounded-xl px-3 py-2"
-                                style={{ background: 'rgba(76,217,100,0.08)', border: '1px solid rgba(76,217,100,0.2)' }}>
-                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#4CD964" strokeWidth="2.5" strokeLinecap="round">
-                                    <polyline points="20 6 9 17 4 12"/>
-                                </svg>
-                                <p className="text-[#4CD964] text-xs font-semibold">Vidéo envoyée ✓</p>
-                            </div>
-                        ) : (
-                            <div className="flex flex-col gap-2">
-                                <input ref={fileRef} type="file" accept="video/mp4,video/mov,video/avi"
-                                    className="hidden" onChange={handleVideoChange} />
-                                {videoFile ? (
-                                    <div className="flex items-center justify-between rounded-xl px-3 py-2"
-                                        style={{ background: '#0D0D0D', border: '1px solid #2A2A2A' }}>
-                                        <span className="text-[#CCCCCC] text-xs truncate flex-1">{videoFile.name}</span>
-                                        <button onClick={() => setVideoFile(null)}
-                                            className="ml-2 flex-shrink-0">
-                                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#666" strokeWidth="2.5" strokeLinecap="round">
-                                                <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
-                                            </svg>
-                                        </button>
-                                    </div>
-                                ) : (
-                                    <button onClick={() => fileRef.current.click()}
-                                        className="w-full rounded-xl py-4 flex flex-col items-center gap-2 border-2 border-dashed"
-                                        style={{ borderColor: '#2A2A2A', background: '#0D0D0D' }}>
-                                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#444" strokeWidth="1.5">
-                                            <polygon points="23 7 16 12 23 17 23 7"/>
-                                            <rect x="1" y="5" width="15" height="14" rx="2" ry="2"/>
-                                        </svg>
-                                        <span className="text-[#555] text-xs">Sélectionner une vidéo (mp4, max 100 Mo)</span>
-                                    </button>
-                                )}
-                                {videoFile && (
-                                    <button onClick={handleUpload} disabled={uploading}
-                                        className="w-full rounded-xl py-2.5 font-bold text-sm flex items-center justify-center gap-2"
-                                        style={{ background: '#FF3B30', color: '#FFF', opacity: uploading ? 0.7 : 1 }}>
-                                        {uploading && (
-                                            <svg className="animate-spin" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-                                                <path d="M21 12a9 9 0 1 1-6.219-8.56"/>
-                                            </svg>
-                                        )}
-                                        {uploading ? 'Envoi...' : 'ENVOYER LA VIDÉO'}
-                                    </button>
-                                )}
-                            </div>
-                        )}
+                        <p className="text-[#888] text-xs mb-3">
+                            Un sondage a été ouvert dans le groupe Telegram <b style={{ color: '#CCC' }}>Rivalbet Community</b>.
+                            Soumets ta preuve (vidéo/capture) dans le groupe et la communauté votera pendant 24h.
+                        </p>
+                        <div className="flex items-center gap-2 rounded-xl px-3 py-2"
+                            style={{ background: 'rgba(0,136,204,0.1)', border: '1px solid rgba(0,136,204,0.3)' }}>
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="#0088CC">
+                                <path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.562 8.248l-2.032 9.574c-.152.67-.548.835-1.111.519l-3-2.21-1.447 1.394c-.16.16-.295.295-.605.295l.213-3.053 5.56-5.023c.242-.213-.054-.333-.373-.12L7.48 14.498l-2.946-.916c-.64-.2-.653-.64.134-.948l11.498-4.43c.533-.194 1-.12.396.044z"/>
+                            </svg>
+                            <span className="text-[#0088CC] text-xs font-semibold">Rejoins le groupe Telegram Rivalbet Community</span>
+                        </div>
                     </div>
                 )}
 
