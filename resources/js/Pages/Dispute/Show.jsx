@@ -1,28 +1,35 @@
 import { useState } from 'react';
 import { Link, usePage } from '@inertiajs/react';
+import { useTranslation } from 'react-i18next';
 import AppLayout from '../../Components/AppLayout';
 import TopBar from '../../Components/TopBar';
 
-const statusConfig = {
-    ouvert:  { label: 'OUVERT',  color: '#FF3B30', bg: 'rgba(255,59,48,0.15)' },
-    resolu:  { label: 'RÉSOLU',  color: '#4CD964', bg: 'rgba(76,217,100,0.15)' },
-    annule:  { label: 'ANNULÉ',  color: '#888888', bg: 'rgba(136,136,136,0.15)' },
-};
+function useStatusConfig() {
+    const { t } = useTranslation();
+    return {
+        ouvert:  { label: t('dispute.open'),      color: '#FF3B30', bg: 'rgba(255,59,48,0.15)' },
+        resolu:  { label: t('dispute.resolved'),  color: '#4CD964', bg: 'rgba(76,217,100,0.15)' },
+        annule:  { label: t('dispute.cancelled'), color: '#888888', bg: 'rgba(136,136,136,0.15)' },
+    };
+}
 
 function ResultBadge({ result }) {
-    if (!result) return <span className="text-[#555] text-xs">En attente</span>;
+    const { t } = useTranslation();
+    if (!result) return <span className="text-[#555] text-xs">{t('chat.waiting')}</span>;
     return (
         <span className="text-xs font-bold px-2 py-0.5 rounded"
             style={result === 'win'
                 ? { background: 'rgba(76,217,100,0.15)', color: '#4CD964' }
                 : { background: 'rgba(255,59,48,0.15)', color: '#FF3B30' }}>
-            Dit avoir {result === 'win' ? 'GAGNÉ' : 'PERDU'}
+            {result === 'win' ? t('dispute.declared_win') : t('dispute.declared_loss')}
         </span>
     );
 }
 
 export default function DisputeShow() {
     const { dispute, match, auth } = usePage().props;
+    const { t } = useTranslation();
+    const statusConfig = useStatusConfig();
     const userId = auth?.user?.id;
 
     const s           = statusConfig[dispute.status] ?? statusConfig.ouvert;
@@ -67,7 +74,7 @@ export default function DisputeShow() {
                                 : <><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></>}
                         </svg>
                         <p className="font-bold text-base" style={{ color: iWon ? '#4CD964' : '#FF3B30' }}>
-                            {iWon ? 'Tu as été déclaré vainqueur !' : 'L\'adversaire a été déclaré vainqueur.'}
+                            {iWon ? t('dispute.won') : t('dispute.lost')}
                         </p>
                         <p className="font-black text-xl" style={{ color: iWon ? '#4CD964' : '#FF3B30' }}>
                             {iWon ? `+${match.bet_amount * 2} RB` : `-${match.bet_amount} RB`}
@@ -90,7 +97,7 @@ export default function DisputeShow() {
 
                 {/* Match info */}
                 <div className="rounded-2xl p-4" style={{ background: '#1A1A1A' }}>
-                    <p className="text-[#888] text-[10px] tracking-widest font-semibold mb-3">MATCH CONCERNÉ</p>
+                    <p className="text-[#888] text-[10px] tracking-widest font-semibold mb-3">{t('dispute.match_concerned')}</p>
                     <div className="flex items-center gap-2 mb-3">
                         <span className="text-[#FF3B30] text-xs font-bold px-2 py-1 rounded-lg"
                             style={{ background: 'rgba(255,59,48,0.15)' }}>
@@ -121,18 +128,17 @@ export default function DisputeShow() {
                                 <circle cx="12" cy="12" r="10"/>
                                 <polyline points="12 6 12 12 16 14"/>
                             </svg>
-                            <p className="text-[#FF9500] font-bold text-sm">Vote communautaire en cours</p>
+                            <p className="text-[#FF9500] font-bold text-sm">{t('dispute.vote_in_progress')}</p>
                         </div>
                         <p className="text-[#888] text-xs mb-3">
-                            Un sondage a été ouvert dans le groupe Telegram <b style={{ color: '#CCC' }}>Rivalbet Community</b>.
-                            Soumets ta preuve (vidéo/capture) dans le groupe et la communauté votera pendant 24h.
+                            {t('dispute.vote_description')}
                         </p>
                         <div className="flex items-center gap-2 rounded-xl px-3 py-2"
                             style={{ background: 'rgba(0,136,204,0.1)', border: '1px solid rgba(0,136,204,0.3)' }}>
                             <svg width="14" height="14" viewBox="0 0 24 24" fill="#0088CC">
                                 <path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.562 8.248l-2.032 9.574c-.152.67-.548.835-1.111.519l-3-2.21-1.447 1.394c-.16.16-.295.295-.605.295l.213-3.053 5.56-5.023c.242-.213-.054-.333-.373-.12L7.48 14.498l-2.946-.916c-.64-.2-.653-.64.134-.948l11.498-4.43c.533-.194 1-.12.396.044z"/>
                             </svg>
-                            <span className="text-[#0088CC] text-xs font-semibold">Rejoins le groupe Telegram Rivalbet Community</span>
+                            <span className="text-[#0088CC] text-xs font-semibold">{t('dispute.join_telegram')}</span>
                         </div>
                     </div>
                 )}
@@ -140,7 +146,7 @@ export default function DisputeShow() {
                 <Link href="/battle"
                     className="w-full rounded-2xl py-3 font-bold text-sm text-center block"
                     style={{ background: '#1A1A1A', color: '#CCCCCC' }}>
-                    Retour aux Défis
+                    {t('dispute.back_to_defis')}
                 </Link>
             </div>
         </AppLayout>

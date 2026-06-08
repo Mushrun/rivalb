@@ -2,6 +2,7 @@ import { createInertiaApp } from '@inertiajs/react';
 import { createRoot } from 'react-dom/client';
 import '../css/app.css';
 import './echo';
+import './i18n';
 
 createInertiaApp({
     resolve: (name) => {

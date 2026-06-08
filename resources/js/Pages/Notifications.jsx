@@ -1,4 +1,5 @@
 import { Link, router, usePage } from '@inertiajs/react';
+import { useTranslation } from 'react-i18next';
 import AppLayout from '../Components/AppLayout';
 
 const typeIcon = {
@@ -19,6 +20,7 @@ const defaultIcon = { bg: 'rgba(255,59,48,0.15)', color: '#FF3B30', svg: <svg wi
 
 export default function Notifications() {
     const { notifications = [] } = usePage().props;
+    const { t } = useTranslation();
 
     const unreadCount = notifications.filter(n => !n.read).length;
 
@@ -52,17 +54,17 @@ export default function Notifications() {
                         </svg>
                     </Link>
                     <div>
-                        <h1 className="text-white font-black text-lg leading-none">Notifications</h1>
+                        <h1 className="text-white font-black text-lg leading-none">{t('notifications.title')}</h1>
                         {unreadCount > 0 && (
                             <p className="text-[#FF3B30] text-xs font-semibold mt-0.5">
-                                {unreadCount} non lue{unreadCount > 1 ? 's' : ''}
+                                {unreadCount} {unreadCount > 1 ? 'non lues' : 'non lue'}
                             </p>
                         )}
                     </div>
                 </div>
                 {unreadCount > 0 && (
                     <button onClick={markAllRead} className="text-[#888] text-xs font-semibold">
-                        Tout marquer lu
+                        {t('notifications.mark_all_read')}
                     </button>
                 )}
             </div>
@@ -78,7 +80,7 @@ export default function Notifications() {
                                 <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
                             </svg>
                         </div>
-                        <p className="text-[#555] text-sm">Aucune notification</p>
+                        <p className="text-[#555] text-sm">{t('notifications.none')}</p>
                     </div>
                 ) : (
                     Object.entries(groups).map(([date, items]) => (

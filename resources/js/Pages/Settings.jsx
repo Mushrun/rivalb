@@ -1,5 +1,6 @@
 import { useState, useRef } from 'react';
 import { Link, router, usePage } from '@inertiajs/react';
+import { useTranslation } from 'react-i18next';
 import AppLayout from '../Components/AppLayout';
 import TopBar from '../Components/TopBar';
 import { useMetaMask } from '../hooks/useMetaMask';
@@ -372,14 +373,17 @@ function ModalWallet({ currentAddress, onClose }) {
 
 export default function Settings() {
     const { auth } = usePage().props;
+    const { t, i18n } = useTranslation();
     const walletAddress = auth?.user?.wallet_address;
     const username      = auth?.user?.username ?? '';
     const bio           = auth?.user?.bio ?? '';
 
     const [modal, setModal]   = useState(null);
     const [notifs, setNotifs] = useState({ defis: true, resultats: true, litiges: true, promo: false });
-    const [langue, setLangue] = useState('Français');
     const [profil, setProfil] = useState({ public: true, solde: false });
+
+    const currentLang = i18n.language?.startsWith('en') ? 'English' : 'Français';
+    const toggleLang  = () => i18n.changeLanguage(currentLang === 'Français' ? 'en' : 'fr');
 
     const toggle = (key) => setNotifs(p => ({ ...p, [key]: !p[key] }));
 
@@ -395,7 +399,7 @@ export default function Settings() {
                         <polyline points="12 19 5 12 12 5"/>
                     </svg>
                 </Link>
-                <h1 className="text-white font-black text-xl">Paramètres</h1>
+                <h1 className="text-white font-black text-xl">{t('settings.title')}</h1>
             </div>
 
             {/* PROFIL */}
@@ -448,9 +452,9 @@ export default function Settings() {
             </Section>
 
             {/* LANGUE */}
-            <Section title="LANGUE">
-                <Row icon={<GlobeIcon />} label="Langue de l'application" value={langue}
-                    onClick={() => setLangue(langue === 'Français' ? 'English' : 'Français')} last />
+            <Section title={t('settings.language').toUpperCase()}>
+                <Row icon={<GlobeIcon />} label={t('settings.language')} value={currentLang}
+                    onClick={toggleLang} last />
             </Section>
 
             {/* COMPTE */}

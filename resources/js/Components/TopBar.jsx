@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { Link, usePage } from '@inertiajs/react';
+import { useTranslation } from 'react-i18next';
 
 function playNotifSound() {
     try {
@@ -40,6 +41,23 @@ function useRBPrice() {
     }, []);
 
     return price;
+}
+
+function LangToggle() {
+    const { i18n } = useTranslation();
+    const lang = i18n.language?.startsWith('en') ? 'en' : 'fr';
+    const toggle = () => i18n.changeLanguage(lang === 'fr' ? 'en' : 'fr');
+    return (
+        <button onClick={toggle}
+            className="text-[10px] font-black px-2 py-0.5 rounded-lg border transition-all"
+            style={{
+                background: 'rgba(255,59,48,0.08)',
+                borderColor: 'rgba(255,59,48,0.3)',
+                color: '#FF3B30',
+            }}>
+            {lang === 'fr' ? 'EN' : 'FR'}
+        </button>
+    );
 }
 
 export default function TopBar() {
@@ -88,22 +106,23 @@ export default function TopBar() {
                 )}
             </div>
 
-            {!isGuest ? (
-                <Link href="/notifications" className="relative w-8 h-8 flex items-center justify-center">
-                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#888" strokeWidth="2" strokeLinecap="round">
-                        <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
-                        <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
-                    </svg>
-                    {unread > 0 && (
-                        <span className="absolute top-0 right-0 min-w-[16px] h-4 rounded-full text-[9px] font-black flex items-center justify-center px-1"
-                            style={{ background: '#FF3B30', color: '#FFF' }}>
-                            {unread > 99 ? '99+' : unread}
-                        </span>
-                    )}
-                </Link>
-            ) : (
-                <div className="w-8" />
-            )}
+            <div className="flex items-center gap-2">
+                <LangToggle />
+                {!isGuest ? (
+                    <Link href="/notifications" className="relative w-8 h-8 flex items-center justify-center">
+                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#888" strokeWidth="2" strokeLinecap="round">
+                            <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
+                            <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
+                        </svg>
+                        {unread > 0 && (
+                            <span className="absolute top-0 right-0 min-w-[16px] h-4 rounded-full text-[9px] font-black flex items-center justify-center px-1"
+                                style={{ background: '#FF3B30', color: '#FFF' }}>
+                                {unread > 99 ? '99+' : unread}
+                            </span>
+                        )}
+                    </Link>
+                ) : null}
+            </div>
         </div>
     );
 }

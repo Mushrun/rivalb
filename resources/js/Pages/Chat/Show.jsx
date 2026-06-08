@@ -1,18 +1,22 @@
 import { useEffect, useRef, useState } from 'react';
 import { Link, router, usePage } from '@inertiajs/react';
+import { useTranslation } from 'react-i18next';
 import axios from 'axios';
 import BottomNav from '../../Components/BottomNav';
 import FIGHTERS from '../../data/fighters';
 
 const fighterMap = Object.fromEntries(FIGHTERS.map(f => [f.name, f.img]));
 
-const statusLabel = {
-    en_attente: 'En attente',
-    en_cours:   'En cours',
-    litige:     'Litige',
-    termine:    'Terminé',
-    annule:     'Annulé',
-};
+function useStatusLabel() {
+    const { t } = useTranslation();
+    return {
+        en_attente: t('chat.pending'),
+        en_cours:   t('chat.in_progress'),
+        litige:     t('chat.dispute'),
+        termine:    t('chat.finished'),
+        annule:     t('chat.cancelled'),
+    };
+}
 
 function PlayerRow({ username, ready }) {
     return (
@@ -172,6 +176,7 @@ function ResultRow({ label, result, screenshot }) {
 }
 
 function ResultForm({ matchId }) {
+    const { t } = useTranslation();
     const [result,     setResult]     = useState(null);
     const [submitting, setSubmitting] = useState(false);
 
@@ -187,7 +192,7 @@ function ResultForm({ matchId }) {
 
     return (
         <div className="flex flex-col gap-3">
-            <p className="text-[#4CD964] font-bold text-sm">Match en cours — Déclare ton résultat</p>
+            <p className="text-[#4CD964] font-bold text-sm">{t('chat.declare_result')}</p>
             <div className="flex gap-2">
                 <button onClick={() => setResult('win')}
                     className="flex-1 rounded-xl py-2.5 font-bold text-sm"
@@ -196,7 +201,7 @@ function ResultForm({ matchId }) {
                         color:      result === 'win' ? '#4CD964' : '#666',
                         border:     `1.5px solid ${result === 'win' ? '#4CD964' : '#2A2A3A'}`,
                     }}>
-                    🏆 Victoire
+                    🏆 {t('chat.victory')}
                 </button>
                 <button onClick={() => setResult('loss')}
                     className="flex-1 rounded-xl py-2.5 font-bold text-sm"
@@ -205,7 +210,7 @@ function ResultForm({ matchId }) {
                         color:      result === 'loss' ? '#FF3B30' : '#666',
                         border:     `1.5px solid ${result === 'loss' ? '#FF3B30' : '#2A2A3A'}`,
                     }}>
-                    💀 Défaite
+                    💀 {t('chat.defeat')}
                 </button>
             </div>
             <button onClick={handleSubmit} disabled={!canSubmit}
@@ -216,7 +221,7 @@ function ResultForm({ matchId }) {
                 }}>
                 {submitting
                     ? <svg className="animate-spin" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M21 12a9 9 0 1 1-6.219-8.56"/></svg>
-                    : 'Soumettre mon résultat'
+                    : t('chat.submit_result')
                 }
             </button>
         </div>
@@ -565,6 +570,8 @@ function AvisBlock({ matchId, opponent, hasReviewed }) {
 
 export default function ChatShow() {
     const { match, opponent, messages: initialMessages } = usePage().props;
+    const { t } = useTranslation();
+    const statusLabel = useStatusLabel();
 
     const [messages, setMessages] = useState(initialMessages);
     const [text,     setText]     = useState('');
@@ -680,7 +687,7 @@ export default function ChatShow() {
                     <button onClick={() => setOpenCombattants(o => !o)}
                         className="w-full flex items-center justify-between px-4 py-2.5"
                         style={{ background: '#0D0D14' }}>
-                        <span className="text-[#555] text-[10px] tracking-widest font-semibold">COMBATTANTS</span>
+                        <span className="text-[#555] text-[10px] tracking-widest font-semibold">{t('chat.fighters')}</span>
                         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#555" strokeWidth="2.5" strokeLinecap="round"
                             style={{ transform: openCombattants ? 'rotate(180deg)' : 'rotate(0deg)', transition: 'transform 0.2s' }}>
                             <polyline points="6 9 12 15 18 9"/>
@@ -695,7 +702,7 @@ export default function ChatShow() {
                         <button onClick={() => setOpenMatch(o => !o)}
                             className="w-full flex items-center justify-between px-4 py-2.5"
                             style={{ background: '#0D0D14' }}>
-                            <span className="text-[#555] text-[10px] tracking-widest font-semibold">MATCH #{match.id}</span>
+                            <span className="text-[#555] text-[10px] tracking-widest font-semibold">{t('chat.match')} #{match.id}</span>
                             <div className="flex items-center gap-2">
                                 <span className="text-[10px] font-bold px-2 py-0.5 rounded-lg"
                                     style={{
@@ -730,7 +737,7 @@ export default function ChatShow() {
                             <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#333" strokeWidth="1.5">
                                 <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
                             </svg>
-                            <p className="text-[#444] text-sm">Aucun message. Dis bonjour !</p>
+                            <p className="text-[#444] text-sm">{t('chat.no_messages')}</p>
                         </div>
                     ) : (
                         messages.map((msg) => {
@@ -795,7 +802,7 @@ export default function ChatShow() {
                             value={text}
                             onChange={e => setText(e.target.value)}
                             onKeyDown={handleKey}
-                            placeholder="Message..."
+                            placeholder={t('chat.message_placeholder')}
                             rows={1}
                             className="w-full bg-transparent text-white text-sm outline-none resize-none leading-relaxed"
                             style={{ maxHeight: '100px' }}
