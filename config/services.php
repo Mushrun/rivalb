@@ -43,6 +43,11 @@ return [
         'rb_per_usdt'     => (int) env('RB_PER_USDT', 500),
     ],
 
+    'telegram' => [
+        'token'    => env('TELEGRAM_BOT_TOKEN'),
+        'group_id' => env('TELEGRAM_COMMUNITY_GROUP_ID'),
+    ],
+
     'anthropic' => [
         'key'                 => env('ANTHROPIC_API_KEY'),
         'moderation_enabled'  => env('AI_CHAT_MODERATION_ENABLED', true),

@@ -2,7 +2,6 @@
 
 namespace App\Services;
 
-use App\Jobs\ResolveTelegramPollJob;
 use App\Models\Dispute;
 use App\Models\GameMatch;
 use App\Models\Message;
@@ -14,7 +13,6 @@ class DisputeService
     public function __construct(
         private ShadowCoinService   $coinService,
         private NotificationService $notifService,
-        private TelegramService     $telegramService,
     ) {}
 
     public function open(User $user, GameMatch $match, ?string $videoPath = null): Dispute
@@ -36,35 +34,15 @@ class DisputeService
 
         $match->update(['status' => 'litige']);
 
-        $player1  = $match->player1;
-        $player2  = $match->player2;
-        $game     = $match->challenge->game ?? 'Jeu inconnu';
-        $bet      = $match->challenge->bet_amount;
-        $currency = strtoupper($match->challenge->currency ?? 'RB');
-        $betLabel = "{$bet} {$currency}";
+        $player1 = $match->player1;
+        $player2 = $match->player2;
 
         Message::create([
             'match_id'  => $match->id,
             'sender_id' => $match->player1_id,
-            'body'      => '⚠️ Les deux joueurs ont déclaré victoire. Un litige a été ouvert — vote communautaire Telegram en cours.',
+            'body'      => '⚠️ Les deux joueurs ont déclaré victoire. Un litige a été ouvert — un admin va trancher.',
             'type'      => 'system',
         ]);
-
-        // Envoyer le sondage sur Telegram
-        $pollData = $this->telegramService->sendDisputePoll(
-            $dispute->id,
-            $player1->username,
-            $player2->username,
-            $game,
-            $betLabel,
-        );
-
-        if ($pollData) {
-            $dispute->update(['telegram_message_id' => $pollData['message_id']]);
-        }
-
-        // Résoudre automatiquement après 24h
-        ResolveTelegramPollJob::dispatch($dispute->id)->delay(now()->addHours(24));
 
         $this->notifService->litigeOuvert($player1, $dispute->id, $match->id);
         $this->notifService->litigeOuvert($player2, $dispute->id, $match->id);
@@ -75,23 +53,21 @@ class DisputeService
     public function resolve(Dispute $dispute, int $winnerId, string $note = ''): void
     {
         DB::transaction(function () use ($dispute, $winnerId, $note) {
-            $match    = $dispute->gameMatch;
-            $currency = $match->challenge->currency ?? 'rb';
-            $bet      = $match->challenge->bet_amount;
-            $prize    = $bet * 2;
+            $match = $dispute->gameMatch;
 
             if ($winnerId !== $match->player1_id && $winnerId !== $match->player2_id) {
                 throw new \RuntimeException('Le gagnant désigné ne fait pas partie de ce match.');
             }
 
-            $winner = User::findOrFail($winnerId);
-            $loser  = $match->player1_id === $winnerId ? $match->player2 : $match->player1;
+            $bet   = $match->challenge->bet_amount;
+            $prize = $bet * 2;
 
-            if ($currency === 'usdt') {
-                $this->coinService->creditUsdt($winner, $prize, 'match_gain');
-            } else {
-                $this->coinService->credit($winner, $prize, 'match_gain');
-            }
+            $winner = User::findOrFail($winnerId);
+            $loser  = $match->player1_id === $winnerId
+                ? $match->player2
+                : $match->player1;
+
+            $this->coinService->credit($winner, $prize, 'match_gain');
 
             $dispute->update([
                 'status'             => 'resolu',
@@ -108,13 +84,11 @@ class DisputeService
 
             $match->challenge->update(['status' => 'termine']);
 
-            $prizeLabel = "{$prize} " . strtoupper($currency);
-            $noteText   = $note ? " · Note : {$note}" : '';
-
+            $noteText = $note ? " · Note : {$note}" : '';
             Message::create([
                 'match_id'  => $match->id,
                 'sender_id' => $match->player1_id,
-                'body'      => "⚖️ Litige tranché. Vainqueur : {$winner->username} (+{$prizeLabel}){$noteText}",
+                'body'      => "⚖️ Litige tranché par l'admin. Vainqueur : {$winner->username} (+{$prize} RB){$noteText}",
                 'type'      => 'system',
             ]);
 
@@ -129,28 +103,20 @@ class DisputeService
     public function cancelMatch(Dispute $dispute): void
     {
         DB::transaction(function () use ($dispute) {
-            $match    = $dispute->gameMatch;
-            $bet      = $match->challenge->bet_amount;
-            $currency = $match->challenge->currency ?? 'rb';
+            $match = $dispute->gameMatch;
+            $bet   = $match->challenge->bet_amount;
 
-            if ($currency === 'usdt') {
-                $this->coinService->creditUsdt($match->player1, $bet, 'remboursement');
-                $this->coinService->creditUsdt($match->player2, $bet, 'remboursement');
-            } else {
-                $this->coinService->credit($match->player1, $bet, 'remboursement');
-                $this->coinService->credit($match->player2, $bet, 'remboursement');
-            }
+            $this->coinService->credit($match->player1, $bet, 'remboursement');
+            $this->coinService->credit($match->player2, $bet, 'remboursement');
 
             $dispute->update(['status' => 'annule', 'resolved_at' => now()]);
             $match->update(['status' => 'annule', 'ended_at' => now()]);
             $match->challenge->update(['status' => 'annule']);
 
-            $betLabel = "{$bet} " . strtoupper($currency);
-
             Message::create([
                 'match_id'  => $match->id,
                 'sender_id' => $match->player1_id,
-                'body'      => "🚫 Match annulé par l'admin. Les deux joueurs ont été remboursés ({$betLabel} chacun).",
+                'body'      => "🚫 Match annulé par l'admin. Les deux joueurs ont été remboursés ({$bet} RB chacun).",
                 'type'      => 'system',
             ]);
 
@@ -158,4 +124,5 @@ class DisputeService
             $this->notifService->litigeResolu($match->player2, $dispute->id, false, $bet);
         });
     }
+
 }
