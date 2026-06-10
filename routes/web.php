@@ -72,6 +72,7 @@ Route::middleware('auth')->group(function () {
     Route::post('/profil/update',   [ProfileController::class, 'update']);
     Route::post('/profil/avatar',   [ProfileController::class, 'uploadAvatar']);
     Route::post('/profil/password', [ProfileController::class, 'updatePassword']);
+    Route::post('/user/locale',    [ProfileController::class, 'updateLocale']);
     Route::get('/profil/{id}',      [ProfileController::class, 'show'])->whereNumber('id');
     Route::get('/settings',    fn() => Inertia::render('Settings'));
     Route::get('/support',     fn() => Inertia::render('Support'));

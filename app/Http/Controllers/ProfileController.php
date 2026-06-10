@@ -59,6 +59,13 @@ class ProfileController extends Controller
         ]);
     }
 
+    public function updateLocale(Request $request)
+    {
+        $locale = in_array($request->input('locale'), ['fr', 'en']) ? $request->input('locale') : 'fr';
+        Auth::user()->update(['locale' => $locale]);
+        return response()->json(['ok' => true]);
+    }
+
     public function update(Request $request)
     {
         $user = Auth::user();
