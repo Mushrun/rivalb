@@ -212,7 +212,18 @@
     "status_in_progress": "En cours",
     "status_dispute": "Litige",
     "status_done": "Terminé",
-    "status_cancelled": "Annulé"
+    "status_cancelled": "Annulé",
+    "victory_badge": "VICTOIRE",
+    "defeat_badge": "DÉFAITE",
+    "capture": "Capture",
+    "me": "Moi",
+    "review_sent_match": "Avis envoyé pour ce match.",
+    "evaluate": "ÉVALUER",
+    "positive": "Positif",
+    "negative": "Négatif",
+    "review_comment_placeholder": "Laisse un commentaire (optionnel)...",
+    "send_review": "Envoyer mon avis",
+    "creator_shared": "Le créateur a partagé l'ID dans le chat. Rejoins la salle et confirme."
   },
   "recharge": {
     "title": "Recharger",

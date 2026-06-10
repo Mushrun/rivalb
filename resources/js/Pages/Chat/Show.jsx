@@ -19,6 +19,7 @@ function useStatusLabel() {
 }
 
 function PlayerRow({ username, ready }) {
+    const { t } = useTranslation();
     return (
         <div className="flex items-center justify-between py-2">
             <div className="flex items-center gap-2">
@@ -31,12 +32,12 @@ function PlayerRow({ username, ready }) {
             {ready ? (
                 <span className="px-2.5 py-1 rounded-lg text-[10px] font-bold tracking-wider"
                     style={{ background: 'rgba(76,217,100,0.15)', color: '#4CD964' }}>
-                    ✓ PRÊT
+                    ✓ {t('chat.ready')}
                 </span>
             ) : (
                 <span className="px-2.5 py-1 rounded-lg text-[10px] font-bold tracking-wider"
                     style={{ background: 'rgba(255,149,0,0.15)', color: '#FF9500' }}>
-                    EN ATTENTE
+                    {t('chat.waiting')}
                 </span>
             )}
         </div>
@@ -63,8 +64,9 @@ function FighterChips({ fighter }) {
 }
 
 function PlayersCard({ match, opponent }) {
-    const p1Username = match.is_player1 ? (match.my_username ?? 'Moi') : opponent.username;
-    const p2Username = match.is_player1 ? opponent.username : (match.my_username ?? 'Moi');
+    const { t } = useTranslation();
+    const p1Username = match.is_player1 ? (match.my_username ?? t('chat.me')) : opponent.username;
+    const p2Username = match.is_player1 ? opponent.username : (match.my_username ?? t('chat.me'));
     const p1Ready    = match.is_player1 ? match.player1_ready : match.player2_ready;
     const p2Ready    = match.is_player1 ? match.player2_ready : match.player1_ready;
     const p1Fighter  = match.is_player1 ? match.my_fighter : match.opp_fighter;
@@ -85,10 +87,10 @@ function PlayersCard({ match, opponent }) {
                     <div className="flex flex-col items-end gap-1.5">
                         {p1Ready ? (
                             <span className="px-2.5 py-1 rounded-lg text-[10px] font-bold tracking-wider"
-                                style={{ background: 'rgba(76,217,100,0.15)', color: '#4CD964' }}>✓ PRÊT</span>
+                                style={{ background: 'rgba(76,217,100,0.15)', color: '#4CD964' }}>✓ {t('chat.ready')}</span>
                         ) : (
                             <span className="px-2.5 py-1 rounded-lg text-[10px] font-bold tracking-wider"
-                                style={{ background: 'rgba(255,149,0,0.15)', color: '#FF9500' }}>EN ATTENTE</span>
+                                style={{ background: 'rgba(255,149,0,0.15)', color: '#FF9500' }}>{t('chat.waiting')}</span>
                         )}
                         <FighterChips fighter={p1Fighter} />
                     </div>
@@ -108,10 +110,10 @@ function PlayersCard({ match, opponent }) {
                     <div className="flex flex-col items-end gap-1.5">
                         {p2Ready ? (
                             <span className="px-2.5 py-1 rounded-lg text-[10px] font-bold tracking-wider"
-                                style={{ background: 'rgba(76,217,100,0.15)', color: '#4CD964' }}>✓ PRÊT</span>
+                                style={{ background: 'rgba(76,217,100,0.15)', color: '#4CD964' }}>✓ {t('chat.ready')}</span>
                         ) : (
                             <span className="px-2.5 py-1 rounded-lg text-[10px] font-bold tracking-wider"
-                                style={{ background: 'rgba(255,149,0,0.15)', color: '#FF9500' }}>EN ATTENTE</span>
+                                style={{ background: 'rgba(255,149,0,0.15)', color: '#FF9500' }}>{t('chat.waiting')}</span>
                         )}
                         <FighterChips fighter={p2Fighter} />
                     </div>
@@ -122,6 +124,7 @@ function PlayersCard({ match, opponent }) {
 }
 
 function ResultRow({ label, result, screenshot }) {
+    const { t } = useTranslation();
     const [open, setOpen] = useState(false);
     const isWin = result === 'win';
 
@@ -136,7 +139,7 @@ function ResultRow({ label, result, screenshot }) {
                             background: isWin ? 'rgba(76,217,100,0.15)' : 'rgba(255,59,48,0.15)',
                             color:      isWin ? '#4CD964'                : '#FF3B30',
                         }}>
-                        {isWin ? '🏆 VICTOIRE' : '💀 DÉFAITE'}
+                        {isWin ? `🏆 ${t('chat.victory_badge')}` : `💀 ${t('chat.defeat_badge')}`}
                     </span>
                 </div>
                 {screenshot && (
@@ -148,7 +151,7 @@ function ResultRow({ label, result, screenshot }) {
                             <circle cx="8.5" cy="8.5" r="1.5"/>
                             <polyline points="21 15 16 10 5 21"/>
                         </svg>
-                        Capture
+                        {t('chat.capture')}
                     </button>
                 )}
             </div>
@@ -277,6 +280,7 @@ function FightersVS({ myFighter, oppFighter, myUsername, oppUsername }) {
 }
 
 function MatchCard({ match, opponent }) {
+    const { t } = useTranslation();
     const [matchLink,  setMatchLink]  = useState('');
     const [submitting, setSubmitting] = useState(false);
 
@@ -288,8 +292,8 @@ function MatchCard({ match, opponent }) {
     const p1Ready = match.is_player1 ? myReady  : oppReady;
     const p2Ready = match.is_player1 ? oppReady : myReady;
 
-    const p1Username = match.is_player1 ? (match.my_username ?? 'Moi') : opponent.username;
-    const p2Username = match.is_player1 ? opponent.username             : (match.my_username ?? 'Moi');
+    const p1Username = match.is_player1 ? (match.my_username ?? t('chat.me')) : opponent.username;
+    const p2Username = match.is_player1 ? opponent.username : (match.my_username ?? t('chat.me'));
 
     const canSubmit = match.is_player1 ? matchLink.trim().length > 0 : true;
 
@@ -311,13 +315,13 @@ function MatchCard({ match, opponent }) {
                         {match.is_player1 && !myReady && (
                             <div className="flex flex-col gap-2">
                                 <p className="text-[#888] text-xs">
-                                    Crée la salle dans Shadow Fight 4, copie l'ID et colle-le ici.
+                                    {t('chat.room_id_hint')}
                                 </p>
                                 <input
                                     type="text"
                                     value={matchLink}
                                     onChange={e => setMatchLink(e.target.value)}
-                                    placeholder="Colle l'ID de la salle SF4 ici..."
+                                    placeholder={t('chat.room_id_placeholder')}
                                     className="w-full rounded-xl px-3 py-2.5 text-sm text-white outline-none"
                                     style={{ background: '#0D0D14', border: '1px solid #2A2A3A' }}
                                 />
@@ -330,7 +334,7 @@ function MatchCard({ match, opponent }) {
                                     }}>
                                     {submitting
                                         ? <svg className="animate-spin" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M21 12a9 9 0 1 1-6.219-8.56"/></svg>
-                                        : '✓ Je suis prêt'
+                                        : t('chat.ready_btn')
                                     }
                                 </button>
                             </div>
@@ -341,14 +345,14 @@ function MatchCard({ match, opponent }) {
                                 <svg className="animate-spin flex-shrink-0" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#FF9500" strokeWidth="2.5">
                                     <path d="M21 12a9 9 0 1 1-6.219-8.56"/>
                                 </svg>
-                                <p className="text-[#FF9500] text-xs font-semibold">En attente que l'adversaire confirme...</p>
+                                <p className="text-[#FF9500] text-xs font-semibold">{t('chat.waiting_opponent')}</p>
                             </div>
                         )}
 
                         {!match.is_player1 && !myReady && (
                             <div className="flex flex-col gap-2">
                                 {p1Ready && (
-                                    <p className="text-[#888] text-xs">Le créateur a partagé l'ID dans le chat. Rejoins la salle et confirme.</p>
+                                    <p className="text-[#888] text-xs">{t('chat.creator_shared')}</p>
                                 )}
                                 <button onClick={handleReady}
                                     disabled={submitting}
@@ -356,7 +360,7 @@ function MatchCard({ match, opponent }) {
                                     style={{ background: submitting ? '#1A2A1A' : '#4CD964', color: submitting ? '#3A5A3A' : '#000' }}>
                                     {submitting
                                         ? <svg className="animate-spin" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M21 12a9 9 0 1 1-6.219-8.56"/></svg>
-                                        : '✓ Je suis prêt'
+                                        : t('chat.ready_btn')
                                     }
                                 </button>
                             </div>
@@ -367,7 +371,7 @@ function MatchCard({ match, opponent }) {
                                 <svg className="animate-spin flex-shrink-0" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#FF9500" strokeWidth="2.5">
                                     <path d="M21 12a9 9 0 1 1-6.219-8.56"/>
                                 </svg>
-                                <p className="text-[#FF9500] text-xs font-semibold">En attente que le créateur confirme...</p>
+                                <p className="text-[#FF9500] text-xs font-semibold">{t('chat.waiting_creator')}</p>
                             </div>
                         )}
                     </>
@@ -380,7 +384,7 @@ function MatchCard({ match, opponent }) {
                 {match.status === 'en_cours' && match.my_result && (
                     <div className="flex flex-col gap-2">
                         <ResultRow
-                            label="Ton résultat"
+                            label={t('chat.my_result')}
                             result={match.my_result}
                             screenshot={match.my_screenshot}
                         />
@@ -389,7 +393,7 @@ function MatchCard({ match, opponent }) {
                                 <svg className="animate-spin flex-shrink-0" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#FF9500" strokeWidth="2.5">
                                     <path d="M21 12a9 9 0 1 1-6.219-8.56"/>
                                 </svg>
-                                <p className="text-[#FF9500] text-xs font-semibold">En attente du résultat de l'adversaire...</p>
+                                <p className="text-[#FF9500] text-xs font-semibold">{t('chat.waiting_result')}</p>
                             </div>
                         ) : (
                             <ResultRow
@@ -405,7 +409,7 @@ function MatchCard({ match, opponent }) {
                     <div className="flex flex-col gap-2">
                         {match.my_result && (
                             <ResultRow
-                                label="Ton résultat"
+                                label={t('chat.my_result')}
                                 result={match.my_result}
                                 screenshot={match.my_screenshot}
                             />
@@ -417,7 +421,7 @@ function MatchCard({ match, opponent }) {
                                 screenshot={match.opp_screenshot}
                             />
                         )}
-                        <p className="text-[#FF9500] font-semibold text-xs mt-1">⚠️ Litige en cours — un admin va trancher.</p>
+                        <p className="text-[#FF9500] font-semibold text-xs mt-1">⚠️ {t('chat.dispute_open')}</p>
                     </div>
                 )}
             </div>
@@ -426,9 +430,10 @@ function MatchCard({ match, opponent }) {
 }
 
 function ResultMessage({ msg, opponent }) {
+    const { t } = useTranslation();
     const [open, setOpen] = useState(false);
     const isWin = msg.result === 'win';
-    const name  = msg.is_mine ? 'Moi' : opponent.username;
+    const name  = msg.is_mine ? t('chat.me') : opponent.username;
 
     return (
         <div className={`flex flex-col gap-1 ${msg.is_mine ? 'items-end' : 'items-start'}`}>
@@ -444,7 +449,7 @@ function ResultMessage({ msg, opponent }) {
                     <span className="text-sm">{isWin ? '🏆' : '💀'}</span>
                     <div className="flex flex-col">
                         <span className="text-[11px] font-bold" style={{ color: isWin ? '#4CD964' : '#FF3B30' }}>
-                            {isWin ? 'VICTOIRE' : 'DÉFAITE'}
+                            {isWin ? t('chat.victory_badge') : t('chat.defeat_badge')}
                         </span>
                         <span className="text-[10px] text-[#666]">{name}</span>
                     </div>
@@ -484,6 +489,7 @@ function ResultMessage({ msg, opponent }) {
 }
 
 function AvisBlock({ matchId, opponent, hasReviewed }) {
+    const { t } = useTranslation();
     const [sentiment, setSentiment] = useState(null);
     const [comment,   setComment]   = useState('');
     const [done,      setDone]      = useState(hasReviewed);
@@ -496,7 +502,7 @@ function AvisBlock({ matchId, opponent, hasReviewed }) {
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#4CD964" strokeWidth="2.5" strokeLinecap="round">
                     <polyline points="20 6 9 17 4 12"/>
                 </svg>
-                <p className="text-[#4CD964] text-sm font-semibold">Avis envoyé pour ce match.</p>
+                <p className="text-[#4CD964] text-sm font-semibold">{t('chat.review_sent_match')}</p>
             </div>
         );
     }
@@ -516,7 +522,7 @@ function AvisBlock({ matchId, opponent, hasReviewed }) {
 
             <div className="px-4 py-2.5" style={{ background: '#0D0D14', borderBottom: '1px solid #1E1E2A' }}>
                 <p className="text-[#555] text-[9px] tracking-widest font-semibold">
-                    ÉVALUER {opponent.username.toUpperCase()}
+                    {t('chat.evaluate')} {opponent.username.toUpperCase()}
                 </p>
             </div>
 
@@ -529,7 +535,7 @@ function AvisBlock({ matchId, opponent, hasReviewed }) {
                             border:     `1.5px solid ${sentiment === 'positive' ? '#4CD964' : '#2A2A3A'}`,
                             color:      sentiment === 'positive' ? '#4CD964' : '#555',
                         }}>
-                        👍 Positif
+                        👍 {t('chat.positive')}
                     </button>
                     <button onClick={() => setSentiment('negative')}
                         className="flex-1 rounded-xl py-2.5 font-bold text-sm flex items-center justify-center gap-2"
@@ -538,14 +544,14 @@ function AvisBlock({ matchId, opponent, hasReviewed }) {
                             border:     `1.5px solid ${sentiment === 'negative' ? '#FF3B30' : '#2A2A3A'}`,
                             color:      sentiment === 'negative' ? '#FF3B30' : '#555',
                         }}>
-                        👎 Négatif
+                        👎 {t('chat.negative')}
                     </button>
                 </div>
 
                 <textarea
                     value={comment}
                     onChange={e => setComment(e.target.value)}
-                    placeholder="Laisse un commentaire (optionnel)..."
+                    placeholder={t('chat.review_comment_placeholder')}
                     rows={2}
                     maxLength={500}
                     className="w-full rounded-xl px-3 py-2.5 text-white text-sm outline-none resize-none"
@@ -560,7 +566,7 @@ function AvisBlock({ matchId, opponent, hasReviewed }) {
                     }}>
                     {sending
                         ? <svg className="animate-spin" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M21 12a9 9 0 1 1-6.219-8.56"/></svg>
-                        : 'Envoyer mon avis'
+                        : t('chat.send_review')
                     }
                 </button>
             </div>
