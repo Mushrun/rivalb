@@ -488,6 +488,68 @@ function ResultMessage({ msg, opponent }) {
     );
 }
 
+function TranslateButton({ text }) {
+    const { t, i18n } = useTranslation();
+    const [translation, setTranslation] = useState(null);
+    const [loading,     setLoading]     = useState(false);
+    const [error,       setError]       = useState(false);
+
+    const handleTranslate = async () => {
+        if (translation || loading) return;
+        setLoading(true);
+        setError(false);
+        const currentLang = i18n.language?.startsWith('en') ? 'en' : 'fr';
+        const sourceLang  = currentLang === 'en' ? 'fr' : 'en';
+        try {
+            const res  = await fetch(
+                `https://api.mymemory.translated.net/get?q=${encodeURIComponent(text)}&langpair=${sourceLang}|${currentLang}`
+            );
+            const data = await res.json();
+            if (data.responseStatus === 200) {
+                setTranslation(data.responseData.translatedText);
+            } else {
+                setError(true);
+            }
+        } catch {
+            setError(true);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    if (translation) {
+        return (
+            <div className="rounded-xl px-3 py-2 mt-1"
+                style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid #2A2A2A' }}>
+                <p className="text-[#AAA] text-xs italic leading-relaxed">{translation}</p>
+            </div>
+        );
+    }
+
+    return (
+        <button onClick={handleTranslate} disabled={loading}
+            className="flex items-center gap-1 mt-1 pl-1 text-[10px] font-semibold transition-colors"
+            style={{ color: loading ? '#666' : '#555' }}>
+            {loading ? (
+                <>
+                    <svg className="animate-spin" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                        <path d="M21 12a9 9 0 1 1-6.219-8.56"/>
+                    </svg>
+                    {t('chat.translating')}
+                </>
+            ) : (
+                <>
+                    <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+                        <path d="M5 8l6 6"/><path d="M4 14l6-6 2-3"/><path d="M2 5h12"/><path d="M7 2h1"/>
+                        <path d="M22 22l-5-10-5 10"/><path d="M14 18h6"/>
+                    </svg>
+                    {error ? <span style={{ color: '#FF3B30' }}>{t('chat.translation_error')}</span> : t('chat.translate')}
+                </>
+            )}
+        </button>
+    );
+}
+
 function AvisBlock({ matchId, opponent, hasReviewed }) {
     const { t } = useTranslation();
     const [sentiment, setSentiment] = useState(null);
@@ -790,6 +852,7 @@ export default function ChatShow() {
                                             style={{ background: '#1A1A1A' }}>
                                             <p className="text-white text-sm leading-relaxed">{msg.body}</p>
                                         </div>
+                                        <TranslateButton text={msg.body} />
                                         <span className="text-[#555] text-[10px] pl-1">{msg.time}</span>
                                     </div>
                                 </div>

@@ -223,7 +223,10 @@
     "negative": "Negative",
     "review_comment_placeholder": "Leave a comment (optional)...",
     "send_review": "Send my review",
-    "creator_shared": "The creator shared the room ID in chat. Join the room and confirm."
+    "creator_shared": "The creator shared the room ID in chat. Join the room and confirm.",
+    "translate": "Translate",
+    "translating": "Translating...",
+    "translation_error": "Translation failed"
   },
   "recharge": {
     "title": "Deposit",

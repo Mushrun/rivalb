@@ -223,7 +223,10 @@
     "negative": "Négatif",
     "review_comment_placeholder": "Laisse un commentaire (optionnel)...",
     "send_review": "Envoyer mon avis",
-    "creator_shared": "Le créateur a partagé l'ID dans le chat. Rejoins la salle et confirme."
+    "creator_shared": "Le créateur a partagé l'ID dans le chat. Rejoins la salle et confirme.",
+    "translate": "Traduire",
+    "translating": "Traduction...",
+    "translation_error": "Échec de la traduction"
   },
   "recharge": {
     "title": "Recharger",
