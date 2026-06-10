@@ -22,7 +22,22 @@ class User extends Authenticatable
         'auth_nonce',
         'bio',
         'avatar_path',
+        'locale',
+        'referral_code',
+        'referred_by',
     ];
+
+    protected static function booted(): void
+    {
+        static::creating(function (User $user) {
+            if (!$user->referral_code) {
+                do {
+                    $code = strtoupper(\Illuminate\Support\Str::random(8));
+                } while (static::where('referral_code', $code)->exists());
+                $user->referral_code = $code;
+            }
+        });
+    }
 
     protected $hidden = [
         'password',
@@ -74,6 +89,16 @@ class User extends Authenticatable
     public function notifications()
     {
         return $this->hasMany(Notification::class);
+    }
+
+    public function referrees()
+    {
+        return $this->hasMany(User::class, 'referred_by');
+    }
+
+    public function referrer()
+    {
+        return $this->belongsTo(User::class, 'referred_by');
     }
 
     public function sendPasswordResetNotification($token): void

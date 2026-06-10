@@ -96,7 +96,9 @@
     "cgu_accept": "J'accepte les",
     "cgu_terms": "Conditions d'utilisation",
     "cgu_and": "et la",
-    "cgu_privacy": "Politique de confidentialité"
+    "cgu_privacy": "Politique de confidentialité",
+    "referral_code_label": "CODE DE PARRAINAGE",
+    "referral_code_optional": "(optionnel)"
   },
   "battle": {
     "title": "Défis disponibles",
@@ -702,5 +704,22 @@
     "inactive": "Inactif",
     "ban": "Bannir",
     "unban": "Débannir"
+  },
+  "referral": {
+    "title": "Mon parrainage",
+    "referrees": "Filleuls",
+    "earned_rb": "Gains RB",
+    "earned_usdt": "Gains USDT",
+    "your_link": "TON LIEN DE PARRAINAGE",
+    "copy": "Copier",
+    "copied": "Copié !",
+    "how_it_works": "Comment ça marche ?",
+    "step1": "Partage ton lien ou ton code à tes amis.",
+    "step2": "Ils s'inscrivent avec ton code — ils deviennent tes filleuls.",
+    "step3_rb": "À chaque retrait RB de ton filleul : tu reçois 4% en RB.",
+    "step3_usdt": "À chaque retrait USDT de ton filleul : tu reçois 4% en USDT.",
+    "referrees_list": "MES FILLEULS",
+    "no_referrees_title": "Aucun filleul pour l'instant",
+    "no_referrees_hint": "Partage ton lien pour commencer à gagner des commissions."
   }
 }

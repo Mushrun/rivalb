@@ -14,6 +14,7 @@ use App\Http\Controllers\Admin\TransactionController as AdminTransactionControll
 use App\Http\Controllers\Admin\UserController as AdminUserController;
 use App\Http\Controllers\ChallengeController;
 use App\Http\Controllers\DepositController;
+use App\Http\Controllers\ParrainageController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ReviewController;
 use App\Http\Controllers\WithdrawController;
@@ -74,6 +75,7 @@ Route::middleware('auth')->group(function () {
     Route::post('/profil/password', [ProfileController::class, 'updatePassword']);
     Route::post('/user/locale',    [ProfileController::class, 'updateLocale']);
     Route::get('/profil/{id}',      [ProfileController::class, 'show'])->whereNumber('id');
+    Route::get('/parrainage',  [ParrainageController::class, 'index']);
     Route::get('/settings',    fn() => Inertia::render('Settings'));
     Route::get('/support',     fn() => Inertia::render('Support'));
 

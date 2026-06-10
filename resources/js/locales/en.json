@@ -96,7 +96,9 @@
     "cgu_accept": "I accept the",
     "cgu_terms": "Terms of Service",
     "cgu_and": "and the",
-    "cgu_privacy": "Privacy Policy"
+    "cgu_privacy": "Privacy Policy",
+    "referral_code_label": "REFERRAL CODE",
+    "referral_code_optional": "(optional)"
   },
   "battle": {
     "title": "Available Challenges",
@@ -702,5 +704,22 @@
     "inactive": "Inactive",
     "ban": "Ban",
     "unban": "Unban"
+  },
+  "referral": {
+    "title": "My referrals",
+    "referrees": "Referrals",
+    "earned_rb": "RB Earned",
+    "earned_usdt": "USDT Earned",
+    "your_link": "YOUR REFERRAL LINK",
+    "copy": "Copy",
+    "copied": "Copied!",
+    "how_it_works": "How does it work?",
+    "step1": "Share your link or code with your friends.",
+    "step2": "They sign up with your code — they become your referrals.",
+    "step3_rb": "Each time your referral withdraws RB: you earn 4% in RB.",
+    "step3_usdt": "Each time your referral withdraws USDT: you earn 4% in USDT.",
+    "referrees_list": "MY REFERRALS",
+    "no_referrees_title": "No referrals yet",
+    "no_referrees_hint": "Share your link to start earning commissions."
   }
 }

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Transaction;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -13,6 +14,10 @@ class WithdrawController extends Controller
     private const MIN_RB           = 500;
     private const MIN_USDT         = 1.0;
     private const RATE_RB_PER_USDT = 500;
+
+    private const FEE_USDT         = 0.10;
+    private const FEE_RB           = 0.06;
+    private const PARRAIN_SHARE    = 0.04;
 
     public function show()
     {
@@ -34,12 +39,14 @@ class WithdrawController extends Controller
             ]);
 
         return Inertia::render('Retrait', [
-            'balance_rb'   => $user->balance_rb,
-            'balance_usdt' => $user->balance_usdt,
-            'minAmountRb'  => self::MIN_RB,
-            'minAmountUsdt'=> self::MIN_USDT,
-            'rate'         => self::RATE_RB_PER_USDT,
-            'history'      => $history,
+            'balance_rb'    => $user->balance_rb,
+            'balance_usdt'  => $user->balance_usdt,
+            'minAmountRb'   => self::MIN_RB,
+            'minAmountUsdt' => self::MIN_USDT,
+            'rate'          => self::RATE_RB_PER_USDT,
+            'fee_rb'        => self::FEE_RB * 100,
+            'fee_usdt'      => self::FEE_USDT * 100,
+            'history'       => $history,
         ]);
     }
 
@@ -59,22 +66,40 @@ class WithdrawController extends Controller
                 'amount_usdt.min' => 'Montant minimum : ' . self::MIN_USDT . ' USDT.',
             ]);
 
-            $amount = (float) $request->input('amount_usdt');
+            $gross  = (float) $request->input('amount_usdt');
+            $fee    = round($gross * self::FEE_USDT, 6);
+            $net    = round($gross - $fee, 6);
 
-            DB::transaction(function () use ($user, $amount) {
-                $fresh = \App\Models\User::lockForUpdate()->findOrFail($user->id);
+            DB::transaction(function () use ($user, $gross, $net, $fee) {
+                $fresh = User::lockForUpdate()->findOrFail($user->id);
 
-                if ((float) $fresh->balance_usdt < $amount) {
+                if ((float) $fresh->balance_usdt < $gross) {
                     throw new \RuntimeException('Solde USDT insuffisant.');
                 }
 
-                $fresh->decrement('balance_usdt', $amount);
+                $fresh->decrement('balance_usdt', $gross);
+
+                // Commission parrain
+                if ($fresh->referred_by) {
+                    $parrain       = User::find($fresh->referred_by);
+                    $parrainShare  = round($gross * self::PARRAIN_SHARE, 6);
+                    if ($parrain) {
+                        $parrain->increment('balance_usdt', $parrainShare);
+                        Transaction::create([
+                            'user_id'     => $parrain->id,
+                            'type'        => 'commission_parrainage',
+                            'currency'    => 'usdt',
+                            'amount_usdt' => $parrainShare,
+                            'status'      => 'valide',
+                        ]);
+                    }
+                }
 
                 Transaction::create([
                     'user_id'        => $user->id,
                     'type'           => 'retrait',
                     'currency'       => 'usdt',
-                    'amount_usdt'    => $amount,
+                    'amount_usdt'    => $net,
                     'wallet_address' => $user->wallet_address,
                     'status'         => 'en_attente',
                 ]);
@@ -90,22 +115,40 @@ class WithdrawController extends Controller
             'amount_rb.min' => 'Montant minimum : ' . self::MIN_RB . ' RB.',
         ]);
 
-        $amountRb = (int) $request->input('amount_rb');
+        $gross  = (int) $request->input('amount_rb');
+        $fee    = (int) round($gross * self::FEE_RB);
+        $net    = $gross - $fee;
 
-        DB::transaction(function () use ($user, $amountRb) {
-            $fresh = \App\Models\User::lockForUpdate()->findOrFail($user->id);
+        DB::transaction(function () use ($user, $gross, $net, $fee) {
+            $fresh = User::lockForUpdate()->findOrFail($user->id);
 
-            if ($fresh->balance_rb < $amountRb) {
+            if ($fresh->balance_rb < $gross) {
                 throw new \RuntimeException('Solde RB insuffisant.');
             }
 
-            $fresh->decrement('balance_rb', $amountRb);
+            $fresh->decrement('balance_rb', $gross);
+
+            // Commission parrain
+            if ($fresh->referred_by) {
+                $parrain      = User::find($fresh->referred_by);
+                $parrainShare = (int) round($gross * self::PARRAIN_SHARE);
+                if ($parrain) {
+                    $parrain->increment('balance_rb', $parrainShare);
+                    Transaction::create([
+                        'user_id'   => $parrain->id,
+                        'type'      => 'commission_parrainage',
+                        'currency'  => 'rb',
+                        'amount_rb' => $parrainShare,
+                        'status'    => 'valide',
+                    ]);
+                }
+            }
 
             Transaction::create([
                 'user_id'        => $user->id,
                 'type'           => 'retrait',
                 'currency'       => 'rb',
-                'amount_rb'      => $amountRb,
+                'amount_rb'      => $net,
                 'wallet_address' => $user->wallet_address,
                 'status'         => 'en_attente',
             ]);

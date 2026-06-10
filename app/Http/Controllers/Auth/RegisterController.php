@@ -14,16 +14,23 @@ class RegisterController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'username' => ['required', 'string', 'min:3', 'max:30', 'unique:users'],
-            'email'    => ['required', 'email', 'unique:users'],
-            'password' => ['required', 'confirmed', Password::min(8)],
+            'username'       => ['required', 'string', 'min:3', 'max:30', 'unique:users'],
+            'email'          => ['required', 'email', 'unique:users'],
+            'password'       => ['required', 'confirmed', Password::min(8)],
+            'referral_code'  => ['nullable', 'string', 'max:10'],
         ]);
 
+        $referrer = null;
+        if (!empty($validated['referral_code'])) {
+            $referrer = User::where('referral_code', strtoupper($validated['referral_code']))->first();
+        }
+
         $user = User::create([
-            'name'     => $validated['username'],
-            'username' => $validated['username'],
-            'email'    => $validated['email'],
-            'password' => $validated['password'],
+            'name'        => $validated['username'],
+            'username'    => $validated['username'],
+            'email'       => $validated['email'],
+            'password'    => $validated['password'],
+            'referred_by' => $referrer?->id,
         ]);
 
         $user->assignRole('player');
