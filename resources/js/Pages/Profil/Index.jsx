@@ -30,9 +30,10 @@ export default function ProfilIndex() {
     const total       = profile?.total  ?? 0;
 
     const menuItems = [
-        { icon: 'settings', label: t('profil.menu_settings'), href: '/settings' },
-        { icon: 'list',     label: t('profil.menu_history'),  href: '/historique' },
-        { icon: 'help',     label: t('profil.menu_support'),  href: '/support' },
+        { icon: 'settings', label: t('profil.menu_settings'),    href: '/settings' },
+        { icon: 'list',     label: t('profil.menu_history'),     href: '/historique' },
+        { icon: 'referral', label: t('profil.menu_parrainage'),  href: '/parrainage' },
+        { icon: 'help',     label: t('profil.menu_support'),     href: '/support' },
     ];
 
     return (
@@ -137,6 +138,14 @@ function MenuIcon({ type }) {
             <rect x="2" y="3" width="20" height="14" rx="2"/>
             <line x1="8" y1="21" x2="16" y2="21"/>
             <line x1="12" y1="17" x2="12" y2="21"/>
+        </svg>
+    );
+    if (type === 'referral') return (
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke={stroke} strokeWidth="2">
+            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+            <circle cx="9" cy="7" r="4"/>
+            <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+            <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
         </svg>
     );
     return (
