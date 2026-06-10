@@ -209,7 +209,7 @@ export default function Retrait() {
                     </div>
                 </div>
 
-                {/* Récap conversion (RB → USDT) */}
+                {/* Récap retrait RB */}
                 {!isUsdt && amountOk && (
                     <div className="rounded-2xl p-4" style={{ background: '#1A1A1A' }}>
                         <div className="flex items-center justify-between mb-2">
@@ -219,7 +219,7 @@ export default function Retrait() {
                         <div className="h-px my-2" style={{ background: '#2A2A2A' }} />
                         <div className="flex items-center justify-between">
                             <span className="text-[#888] text-xs">{t('retrait.you_receive')}</span>
-                            <span className="text-[#4CD964] font-black text-lg">~{usdtVal.toFixed(4)} USDT</span>
+                            <span className="text-[#4CD964] font-black text-lg">{rbVal.toLocaleString()} RB</span>
                         </div>
                     </div>
                 )}
