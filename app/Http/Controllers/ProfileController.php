@@ -124,6 +124,7 @@ class ProfileController extends Controller
             'bio'               => $user->bio ?? '',
             'avatar_path'       => $user->avatar_path,
             'balance_rb'        => $user->balance_rb,
+            'balance_usdt'      => $user->balance_usdt ?? 0,
             'reliability_score' => $user->reliability_score ?? 100,
             'member_since'      => $user->created_at->format('M Y'),
             'wins'              => $wins,

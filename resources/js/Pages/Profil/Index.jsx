@@ -82,19 +82,17 @@ export default function ProfilIndex() {
                 {/* Solde */}
                 <div className="w-full rounded-2xl p-4 mb-4 flex items-center justify-between"
                     style={{ background: '#1A1A1A' }}>
-                    <div className="flex flex-col gap-1">
-                        <div className="flex items-center justify-between gap-8">
+                    <div className="flex flex-col gap-1 w-full">
+                        <div className="flex items-center justify-between">
                             <span className="text-[#888] text-sm">{t('profil.balance_rb_label')}</span>
                             <span className="text-white font-black text-lg">{(profile?.balance_rb ?? 0).toLocaleString()} RB</span>
                         </div>
-                        {(profile?.balance_usdt ?? 0) > 0 && (
-                            <div className="flex items-center justify-between gap-8">
-                                <span className="text-[#888] text-sm">{t('recharge.usdt_balance')}</span>
-                                <span className="font-black text-lg" style={{ color: '#4CD964' }}>
-                                    {parseFloat(profile?.balance_usdt ?? 0).toFixed(2)} USDT
-                                </span>
-                            </div>
-                        )}
+                        <div className="flex items-center justify-between">
+                            <span className="text-[#888] text-sm">{t('recharge.usdt_balance')}</span>
+                            <span className="font-black text-lg" style={{ color: '#4CD964' }}>
+                                {parseFloat(profile?.balance_usdt ?? 0).toFixed(2)} USDT
+                            </span>
+                        </div>
                     </div>
                 </div>
 
