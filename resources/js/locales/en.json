@@ -162,7 +162,17 @@
     "format_label": "Format",
     "my_bet": "MY BET",
     "creating": "Creating...",
-    "launch_btn": "LAUNCH CHALLENGE"
+    "launch_btn": "LAUNCH CHALLENGE",
+    "opt_classic": "CLASSIC COMBAT",
+    "opt_fast": "QUICK COMBAT",
+    "opt_tournament": "TOURNAMENT MODE",
+    "opt_bamboo": "BAMBOO FOREST",
+    "opt_volcano": "VOLCANIC ARENA",
+    "opt_temple": "ANCIENT TEMPLE",
+    "opt_random": "RANDOM",
+    "opt_real_levels": "REAL LEVELS",
+    "opt_max_levels": "MAX LEVELS",
+    "opt_equal_levels": "EQUAL LEVELS"
   },
   "chat": {
     "message_placeholder": "Message...",

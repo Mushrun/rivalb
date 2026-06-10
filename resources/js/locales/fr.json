@@ -162,7 +162,17 @@
     "format_label": "Format",
     "my_bet": "MA MISE",
     "creating": "Création...",
-    "launch_btn": "LANCER LE DÉFI"
+    "launch_btn": "LANCER LE DÉFI",
+    "opt_classic": "COMBAT CLASSIQUE",
+    "opt_fast": "COMBAT RAPIDE",
+    "opt_tournament": "MODE TOURNOI",
+    "opt_bamboo": "FORÊT DE BAMBOUS",
+    "opt_volcano": "ARÈNE VOLCANIQUE",
+    "opt_temple": "TEMPLE ANCIEN",
+    "opt_random": "ALÉATOIRE",
+    "opt_real_levels": "NIVEAUX RÉELS",
+    "opt_max_levels": "NIVEAUX MAX",
+    "opt_equal_levels": "NIVEAUX ÉGAUX"
   },
   "chat": {
     "message_placeholder": "Message...",

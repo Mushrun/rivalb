@@ -31,6 +31,26 @@ function StepProgress({ current, total }) {
 export default function ChallengeStep4() {
     const { t } = useTranslation();
     const rules = rulesConfig.map(r => ({ ...r, label: t(r.tKey) }));
+
+    const valueLabels = {
+        combat: {
+            'COMBAT CLASSIQUE': t('challenge.opt_classic'),
+            'COMBAT RAPIDE':    t('challenge.opt_fast'),
+            'MODE TOURNOI':     t('challenge.opt_tournament'),
+        },
+        position: {
+            'FORÊT DE BAMBOUS': t('challenge.opt_bamboo'),
+            'ARÈNE VOLCANIQUE': t('challenge.opt_volcano'),
+            'TEMPLE ANCIEN':    t('challenge.opt_temple'),
+            'ALÉATOIRE':        t('challenge.opt_random'),
+        },
+        heros: {
+            'NIVEAUX RÉELS':  t('challenge.opt_real_levels'),
+            'NIVEAUX MAX':    t('challenge.opt_max_levels'),
+            'NIVEAUX ÉGAUX':  t('challenge.opt_equal_levels'),
+        },
+        duree: {},
+    };
     const [values, setValues] = useState({
         combat: 'COMBAT CLASSIQUE',
         position: 'FORÊT DE BAMBOUS',
@@ -101,7 +121,7 @@ export default function ChallengeStep4() {
                                     </svg>
                                 </button>
                                 <span className="text-white font-bold text-sm min-w-[120px] text-center">
-                                    {values[rule.key]}
+                                    {valueLabels[rule.key]?.[values[rule.key]] ?? values[rule.key]}
                                 </span>
                                 <button onClick={() => cycle(rule.key, 1)}>
                                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#CCAAA0" strokeWidth="2.5" strokeLinecap="round">
