@@ -121,8 +121,8 @@ export default function ForgotPassword() {
 
                 {!sent && (
                     <p className="text-center text-sm text-[#888888] mt-6">
-                        Tu te souviens ?{' '}
-                        <Link href="/login" className="text-[#FF3B30] font-semibold">Se connecter</Link>
+                        {t('auth.remember_password')}{' '}
+                        <Link href="/login" className="text-[#FF3B30] font-semibold">{t('auth.login')}</Link>
                     </p>
                 )}
             </div>

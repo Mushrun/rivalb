@@ -45,7 +45,8 @@ function PlayerRow({ username, ready }) {
 }
 
 function FighterChips({ fighter }) {
-    if (!fighter) return <span className="text-[#333] text-[10px]">Libre</span>;
+    const { t } = useTranslation();
+    if (!fighter) return <span className="text-[#333] text-[10px]">{t('chat.free_fighter')}</span>;
     const names = fighter.split(',').map(n => n.trim()).filter(Boolean);
     return (
         <div className="flex flex-wrap gap-1">

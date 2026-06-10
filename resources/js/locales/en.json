@@ -87,7 +87,16 @@
     "password_label": "PASSWORD",
     "confirm_password_label": "CONFIRM PASSWORD",
     "send_link_btn": "SEND LINK",
-    "sending": "SENDING..."
+    "sending": "SENDING...",
+    "metamask_not_installed": "MetaMask is not installed. Install the extension in your browser.",
+    "metamask_verify_error": "Verification error.",
+    "metamask_cancelled": "Connection cancelled.",
+    "metamask_error": "MetaMask error: {{msg}}",
+    "metamask_unknown": "unknown",
+    "cgu_accept": "I accept the",
+    "cgu_terms": "Terms of Service",
+    "cgu_and": "and the",
+    "cgu_privacy": "Privacy Policy"
   },
   "battle": {
     "title": "Available Challenges",
@@ -226,7 +235,10 @@
     "creator_shared": "The creator shared the room ID in chat. Join the room and confirm.",
     "translate": "Translate",
     "translating": "Translating...",
-    "translation_error": "Translation failed"
+    "translation_error": "Translation failed",
+    "unread_one": "unread",
+    "unread_other": "unread",
+    "free_fighter": "Free"
   },
   "recharge": {
     "title": "Deposit",
@@ -350,7 +362,10 @@
     "close": "CLOSE",
     "you_prefix": "You: ",
     "victory_label": "Win",
-    "lost_label": "Lost"
+    "lost_label": "Lost",
+    "review_positive": "👍 Positive",
+    "review_negative": "👎 Negative",
+    "transactions_title": "Transaction history"
   },
   "notifications": {
     "title": "Notifications",
@@ -404,7 +419,9 @@
     "back_to_defis": "Back to Challenges",
     "match_concerned": "MATCH CONCERNED",
     "declared_win": "Declared WIN",
-    "declared_loss": "Declared LOSS"
+    "declared_loss": "Declared LOSS",
+    "match_cancelled_title": "Match cancelled — Refund",
+    "refund_note": "Your stake has been refunded following the admin's decision."
   },
   "profil": {
     "title": "Profile",
@@ -532,7 +549,19 @@
     "contact_modal_title": "Contact support",
     "contact_modal_sub": "Choose your preferred contact channel.",
     "close": "CLOSE",
-    "version_text": "RIVALBET v1.0.0 — All rights reserved"
+    "version_text": "RIVALBET v1.0.0 — All rights reserved",
+    "faq_q1": "How does the betting system work?",
+    "faq_a1": "Both players bet the same amount in RB. The stake is held in escrow until the end of the match. The winner takes it all.",
+    "faq_q2": "What happens in case of a dispute?",
+    "faq_a2": "If both players submit contradictory results, a dispute is opened. An admin reviews the screenshots and decides within 24h.",
+    "faq_q3": "How do I top up my RB?",
+    "faq_a3": "Go to History → Transactions → DEPOSIT. You can use Mobile Money or other methods available in your region.",
+    "faq_q4": "How do I withdraw my RB?",
+    "faq_a4": "Go to History → Transactions → WITHDRAW. The minimum withdrawal is 500 RB. Processing time is 24-48h.",
+    "faq_q5": "My reliability dropped, why?",
+    "faq_a5": "Reliability is calculated over your last 50 matches. It drops if you cancel challenges, abandon matches or receive negative reviews.",
+    "faq_q6": "How do I report a player?",
+    "faq_a6": "On the player's profile, tap the 3 dots at the top right to access the Report option."
   },
   "avis": {
     "title": "Rate your opponent",

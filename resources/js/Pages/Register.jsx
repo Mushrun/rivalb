@@ -63,7 +63,7 @@ export default function Register() {
                     {/* Pseudo */}
                     <div>
                         <label className="text-[11px] font-semibold tracking-widest text-[#888888] mb-2 block">
-                            PSEUDO
+                            {t('auth.pseudo')}
                         </label>
                         <input
                             type="text"
@@ -105,12 +105,12 @@ export default function Register() {
                     {/* Password */}
                     <div>
                         <label className="text-[11px] font-semibold tracking-widest text-[#888888] mb-2 block">
-                            MOT DE PASSE
+                            {t('auth.password_label')}
                         </label>
                         <div className="relative">
                             <input
                                 type={showPassword ? 'text' : 'password'}
-                                placeholder="Min. 8 caractères"
+                                placeholder={t('auth.new_password_placeholder')}
                                 value={data.password}
                                 onChange={e => setData('password', e.target.value)}
                                 className="w-full rounded-xl px-4 py-3.5 pr-12 text-white text-sm outline-none"
@@ -138,12 +138,12 @@ export default function Register() {
                     {/* Confirm password */}
                     <div>
                         <label className="text-[11px] font-semibold tracking-widest text-[#888888] mb-2 block">
-                            CONFIRMER LE MOT DE PASSE
+                            {t('auth.confirm_password_label')}
                         </label>
                         <div className="relative">
                             <input
                                 type={showConfirm ? 'text' : 'password'}
-                                placeholder="Répète ton mot de passe"
+                                placeholder={t('auth.repeat_password')}
                                 value={data.password_confirmation}
                                 onChange={e => setData('password_confirmation', e.target.value)}
                                 className="w-full rounded-xl px-4 py-3.5 pr-12 text-white text-sm outline-none"
@@ -174,10 +174,10 @@ export default function Register() {
                             </svg>
                         </div>
                         <p className="text-[#888888] text-xs leading-relaxed">
-                            J'accepte les{' '}
-                            <span className="text-[#FF3B30]">Conditions d'utilisation</span>
-                            {' '}et la{' '}
-                            <span className="text-[#FF3B30]">Politique de confidentialité</span>
+                            {t('auth.cgu_accept')}{' '}
+                            <span className="text-[#FF3B30]">{t('auth.cgu_terms')}</span>
+                            {' '}{t('auth.cgu_and')}{' '}
+                            <span className="text-[#FF3B30]">{t('auth.cgu_privacy')}</span>
                         </p>
                     </div>
 
@@ -193,7 +193,7 @@ export default function Register() {
                     {/* Divider */}
                     <div className="flex items-center gap-3">
                         <div className="flex-1 h-px" style={{ background: '#2A2A2A' }}/>
-                        <span className="text-[#555] text-xs">OU</span>
+                        <span className="text-[#555] text-xs">{t('auth.or')}</span>
                         <div className="flex-1 h-px" style={{ background: '#2A2A2A' }}/>
                     </div>
 

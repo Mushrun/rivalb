@@ -87,7 +87,16 @@
     "password_label": "MOT DE PASSE",
     "confirm_password_label": "CONFIRMER LE MOT DE PASSE",
     "send_link_btn": "ENVOYER LE LIEN",
-    "sending": "ENVOI..."
+    "sending": "ENVOI...",
+    "metamask_not_installed": "MetaMask n'est pas installé. Installe l'extension sur ton navigateur.",
+    "metamask_verify_error": "Erreur de vérification.",
+    "metamask_cancelled": "Connexion annulée.",
+    "metamask_error": "Erreur MetaMask : {{msg}}",
+    "metamask_unknown": "inconnue",
+    "cgu_accept": "J'accepte les",
+    "cgu_terms": "Conditions d'utilisation",
+    "cgu_and": "et la",
+    "cgu_privacy": "Politique de confidentialité"
   },
   "battle": {
     "title": "Défis disponibles",
@@ -226,7 +235,10 @@
     "creator_shared": "Le créateur a partagé l'ID dans le chat. Rejoins la salle et confirme.",
     "translate": "Traduire",
     "translating": "Traduction...",
-    "translation_error": "Échec de la traduction"
+    "translation_error": "Échec de la traduction",
+    "unread_one": "non lu",
+    "unread_other": "non lus",
+    "free_fighter": "Libre"
   },
   "recharge": {
     "title": "Recharger",
@@ -350,7 +362,10 @@
     "close": "FERMER",
     "you_prefix": "Vous : ",
     "victory_label": "Victoire",
-    "lost_label": "Perdu"
+    "lost_label": "Perdu",
+    "review_positive": "👍 Positif",
+    "review_negative": "👎 Négatif",
+    "transactions_title": "Historique de transactions"
   },
   "notifications": {
     "title": "Notifications",
@@ -404,7 +419,9 @@
     "back_to_defis": "Retour aux Défis",
     "match_concerned": "MATCH CONCERNÉ",
     "declared_win": "Dit avoir GAGNÉ",
-    "declared_loss": "Dit avoir PERDU"
+    "declared_loss": "Dit avoir PERDU",
+    "match_cancelled_title": "Match annulé — Remboursement",
+    "refund_note": "Ta mise a été remboursée suite à la décision de l'admin."
   },
   "profil": {
     "title": "Profil",
@@ -532,7 +549,19 @@
     "contact_modal_title": "Contacter le support",
     "contact_modal_sub": "Choisis ton canal de contact préféré.",
     "close": "FERMER",
-    "version_text": "RIVALBET v1.0.0 — Tous droits réservés"
+    "version_text": "RIVALBET v1.0.0 — Tous droits réservés",
+    "faq_q1": "Comment fonctionne le système de mise ?",
+    "faq_a1": "Les deux joueurs misent le même montant en RB. La mise est placée en séquestre jusqu'à la fin du match. Le gagnant récupère la totalité.",
+    "faq_q2": "Que se passe-t-il en cas de litige ?",
+    "faq_a2": "Si les deux joueurs soumettent des résultats contradictoires, un litige est ouvert. Un administrateur examine les captures d'écran et tranche sous 24h.",
+    "faq_q3": "Comment recharger mes RB ?",
+    "faq_a3": "Va dans Historique → Transactions → RECHARGER. Tu peux utiliser Mobile Money ou d'autres méthodes disponibles dans ta région.",
+    "faq_q4": "Comment retirer mes RB ?",
+    "faq_a4": "Va dans Historique → Transactions → RETIRER. Le minimum de retrait est de 500 RB. Le délai de traitement est de 24-48h.",
+    "faq_q5": "Ma fiabilité a baissé, pourquoi ?",
+    "faq_a5": "La fiabilité est calculée sur tes 50 derniers matchs. Elle baisse si tu annules des défis, abandonnes des matchs ou reçois des avis négatifs.",
+    "faq_q6": "Comment signaler un joueur ?",
+    "faq_a6": "Sur le profil du joueur, appuie sur les 3 points en haut à droite pour accéder à l'option Signaler."
   },
   "avis": {
     "title": "Note ton adversaire",

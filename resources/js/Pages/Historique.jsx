@@ -4,7 +4,6 @@ import { useTranslation } from 'react-i18next';
 import AppLayout from '../Components/AppLayout';
 import TopBar from '../Components/TopBar';
 
-const statusLabel = { en_attente: 'EN ATTENTE', valide: 'VALIDÉ', refuse: 'REFUSÉ' };
 const statusColor = { en_attente: '#FF9500', valide: '#4CD964', refuse: '#FF3B30' };
 const statusBg    = { en_attente: 'rgba(255,149,0,0.12)', valide: 'rgba(76,217,100,0.12)', refuse: 'rgba(255,59,48,0.12)' };
 
@@ -50,8 +49,8 @@ function AvisModal({ name, onClose }) {
                 </div>
                 <div className="flex gap-3 mb-4">
                     {[
-                        { key: 'positive', label: '👍 Positif', active: '#4CD964', bg: 'rgba(76,217,100,0.12)' },
-                        { key: 'negative', label: '👎 Négatif', active: '#FF3B30', bg: 'rgba(255,59,48,0.1)' },
+                        { key: 'positive', label: t('historique.review_positive'), active: '#4CD964', bg: 'rgba(76,217,100,0.12)' },
+                        { key: 'negative', label: t('historique.review_negative'), active: '#FF3B30', bg: 'rgba(255,59,48,0.1)' },
                     ].map(item => (
                         <button key={item.key} onClick={() => setSentiment(item.key)}
                             className="flex-1 rounded-xl py-3 font-bold text-sm transition-all"
@@ -181,6 +180,11 @@ function CombatsTab({ combats, stats }) {
 
 function TransactionsTab({ transactions, balanceRb }) {
     const { t } = useTranslation();
+    const statusLabel = {
+        en_attente: t('recharge.status_waiting'),
+        valide:     t('recharge.status_validated'),
+        refuse:     t('recharge.status_refused'),
+    };
     const [filter, setFilter] = useState('ALL');
 
     const filters = [

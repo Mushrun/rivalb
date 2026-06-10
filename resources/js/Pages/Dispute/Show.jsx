@@ -52,7 +52,7 @@ export default function DisputeShow() {
                     </svg>
                 </Link>
                 <div className="flex-1">
-                    <h1 className="text-white font-black text-lg">Litige #{dispute.id}</h1>
+                    <h1 className="text-white font-black text-lg">{t('dispute.title')} #{dispute.id}</h1>
                     <p className="text-[#555] text-xs">{dispute.created_at}</p>
                 </div>
                 <span className="text-xs font-bold px-2 py-1 rounded-lg"
@@ -80,7 +80,7 @@ export default function DisputeShow() {
                             {iWon ? `+${match.bet_amount * 2} RB` : `-${match.bet_amount} RB`}
                         </p>
                         {dispute.admin_note && (
-                            <p className="text-[#888] text-xs text-center mt-1">Note admin : {dispute.admin_note}</p>
+                            <p className="text-[#888] text-xs text-center mt-1">{t('dispute.admin_note')} {dispute.admin_note}</p>
                         )}
                         <p className="text-[#444] text-xs">{dispute.resolved_at}</p>
                     </div>
@@ -89,9 +89,9 @@ export default function DisputeShow() {
                 {isCancelled && (
                     <div className="rounded-2xl p-4 flex flex-col items-center gap-2"
                         style={{ background: 'rgba(136,136,136,0.08)', border: '1px solid #444' }}>
-                        <p className="text-white font-bold text-base">Match annulé — Remboursement</p>
+                        <p className="text-white font-bold text-base">{t('dispute.match_cancelled_title')}</p>
                         <p className="text-[#4CD964] font-black text-xl">+{match.bet_amount} RB</p>
-                        <p className="text-[#888] text-xs text-center">Ta mise a été remboursée suite à la décision de l'admin.</p>
+                        <p className="text-[#888] text-xs text-center">{t('dispute.refund_note')}</p>
                     </div>
                 )}
 

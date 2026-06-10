@@ -144,30 +144,12 @@ export default function Support() {
     const [modal, setModal] = useState(null);
 
     const faqs = [
-        {
-            q: t('support.faq_q1', 'Comment fonctionne le système de mise ?'),
-            a: t('support.faq_a1', "Les deux joueurs misent le même montant en RB. La mise est placée en séquestre jusqu'à la fin du match. Le gagnant récupère la totalité."),
-        },
-        {
-            q: t('support.faq_q2', 'Que se passe-t-il en cas de litige ?'),
-            a: t('support.faq_a2', "Si les deux joueurs soumettent des résultats contradictoires, un litige est ouvert. Un administrateur examine les captures d'écran et tranche sous 24h."),
-        },
-        {
-            q: t('support.faq_q3', 'Comment recharger mes RB ?'),
-            a: t('support.faq_a3', "Va dans Historique → Transactions → RECHARGER. Tu peux utiliser Mobile Money ou d'autres méthodes disponibles dans ta région."),
-        },
-        {
-            q: t('support.faq_q4', 'Comment retirer mes RB ?'),
-            a: t('support.faq_a4', "Va dans Historique → Transactions → RETIRER. Le minimum de retrait est de 500 RB. Le délai de traitement est de 24-48h."),
-        },
-        {
-            q: t('support.faq_q5', 'Ma fiabilité a baissé, pourquoi ?'),
-            a: t('support.faq_a5', "La fiabilité est calculée sur tes 50 derniers matchs. Elle baisse si tu annules des défis, abandonnes des matchs ou reçois des avis négatifs."),
-        },
-        {
-            q: t('support.faq_q6', 'Comment signaler un joueur ?'),
-            a: t('support.faq_a6', "Sur le profil du joueur, appuie sur les 3 points en haut à droite pour accéder à l'option \"Signaler\"."),
-        },
+        { q: t('support.faq_q1'), a: t('support.faq_a1') },
+        { q: t('support.faq_q2'), a: t('support.faq_a2') },
+        { q: t('support.faq_q3'), a: t('support.faq_a3') },
+        { q: t('support.faq_q4'), a: t('support.faq_a4') },
+        { q: t('support.faq_q5'), a: t('support.faq_a5') },
+        { q: t('support.faq_q6'), a: t('support.faq_a6') },
     ];
 
     return (

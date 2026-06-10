@@ -26,7 +26,7 @@ export default function Login() {
         setMetaMaskError('');
 
         if (typeof window.ethereum === 'undefined') {
-            setMetaMaskError('MetaMask n\'est pas installé. Installe l\'extension sur ton navigateur.');
+            setMetaMaskError(t('auth.metamask_not_installed'));
             setMetaMaskState('error');
             return;
         }
@@ -62,7 +62,7 @@ export default function Login() {
             const result = await verifyRes.json();
 
             if (!verifyRes.ok) {
-                setMetaMaskError(result.error ?? 'Erreur de vérification.');
+                setMetaMaskError(result.error ?? t('auth.metamask_verify_error'));
                 setMetaMaskState('error');
                 return;
             }
@@ -72,9 +72,9 @@ export default function Login() {
 
         } catch (err) {
             if (err.code === 4001) {
-                setMetaMaskError('Connexion annulée.');
+                setMetaMaskError(t('auth.metamask_cancelled'));
             } else {
-                setMetaMaskError('Erreur MetaMask : ' + (err.message ?? 'inconnue'));
+                setMetaMaskError(t('auth.metamask_error', { msg: err.message ?? t('auth.metamask_unknown') }));
             }
             setMetaMaskState('error');
         }
@@ -203,7 +203,7 @@ export default function Login() {
                     {/* Divider */}
                     <div className="flex items-center gap-3">
                         <div className="flex-1 h-px" style={{ background: '#2A2A2A' }}/>
-                        <span className="text-[#555] text-xs">OU</span>
+                        <span className="text-[#555] text-xs">{t('auth.or')}</span>
                         <div className="flex-1 h-px" style={{ background: '#2A2A2A' }}/>
                     </div>
 
@@ -255,13 +255,13 @@ export default function Login() {
                                 <line x1="12" y1="8" x2="12" y2="12"/>
                                 <line x1="12" y1="16" x2="12.01" y2="16"/>
                             </svg>
-                            <span className="text-white font-semibold text-sm">Accès limité</span>
+                            <span className="text-white font-semibold text-sm">{t('auth.limited_access')}</span>
                         </div>
                         <p className="text-[#888888] text-xs leading-relaxed">{emailError}</p>
                         <Link href="/support"
                             className="w-full rounded-xl py-2 font-semibold text-xs tracking-wider text-[#CCCCCC] mt-1 text-center"
                             style={{ border: '1px solid #3A1A1A', background: 'transparent' }}>
-                            CONTACTER LE SUPPORT
+                            {t('auth.contact_support')}
                         </Link>
                     </div>
                 )}

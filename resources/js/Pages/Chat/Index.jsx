@@ -45,7 +45,7 @@ export default function ChatIndex() {
                         <h1 className="text-white font-bold text-2xl">{t('chat.messages_title')}</h1>
                         {totalUnread > 0 && (
                             <p className="text-[#FF3B30] text-xs font-semibold">
-                                {totalUnread} {totalUnread > 1 ? t('chat.status_waiting') : t('chat.status_waiting')} non lu{totalUnread > 1 ? 's' : ''}
+                                {totalUnread} {t(totalUnread > 1 ? 'chat.unread_other' : 'chat.unread_one')}
                             </p>
                         )}
                     </div>
