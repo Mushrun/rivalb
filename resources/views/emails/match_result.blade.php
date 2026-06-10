@@ -40,7 +40,7 @@
 
             <div class="prize-box">
                 <span class="prize-label">{{ $won ? __('email_match_earned') : __('email_match_lost_bet') }}</span>
-                <span class="prize-value">{{ $won ? '+' : '-' }}{{ $won ? $prize : ($prize / 2) }} RB</span>
+                <span class="prize-value">{{ $won ? '+' : '-' }}{{ $won ? $prize : ($prize / 2) }} {{ strtoupper($currency) }}</span>
             </div>
 
             <a href="{{ config('app.url') }}/match/{{ $matchId }}" class="btn">{{ __('email_match_cta') }}</a>

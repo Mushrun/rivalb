@@ -18,15 +18,16 @@ class SendMatchResultNotificationJob implements ShouldQueue
     public int $timeout = 30;
 
     public function __construct(
-        public readonly User $recipient,
-        public readonly int  $matchId,
-        public readonly bool $won,
-        public readonly int  $prize,
+        public readonly User   $recipient,
+        public readonly int    $matchId,
+        public readonly bool   $won,
+        public readonly int    $prize,
+        public readonly string $currency = 'rb',
     ) {}
 
     public function handle(): void
     {
         Mail::to($this->recipient->email)
-            ->send(new MatchResultMail($this->recipient, $this->matchId, $this->won, $this->prize));
+            ->send(new MatchResultMail($this->recipient, $this->matchId, $this->won, $this->prize, $this->currency));
     }
 }

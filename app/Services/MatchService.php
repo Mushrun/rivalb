@@ -147,6 +147,6 @@ class MatchService
         $winner->updateReliabilityScore(true);
         $loser->updateReliabilityScore(false);
 
-        event(new MatchTermine($match->fresh(), $winner, $loser, $prize));
+        event(new MatchTermine($match->fresh(), $winner, $loser, $prize, $currency));
     }
 }

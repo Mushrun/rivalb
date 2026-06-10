@@ -20,7 +20,7 @@ class EnvoyerNotificationsMatch
             $event->loser, $event->match->id, false, 0
         );
 
-        SendMatchResultNotificationJob::dispatch($event->winner, $event->match->id, true,  $event->prize);
-        SendMatchResultNotificationJob::dispatch($event->loser,  $event->match->id, false, 0);
+        SendMatchResultNotificationJob::dispatch($event->winner, $event->match->id, true,  $event->prize, $event->currency);
+        SendMatchResultNotificationJob::dispatch($event->loser,  $event->match->id, false, 0,             $event->currency);
     }
 }

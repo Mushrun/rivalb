@@ -16,5 +16,6 @@ class MatchTermine
         public readonly User      $winner,
         public readonly User      $loser,
         public readonly int       $prize,
+        public readonly string    $currency = 'rb',
     ) {}
 }
