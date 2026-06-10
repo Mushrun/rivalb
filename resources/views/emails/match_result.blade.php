@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="{{ app()->getLocale() }}">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Résultat de ton match</title>
+    <title>{{ $won ? __('email_match_won_title') : __('email_match_lost_title') }}</title>
     <style>
         body { margin: 0; padding: 0; background: #0D0D0D; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; }
         .container { max-width: 520px; margin: 40px auto; background: #1A1A1A; border-radius: 16px; overflow: hidden; }
@@ -25,25 +25,25 @@
     <div class="container">
         <div class="header">
             <div class="result-icon">{{ $won ? '🏆' : '💔' }}</div>
-            <h1 class="result-title">{{ $won ? 'VICTOIRE !' : 'DÉFAITE' }}</h1>
+            <h1 class="result-title">{{ $won ? __('email_match_won_title') : __('email_match_lost_title') }}</h1>
             <p class="result-subtitle">Match #{{ $matchId }}</p>
         </div>
         <div class="body">
             <p class="text">
-                Bonjour <strong style="color:#FFF">{{ $recipient->username }}</strong>,<br>
+                <strong style="color:#FFF">{{ $recipient->username }}</strong>,<br>
                 @if($won)
-                    Félicitations ! Tu as remporté ce match et tes gains ont été crédités sur ton solde.
+                    {{ __('email_match_greeting_won') }}
                 @else
-                    Tu as perdu ce match. Ne te décourage pas, reviens plus fort !
+                    {{ __('email_match_greeting_lost') }}
                 @endif
             </p>
 
             <div class="prize-box">
-                <span class="prize-label">{{ $won ? 'GAINS CRÉDITÉS' : 'MISE PERDUE' }}</span>
+                <span class="prize-label">{{ $won ? __('email_match_earned') : __('email_match_lost_bet') }}</span>
                 <span class="prize-value">{{ $won ? '+' : '-' }}{{ $won ? $prize : ($prize / 2) }} RB</span>
             </div>
 
-            <a href="{{ config('app.url') }}/match/{{ $matchId }}" class="btn">VOIR LE MATCH</a>
+            <a href="{{ config('app.url') }}/match/{{ $matchId }}" class="btn">{{ __('email_match_cta') }}</a>
         </div>
         <div class="footer">
             <p>© {{ date('Y') }} Rivalbet · Match #{{ $matchId }}</p>

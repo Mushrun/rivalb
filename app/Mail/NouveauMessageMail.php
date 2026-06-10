@@ -22,8 +22,9 @@ class NouveauMessageMail extends Mailable
 
     public function envelope(): Envelope
     {
+        app()->setLocale($this->recipient->locale ?? 'fr');
         return new Envelope(
-            subject: "💬 Nouveau message de {$this->senderUsername} — RIVALBET",
+            subject: __('email_message_subject', ['sender' => $this->senderUsername]),
         );
     }
 

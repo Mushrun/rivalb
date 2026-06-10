@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="{{ app()->getLocale() }}">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Bienvenue sur Rivalbet</title>
+    <title>{{ __('email_welcome_subject') }}</title>
     <style>
         body { margin: 0; padding: 0; background: #0D0D0D; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; }
         .container { max-width: 520px; margin: 40px auto; background: #1A1A1A; border-radius: 16px; overflow: hidden; }
@@ -26,36 +26,32 @@
     <div class="container">
         <div class="header">
             <h1>RIVALBET</h1>
-            <p>La plateforme de défis compétitifs</p>
+            <p>{{ __('email_welcome_platform') }}</p>
         </div>
         <div class="body">
-            <p class="greeting">Bienvenue, {{ $user->username }} !</p>
-            <p class="text">
-                Ton compte a bien été créé. Tu peux maintenant rejoindre des défis,
-                affronter d'autres joueurs et gagner des RivalCoins.
-            </p>
+            <p class="greeting">{{ __('email_welcome_greeting', ['username' => $user->username]) }}</p>
+            <p class="text">{{ __('email_welcome_body') }}</p>
 
             <div style="text-align:center; margin-bottom: 24px;">
                 <div class="stat">
                     <span class="stat-value">100</span>
-                    <span class="stat-label">Score fiabilité</span>
+                    <span class="stat-label">{{ __('email_welcome_reliability') }}</span>
                 </div>
                 <div class="stat">
                     <span class="stat-value">0 RB</span>
-                    <span class="stat-label">Solde</span>
+                    <span class="stat-label">{{ __('email_welcome_balance') }}</span>
                 </div>
             </div>
 
-            <a href="{{ config('app.url') }}/battle" class="btn">COMMENCER À JOUER</a>
+            <a href="{{ config('app.url') }}/battle" class="btn">{{ __('email_welcome_cta') }}</a>
 
             <hr class="divider">
             <p class="text" style="margin:0; font-size:12px;">
-                Comment ça marche ? Recharge ton solde en RB, crée ou rejoins un défi,
-                jouez votre match et soumettez vos résultats. Simple et rapide.
+                {{ __('email_welcome_how') }}
             </p>
         </div>
         <div class="footer">
-            <p>© {{ date('Y') }} Rivalbet · Tu reçois cet email car tu viens de t'inscrire.</p>
+            <p>© {{ date('Y') }} Rivalbet · {{ __('email_welcome_footer') }}</p>
         </div>
     </div>
 </body>

@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="{{ app()->getLocale() }}">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Réinitialisation de mot de passe — Rivalbet</title>
+    <title>{{ __('email_reset_subject') }}</title>
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -181,22 +181,21 @@
                         <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
                     </svg>
                 </div>
-                <h1>Réinitialise ton mot de passe</h1>
-                <p>Une demande de réinitialisation a été effectuée<br>pour ton compte Rivalbet.</p>
+                <h1>{{ __('email_reset_title') }}</h1>
+                <p>{{ __('email_reset_subtitle') }}</p>
             </div>
 
             <!-- Body -->
             <div class="card-body">
 
                 <p class="greeting">
-                    Bonjour <strong>{{ $username }}</strong>,<br><br>
-                    Clique sur le bouton ci-dessous pour choisir un nouveau mot de passe.
-                    Ce lien est valable <strong style="color:#FFFFFF">60 minutes</strong>.
+                    {!! __('email_reset_greeting', ['username' => '<strong>' . e($username) . '</strong>']) !!}<br><br>
+                    {!! __('email_reset_body') !!}
                 </p>
 
                 <!-- CTA -->
                 <div class="btn-wrap">
-                    <a href="{{ $url }}" class="btn">RÉINITIALISER MON MOT DE PASSE</a>
+                    <a href="{{ $url }}" class="btn">{{ __('email_reset_cta') }}</a>
                 </div>
 
                 <!-- Warning -->
@@ -208,14 +207,14 @@
                             <line x1="12" y1="17" x2="12.01" y2="17"/>
                         </svg>
                     </div>
-                    <p>Si tu n'es pas à l'origine de cette demande, ignore cet email. Ton mot de passe restera inchangé.</p>
+                    <p>{{ __('email_reset_warning') }}</p>
                 </div>
 
                 <hr class="divider">
 
                 <!-- Fallback -->
                 <p class="fallback">
-                    Si le bouton ne fonctionne pas, copie et colle ce lien dans ton navigateur :<br>
+                    {{ __('email_reset_fallback') }}<br>
                     <a href="{{ $url }}">{{ $url }}</a>
                 </p>
 
@@ -225,8 +224,8 @@
         <!-- Footer -->
         <div class="footer">
             <p>
-                © {{ date('Y') }} Rivalbet · Plateforme de défis compétitifs P2P<br>
-                Tu reçois cet email car une réinitialisation a été demandée pour ce compte.
+                © {{ date('Y') }} Rivalbet · {{ __('email_reset_footer1') }}<br>
+                {{ __('email_reset_footer2') }}
             </p>
         </div>
 

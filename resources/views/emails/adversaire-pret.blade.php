@@ -1,17 +1,17 @@
 <x-mail::message>
-# ⚔️ {{ $opponentUsername }} est prêt !
+# {{ __('email_ready_title', ['opponent' => $opponentUsername]) }}
 
-Bonjour **{{ $creator->username }}**,
+{{ __('email_ready_greeting', ['creator' => $creator->username]) }}
 
-**{{ $opponentUsername }}** a marqué **Je suis prêt** pour le **Match #{{ $matchId }}**.
+{{ __('email_ready_body', ['opponent' => $opponentUsername, 'matchId' => $matchId]) }}
 
-Ouvre le chat pour marquer ton tour et lancer le match.
+{{ __('email_ready_hint') }}
 
 <x-mail::button :url="$chatUrl" color="red">
-Ouvrir le chat — Match #{{ $matchId }}
+{{ __('email_ready_cta', ['matchId' => $matchId]) }}
 </x-mail::button>
 
-Bonne chance et que le meilleur gagne ! 🏆
+{{ __('email_ready_wish') }}
 
-**L'équipe RIVALBET**
+**{{ __('email_team') }}**
 </x-mail::message>

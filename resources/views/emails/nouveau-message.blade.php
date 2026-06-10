@@ -1,17 +1,17 @@
 <x-mail::message>
-# 💬 Tu as un nouveau message !
+# {{ __('email_message_title') }}
 
-Bonjour **{{ $recipient->username }}**,
+{{ __('email_message_greeting', ['recipient' => $recipient->username]) }}
 
-**{{ $senderUsername }}** t'a envoyé un message dans le **Match #{{ $matchId }}** :
+{{ __('email_message_body', ['sender' => $senderUsername, 'matchId' => $matchId]) }}
 
 <x-mail::panel>
 {{ $messageBody }}
 </x-mail::panel>
 
 <x-mail::button :url="$chatUrl" color="red">
-Répondre dans le chat
+{{ __('email_message_cta') }}
 </x-mail::button>
 
-**L'équipe RIVALBET**
+**{{ __('email_team') }}**
 </x-mail::message>

@@ -19,13 +19,15 @@ class PasswordResetNotification extends Notification implements ShouldQueue
 
     public function toMail(object $notifiable): MailMessage
     {
+        app()->setLocale($notifiable->locale ?? 'fr');
+
         $url = url(route('password.reset', [
             'token' => $this->token,
             'email' => $notifiable->getEmailForPasswordReset(),
         ], false));
 
         return (new MailMessage)
-            ->subject('Réinitialisation de ton mot de passe — Rivalbet')
+            ->subject(__('email_reset_subject'))
             ->view('emails.password_reset', [
                 'url'      => $url,
                 'username' => $notifiable->username ?? $notifiable->name,

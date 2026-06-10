@@ -1,0 +1,48 @@
+{
+  "email_welcome_subject": "Welcome to Rivalbet!",
+  "email_welcome_platform": "The competitive challenge platform",
+  "email_welcome_greeting": "Welcome, :username!",
+  "email_welcome_body": "Your account has been created. You can now join challenges, face other players and earn RivalCoins.",
+  "email_welcome_reliability": "Reliability score",
+  "email_welcome_balance": "Balance",
+  "email_welcome_cta": "START PLAYING",
+  "email_welcome_how": "How does it work? Top up your RB balance, create or join a challenge, play your match and submit your results. Simple and fast.",
+  "email_welcome_footer": "You're receiving this email because you just signed up.",
+
+  "email_reset_subject": "Reset your password — Rivalbet",
+  "email_reset_title": "Reset your password",
+  "email_reset_subtitle": "A password reset request has been made for your Rivalbet account.",
+  "email_reset_greeting": "Hello :username,",
+  "email_reset_body": "Click the button below to choose a new password. This link is valid for <strong style=\"color:#FFFFFF\">60 minutes</strong>.",
+  "email_reset_cta": "RESET MY PASSWORD",
+  "email_reset_warning": "If you didn't request this, just ignore this email. Your password will remain unchanged.",
+  "email_reset_fallback": "If the button doesn't work, copy and paste this link in your browser:",
+  "email_reset_footer1": "Competitive P2P challenge platform",
+  "email_reset_footer2": "You're receiving this email because a password reset was requested for this account.",
+
+  "email_match_won_title": "VICTORY!",
+  "email_match_lost_title": "DEFEAT",
+  "email_match_won_subject": "Victory! You won :prize RB",
+  "email_match_lost_subject": "Your Rivalbet match result",
+  "email_match_greeting_won": "Congratulations! You won this match and your earnings have been credited to your balance.",
+  "email_match_greeting_lost": "You lost this match. Don't give up, come back stronger!",
+  "email_match_earned": "EARNINGS CREDITED",
+  "email_match_lost_bet": "BET LOST",
+  "email_match_cta": "VIEW MATCH",
+
+  "email_ready_subject": "⚔️ :opponent is ready — RIVALBET Match #:matchId",
+  "email_ready_title": "⚔️ :opponent is ready!",
+  "email_ready_greeting": "Hello **:creator**,",
+  "email_ready_body": "**:opponent** marked **I'm ready** for **Match #:matchId**.",
+  "email_ready_hint": "Open the chat to mark your turn and start the match.",
+  "email_ready_cta": "Open chat — Match #:matchId",
+  "email_ready_wish": "Good luck and may the best player win! 🏆",
+
+  "email_message_subject": "💬 New message from :sender — RIVALBET",
+  "email_message_title": "💬 You have a new message!",
+  "email_message_greeting": "Hello **:recipient**,",
+  "email_message_body": "**:sender** sent you a message in **Match #:matchId**:",
+  "email_message_cta": "Reply in chat",
+
+  "email_team": "The RIVALBET Team"
+}

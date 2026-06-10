@@ -22,9 +22,10 @@ class MatchResultMail extends Mailable
 
     public function envelope(): Envelope
     {
+        app()->setLocale($this->recipient->locale ?? 'fr');
         $subject = $this->won
-            ? "Victoire ! Tu as remporté {$this->prize} RB"
-            : 'Résultat de ton match Rivalbet';
+            ? __('email_match_won_subject', ['prize' => $this->prize])
+            : __('email_match_lost_subject');
 
         return new Envelope(subject: $subject);
     }

@@ -17,7 +17,8 @@ class WelcomeMail extends Mailable
 
     public function envelope(): Envelope
     {
-        return new Envelope(subject: 'Bienvenue sur Rivalbet !');
+        app()->setLocale($this->user->locale ?? 'fr');
+        return new Envelope(subject: __('email_welcome_subject'));
     }
 
     public function content(): Content

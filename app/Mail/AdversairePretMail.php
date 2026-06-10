@@ -21,8 +21,9 @@ class AdversairePretMail extends Mailable
 
     public function envelope(): Envelope
     {
+        app()->setLocale($this->creator->locale ?? 'fr');
         return new Envelope(
-            subject: "⚔️ {$this->opponentUsername} est prêt — RIVALBET Match #{$this->matchId}",
+            subject: __('email_ready_subject', ['opponent' => $this->opponentUsername, 'matchId' => $this->matchId]),
         );
     }
 

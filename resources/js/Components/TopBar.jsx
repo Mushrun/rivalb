@@ -45,8 +45,20 @@ function useRBPrice() {
 
 function LangToggle() {
     const { i18n } = useTranslation();
+    const { auth } = usePage().props;
     const lang = i18n.language?.startsWith('en') ? 'en' : 'fr';
-    const toggle = () => i18n.changeLanguage(lang === 'fr' ? 'en' : 'fr');
+    const toggle = () => {
+        const newLang = lang === 'fr' ? 'en' : 'fr';
+        i18n.changeLanguage(newLang);
+        if (auth?.user) {
+            const token = document.querySelector('meta[name="csrf-token"]')?.content ?? '';
+            fetch('/user/locale', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': token },
+                body: JSON.stringify({ locale: newLang }),
+            }).catch(() => {});
+        }
+    };
     return (
         <button onClick={toggle}
             className="text-[10px] font-black px-2 py-0.5 rounded-lg border transition-all"

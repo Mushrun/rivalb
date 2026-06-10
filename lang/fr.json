@@ -1,0 +1,48 @@
+{
+  "email_welcome_subject": "Bienvenue sur Rivalbet !",
+  "email_welcome_platform": "La plateforme de défis compétitifs",
+  "email_welcome_greeting": "Bienvenue, :username !",
+  "email_welcome_body": "Ton compte a bien été créé. Tu peux maintenant rejoindre des défis, affronter d'autres joueurs et gagner des RivalCoins.",
+  "email_welcome_reliability": "Score fiabilité",
+  "email_welcome_balance": "Solde",
+  "email_welcome_cta": "COMMENCER À JOUER",
+  "email_welcome_how": "Comment ça marche ? Recharge ton solde en RB, crée ou rejoins un défi, jouez votre match et soumettez vos résultats. Simple et rapide.",
+  "email_welcome_footer": "Tu reçois cet email car tu viens de t'inscrire.",
+
+  "email_reset_subject": "Réinitialisation de ton mot de passe — Rivalbet",
+  "email_reset_title": "Réinitialise ton mot de passe",
+  "email_reset_subtitle": "Une demande de réinitialisation a été effectuée pour ton compte Rivalbet.",
+  "email_reset_greeting": "Bonjour :username,",
+  "email_reset_body": "Clique sur le bouton ci-dessous pour choisir un nouveau mot de passe. Ce lien est valable <strong style=\"color:#FFFFFF\">60 minutes</strong>.",
+  "email_reset_cta": "RÉINITIALISER MON MOT DE PASSE",
+  "email_reset_warning": "Si tu n'es pas à l'origine de cette demande, ignore cet email. Ton mot de passe restera inchangé.",
+  "email_reset_fallback": "Si le bouton ne fonctionne pas, copie et colle ce lien dans ton navigateur :",
+  "email_reset_footer1": "Plateforme de défis compétitifs P2P",
+  "email_reset_footer2": "Tu reçois cet email car une réinitialisation a été demandée pour ce compte.",
+
+  "email_match_won_title": "VICTOIRE !",
+  "email_match_lost_title": "DÉFAITE",
+  "email_match_won_subject": "Victoire ! Tu as remporté :prize RB",
+  "email_match_lost_subject": "Résultat de ton match Rivalbet",
+  "email_match_greeting_won": "Félicitations ! Tu as remporté ce match et tes gains ont été crédités sur ton solde.",
+  "email_match_greeting_lost": "Tu as perdu ce match. Ne te décourage pas, reviens plus fort !",
+  "email_match_earned": "GAINS CRÉDITÉS",
+  "email_match_lost_bet": "MISE PERDUE",
+  "email_match_cta": "VOIR LE MATCH",
+
+  "email_ready_subject": "⚔️ :opponent est prêt — RIVALBET Match #:matchId",
+  "email_ready_title": "⚔️ :opponent est prêt !",
+  "email_ready_greeting": "Bonjour **:creator**,",
+  "email_ready_body": "**:opponent** a marqué **Je suis prêt** pour le **Match #:matchId**.",
+  "email_ready_hint": "Ouvre le chat pour marquer ton tour et lancer le match.",
+  "email_ready_cta": "Ouvrir le chat — Match #:matchId",
+  "email_ready_wish": "Bonne chance et que le meilleur gagne ! 🏆",
+
+  "email_message_subject": "💬 Nouveau message de :sender — RIVALBET",
+  "email_message_title": "💬 Tu as un nouveau message !",
+  "email_message_greeting": "Bonjour **:recipient**,",
+  "email_message_body": "**:sender** t'a envoyé un message dans le **Match #:matchId** :",
+  "email_message_cta": "Répondre dans le chat",
+
+  "email_team": "L'équipe RIVALBET"
+}
