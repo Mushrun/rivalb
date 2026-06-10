@@ -5,13 +5,17 @@ import AppLayout from '../Components/AppLayout';
 import { useRBDeposit }   from '../hooks/useRBDeposit';
 import { useUSDTDeposit } from '../hooks/useUSDTDeposit';
 
-const statusLabel = { en_attente: 'EN ATTENTE', valide: 'VALIDÉ', refuse: 'REFUSÉ' };
 const statusColor = { en_attente: '#FF9500', valide: '#4CD964', refuse: '#FF3B30' };
 const statusBg    = { en_attente: 'rgba(255,149,0,0.12)', valide: 'rgba(76,217,100,0.12)', refuse: 'rgba(255,59,48,0.12)' };
 
 export default function Recharge() {
     const { balance, balance_usdt, history, flash, auth } = usePage().props;
     const { t } = useTranslation();
+    const statusLabel = {
+        en_attente: t('recharge.status_waiting'),
+        valide:     t('recharge.status_validated'),
+        refuse:     t('recharge.status_refused'),
+    };
     const walletConnected = !!auth?.user?.wallet_address;
 
     const [tab,     setTab]     = useState('rb');
@@ -36,7 +40,7 @@ export default function Recharge() {
             const result = await usdt.deposit(numVal);
             if (!result) { setSending(false); return; }
             router.post('/recharge', { tx_hash: result.hash, amount_usdt: result.amountUSDT, currency: 'usdt' }, {
-                onSuccess: () => { setSuccess('Dépôt USDT soumis ! Vérification en cours.'); setAmount(''); usdt.reset(); },
+                onSuccess: () => { setSuccess(t('recharge.deposit_usdt_submitted')); setAmount(''); usdt.reset(); },
                 onError:   () => usdt.reset(),
                 onFinish:  () => setSending(false),
             });
@@ -44,7 +48,7 @@ export default function Recharge() {
             const result = await rb.deposit(numVal);
             if (!result) { setSending(false); return; }
             router.post('/recharge', { tx_hash: result.hash, amount_rb: result.amountRB, currency: 'rb' }, {
-                onSuccess: () => { setSuccess('Dépôt RB soumis ! Vérification en cours.'); setAmount(''); rb.reset(); },
+                onSuccess: () => { setSuccess(t('recharge.deposit_rb_submitted')); setAmount(''); rb.reset(); },
                 onError:   () => rb.reset(),
                 onFinish:  () => setSending(false),
             });
@@ -167,7 +171,7 @@ export default function Recharge() {
                 {hook.status === 'submitted' && hook.txHash && (
                     <div className="rounded-xl px-4 py-3"
                         style={{ background: 'rgba(76,217,100,0.08)', border: '1px solid rgba(76,217,100,0.2)' }}>
-                        <p className="text-[#4CD964] text-xs font-bold mb-1">Transaction envoyée ✓</p>
+                        <p className="text-[#4CD964] text-xs font-bold mb-1">{t('recharge.tx_sent')}</p>
                         <p className="text-[#555] text-[10px] font-mono break-all">{hook.txHash}</p>
                     </div>
                 )}

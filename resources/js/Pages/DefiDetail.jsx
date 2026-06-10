@@ -28,7 +28,7 @@ export default function DefiDetail() {
             <AppLayout>
                 <TopBar />
                 <div className="flex items-center justify-center h-64">
-                    <p className="text-[#555]">Défi introuvable.</p>
+                    <p className="text-[#555]">{t('defi.not_found')}</p>
                 </div>
             </AppLayout>
         );
@@ -114,13 +114,13 @@ export default function DefiDetail() {
                             </div>
                             <div className="flex items-center gap-1">
                                 <span className="w-2 h-2 rounded-full" style={{ background: '#4CD964' }} />
-                                <span className="text-[#4CD964] text-xs font-semibold">Fiabilité {creator.reliability_score}%</span>
+                                <span className="text-[#4CD964] text-xs font-semibold">{t('defi.reliability', { score: creator.reliability_score })}</span>
                             </div>
                         </div>
                         <Link href={`/profil/${creator.id}`}
                             className="px-3 py-1.5 rounded-xl text-xs font-semibold"
                             style={{ background: '#2A2A2A', color: '#CCCCCC' }}>
-                            Profil
+                            {t('defi.profile')}
                         </Link>
                     </div>
                     <div className="flex gap-2">
@@ -154,7 +154,7 @@ export default function DefiDetail() {
                 {/* Fighter du créateur */}
                 {rules.fighter && (
                     <div className="rounded-2xl p-4" style={{ background: '#1A1A1A' }}>
-                        <p className="text-[#666] text-[10px] tracking-widest font-semibold mb-3">FIGHTER DU CRÉATEUR</p>
+                        <p className="text-[#666] text-[10px] tracking-widest font-semibold mb-3">{t('defi.creator_fighter')}</p>
                         <div className="flex gap-2">
                             {rules.fighter.split(', ').map(name => {
                                 const img = fighterMap[name.trim()];
@@ -178,7 +178,7 @@ export default function DefiDetail() {
                 {allowedChars.length > 0 && (
                     <div className="rounded-2xl p-4" style={{ background: '#1A1A1A' }}>
                         <div className="flex items-center justify-between mb-1">
-                            <p className="text-[#666] text-[10px] tracking-widest font-semibold">PERSONNAGES AUTORISÉS</p>
+                            <p className="text-[#666] text-[10px] tracking-widest font-semibold">{t('defi.allowed_chars')}</p>
                             {canJoin && !done && (
                                 <span className="text-xs font-bold px-2 py-0.5 rounded-lg"
                                     style={{
@@ -192,7 +192,7 @@ export default function DefiDetail() {
 
                         {canJoin && !done && (
                             <p className="text-[#FF3B30] text-[10px] mb-3 font-semibold">
-                                ↓ Clique pour choisir {maxSelect === 1 ? 'ton personnage' : `tes ${maxSelect} personnages`}
+                                {maxSelect === 1 ? t('defi.choose_char_singular') : t('defi.choose_char_plural', { n: maxSelect })}
                             </p>
                         )}
 
@@ -238,12 +238,12 @@ export default function DefiDetail() {
                 {/* Règles du combat */}
                 {(rules.combat || rules.position || rules.heros || rules.duree) && (
                     <div className="rounded-2xl p-4" style={{ background: '#1A1A1A' }}>
-                        <p className="text-[#666] text-[10px] tracking-widest font-semibold mb-3">PARAMÈTRES DU COMBAT</p>
+                        <p className="text-[#666] text-[10px] tracking-widest font-semibold mb-3">{t('defi.combat_params')}</p>
                         <div className="grid grid-cols-2 gap-3">
-                            {rules.combat   && <div><p className="text-[#666] text-xs mb-0.5">Règles</p><p className="text-white font-bold text-sm">{rules.combat}</p></div>}
-                            {rules.position && <div><p className="text-[#666] text-xs mb-0.5">Position</p><p className="text-white font-bold text-sm">{rules.position}</p></div>}
-                            {rules.heros    && <div><p className="text-[#666] text-xs mb-0.5">Héros</p><p className="text-white font-bold text-sm">{rules.heros}</p></div>}
-                            {rules.duree    && <div><p className="text-[#666] text-xs mb-0.5">Durée de manche</p><p className="text-white font-bold text-sm">{rules.duree}</p></div>}
+                            {rules.combat   && <div><p className="text-[#666] text-xs mb-0.5">{t('defi.rule_label')}</p><p className="text-white font-bold text-sm">{rules.combat}</p></div>}
+                            {rules.position && <div><p className="text-[#666] text-xs mb-0.5">{t('defi.position_label')}</p><p className="text-white font-bold text-sm">{rules.position}</p></div>}
+                            {rules.heros    && <div><p className="text-[#666] text-xs mb-0.5">{t('defi.heroes_label')}</p><p className="text-white font-bold text-sm">{rules.heros}</p></div>}
+                            {rules.duree    && <div><p className="text-[#666] text-xs mb-0.5">{t('defi.duration_label')}</p><p className="text-white font-bold text-sm">{rules.duree}</p></div>}
                         </div>
                     </div>
                 )}
@@ -276,25 +276,25 @@ export default function DefiDetail() {
                                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
                                         <polyline points="20 6 9 17 4 12"/>
                                     </svg>
-                                    ACCEPTER LE DÉFI — {challenge.bet_amount} {challenge.currency === 'usdt' ? 'USDT' : 'RB'}
+                                    {t('defi.accept_with_amount', { amount: challenge.bet_amount, currency: challenge.currency === 'usdt' ? 'USDT' : 'RB' })}
                                 </>
                             )}
                         </button>
                         {!ready && allowedChars.length > 0 && (
                             <p className="text-[#555] text-xs text-center">
-                                Sélectionne {maxSelect === 1 ? 'un héros' : `${maxSelect} héros`} pour activer le bouton.
+                                {maxSelect === 1 ? t('defi.select_hero_singular') : t('defi.select_hero_plural', { n: maxSelect })}
                             </p>
                         )}
                         <p className="text-[#444] text-xs text-center px-4">
-                            En acceptant, {challenge.bet_amount} RB seront débités de ton solde et placés en séquestre.
+                            {t('defi.escrow_note', { amount: challenge.bet_amount, currency: challenge.currency === 'usdt' ? 'USDT' : 'RB' })}
                         </p>
                     </>
                 ) : (
                     <div className="rounded-2xl p-4 text-center" style={{ background: '#1A1A1A' }}>
                         <p className="text-[#888] text-sm">
                             {challenge.status !== 'ouvert'
-                                ? 'Ce défi n\'est plus disponible.'
-                                : `Solde ${challenge.currency === 'usdt' ? 'USDT' : 'RB'} insuffisant pour rejoindre ce défi.`}
+                                ? t('defi.not_available')
+                                : t('defi.insufficient_balance', { currency: challenge.currency === 'usdt' ? 'USDT' : 'RB' })}
                         </p>
                     </div>
                 )}

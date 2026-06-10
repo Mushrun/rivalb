@@ -49,6 +49,7 @@ function Row({ icon, label, value, onClick, danger, toggle, toggled, onToggle, l
 
 /* ── Modals ── */
 function ModalPseudo({ currentUsername, onClose }) {
+    const { t } = useTranslation();
     const [value,   setValue]   = useState(currentUsername ?? '');
     const [saving,  setSaving]  = useState(false);
     const [error,   setError]   = useState('');
@@ -58,13 +59,13 @@ function ModalPseudo({ currentUsername, onClose }) {
         setSaving(true);
         router.post('/profil/update', { username: value.trim() }, {
             onSuccess: () => onClose(),
-            onError:   (errs) => { setError(errs.username ?? 'Erreur.'); setSaving(false); },
+            onError:   (errs) => { setError(errs.username ?? t('common.error')); setSaving(false); },
             onFinish:  () => setSaving(false),
         });
     };
 
     return (
-        <Modal title="Changer de pseudo" onClose={onClose}>
+        <Modal title={t('settings.modal_pseudo_title')} onClose={onClose}>
             <input value={value} onChange={e => { setValue(e.target.value); setError(''); }}
                 className="w-full rounded-xl px-4 py-3 text-white text-sm outline-none mb-1"
                 style={{ background: '#0D0D0D', border: `1px solid ${error ? '#FF3B30' : '#2A2A2A'}` }} />
@@ -73,13 +74,14 @@ function ModalPseudo({ currentUsername, onClose }) {
             <button onClick={save} disabled={saving || !value.trim()}
                 className="w-full rounded-xl py-3 font-bold text-sm"
                 style={{ background: '#FF3B30', color: '#FFF', opacity: saving ? 0.7 : 1 }}>
-                {saving ? 'ENREGISTREMENT...' : 'ENREGISTRER'}
+                {saving ? t('settings.saving') : t('settings.save_btn')}
             </button>
         </Modal>
     );
 }
 
 function ModalPassword({ onClose }) {
+    const { t } = useTranslation();
     const [form,   setForm]   = useState({ current_password: '', password: '', password_confirmation: '' });
     const [saving, setSaving] = useState(false);
     const [errors, setErrors] = useState({});
@@ -96,7 +98,7 @@ function ModalPassword({ onClose }) {
     };
 
     if (done) return (
-        <Modal title="Mot de passe" onClose={onClose}>
+        <Modal title={t('settings.modal_password_title')} onClose={onClose}>
             <div className="flex flex-col items-center gap-3 py-4">
                 <div className="w-14 h-14 rounded-full flex items-center justify-center"
                     style={{ background: 'rgba(76,217,100,0.15)' }}>
@@ -104,17 +106,17 @@ function ModalPassword({ onClose }) {
                         <polyline points="20 6 9 17 4 12"/>
                     </svg>
                 </div>
-                <p className="text-[#4CD964] font-bold">Mot de passe mis à jour !</p>
+                <p className="text-[#4CD964] font-bold">{t('settings.modal_password_done')}</p>
             </div>
         </Modal>
     );
 
     return (
-        <Modal title="Changer le mot de passe" onClose={onClose}>
+        <Modal title={t('settings.modal_password_title')} onClose={onClose}>
             {[
-                { key: 'current_password',      label: 'Mot de passe actuel' },
-                { key: 'password',              label: 'Nouveau mot de passe' },
-                { key: 'password_confirmation', label: 'Confirmer le nouveau' },
+                { key: 'current_password',      label: t('settings.current_password_label') },
+                { key: 'password',              label: t('settings.new_password_label') },
+                { key: 'password_confirmation', label: t('settings.confirm_new_password_label') },
             ].map(f => (
                 <div key={f.key} className="mb-3">
                     <p className="text-[#666] text-xs mb-1">{f.label}</p>
@@ -128,13 +130,14 @@ function ModalPassword({ onClose }) {
             <button onClick={save} disabled={saving}
                 className="w-full rounded-xl py-3 font-bold text-sm mt-2"
                 style={{ background: '#FF3B30', color: '#FFF', opacity: saving ? 0.7 : 1 }}>
-                {saving ? 'MISE À JOUR...' : 'METTRE À JOUR'}
+                {saving ? t('settings.updating') : t('settings.update_btn')}
             </button>
         </Modal>
     );
 }
 
 function ModalBio({ currentBio, onClose }) {
+    const { t } = useTranslation();
     const [bio,    setBio]    = useState(currentBio ?? '');
     const [saving, setSaving] = useState(false);
 
@@ -148,7 +151,7 @@ function ModalBio({ currentBio, onClose }) {
     };
 
     return (
-        <Modal title="Ma bio" onClose={onClose}>
+        <Modal title={t('settings.modal_bio_title')} onClose={onClose}>
             <textarea value={bio} onChange={e => setBio(e.target.value)} rows={4} maxLength={300}
                 className="w-full rounded-xl px-4 py-3 text-white text-sm outline-none resize-none mb-1"
                 style={{ background: '#0D0D0D', border: '1px solid #2A2A2A' }} />
@@ -156,13 +159,14 @@ function ModalBio({ currentBio, onClose }) {
             <button onClick={save} disabled={saving}
                 className="w-full rounded-xl py-3 font-bold text-sm"
                 style={{ background: '#FF3B30', color: '#FFF', opacity: saving ? 0.7 : 1 }}>
-                {saving ? 'ENREGISTREMENT...' : 'ENREGISTRER'}
+                {saving ? t('settings.saving') : t('settings.save_btn')}
             </button>
         </Modal>
     );
 }
 
 function ModalPhoto({ currentPath, onClose }) {
+    const { t } = useTranslation();
     const [file,    setFile]    = useState(null);
     const [preview, setPreview] = useState(currentPath ? resolveMediaUrl(currentPath) : null);
     const [saving,  setSaving]  = useState(false);
@@ -186,7 +190,7 @@ function ModalPhoto({ currentPath, onClose }) {
     };
 
     return (
-        <Modal title="Photo de profil" onClose={onClose}>
+        <Modal title={t('settings.modal_photo_title')} onClose={onClose}>
             <input ref={fileRef} type="file" accept="image/jpg,image/jpeg,image/png,image/webp" className="hidden" onChange={handleFile} />
             <div className="flex flex-col items-center gap-4 mb-5">
                 <div className="w-24 h-24 rounded-2xl overflow-hidden flex items-center justify-center"
@@ -205,12 +209,12 @@ function ModalPhoto({ currentPath, onClose }) {
                 <button onClick={() => fileRef.current.click()}
                     className="w-full rounded-xl py-3 font-bold text-sm"
                     style={{ background: '#2A2A2A', color: '#FFF' }}>
-                    CHOISIR UNE PHOTO
+                    {t('settings.choose_photo')}
                 </button>
                 <button onClick={save} disabled={!file || saving}
                     className="w-full rounded-xl py-3 font-bold text-sm transition-opacity"
                     style={{ background: '#FF3B30', color: '#FFF', opacity: file && !saving ? 1 : 0.35 }}>
-                    {saving ? 'ENREGISTREMENT...' : 'ENREGISTRER'}
+                    {saving ? t('settings.saving') : t('settings.save_btn')}
                 </button>
             </div>
         </Modal>
@@ -218,26 +222,30 @@ function ModalPhoto({ currentPath, onClose }) {
 }
 
 function ModalDelete({ onClose }) {
+    const { t } = useTranslation();
+    const confirmWord = t('settings.delete_confirm_word');
     const [confirm, setConfirm] = useState('');
     return (
-        <Modal title="Supprimer le compte" onClose={onClose}>
+        <Modal title={t('settings.modal_delete_title')} onClose={onClose}>
             <div className="rounded-xl p-3 mb-4 flex items-start gap-2"
                 style={{ background: 'rgba(255,59,48,0.08)', border: '1px solid rgba(255,59,48,0.2)' }}>
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#FF3B30" strokeWidth="2" className="flex-shrink-0 mt-0.5">
                     <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
                     <line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/>
                 </svg>
-                <p className="text-[#FF3B30] text-xs">Cette action est irréversible. Ton solde RB et tout ton historique seront supprimés.</p>
+                <p className="text-[#FF3B30] text-xs">{t('settings.modal_delete_warning')}</p>
             </div>
-            <p className="text-[#888] text-xs mb-2">Tape <span className="text-white font-bold">SUPPRIMER</span> pour confirmer</p>
+            <p className="text-[#888] text-xs mb-2">
+                {t('settings.modal_delete_hint_before')} <span className="text-white font-bold">{confirmWord}</span> {t('settings.modal_delete_hint_after')}
+            </p>
             <input value={confirm} onChange={e => setConfirm(e.target.value)}
-                placeholder="SUPPRIMER"
+                placeholder={confirmWord}
                 className="w-full rounded-xl px-4 py-3 text-white text-sm outline-none mb-4"
                 style={{ background: '#0D0D0D', border: '1px solid #2A2A2A' }} />
-            <button disabled={confirm !== 'SUPPRIMER'}
+            <button disabled={confirm !== confirmWord}
                 className="w-full rounded-xl py-3 font-bold text-sm transition-opacity"
-                style={{ background: '#FF3B30', color: '#FFF', opacity: confirm === 'SUPPRIMER' ? 1 : 0.35 }}>
-                SUPPRIMER DÉFINITIVEMENT
+                style={{ background: '#FF3B30', color: '#FFF', opacity: confirm === confirmWord ? 1 : 0.35 }}>
+                {t('settings.delete_btn_label')}
             </button>
         </Modal>
     );
@@ -266,6 +274,7 @@ function Modal({ title, onClose, children }) {
 }
 
 function ModalWallet({ currentAddress, onClose }) {
+    const { t } = useTranslation();
     const { connect, status, error, reset } = useMetaMask();
     const [serverError, setServerError] = useState('');
     const [linked, setLinked]           = useState(false);
@@ -300,7 +309,7 @@ function ModalWallet({ currentAddress, onClose }) {
     };
 
     if (linked) return (
-        <Modal title="Wallet connecté" onClose={onClose}>
+        <Modal title={t('settings.modal_wallet_linked_title')} onClose={onClose}>
             <div className="flex flex-col items-center gap-3 py-4">
                 <div className="w-14 h-14 rounded-full flex items-center justify-center"
                     style={{ background: 'rgba(76,217,100,0.15)' }}>
@@ -308,28 +317,28 @@ function ModalWallet({ currentAddress, onClose }) {
                         <polyline points="20 6 9 17 4 12"/>
                     </svg>
                 </div>
-                <p className="text-[#4CD964] font-bold text-base">Wallet lié avec succès !</p>
+                <p className="text-[#4CD964] font-bold text-base">{t('settings.modal_wallet_linked_success')}</p>
             </div>
         </Modal>
     );
 
     return (
-        <Modal title="Connecter MetaMask" onClose={onClose}>
+        <Modal title={t('settings.modal_wallet_connect_title')} onClose={onClose}>
             {currentAddress ? (
                 <div className="flex flex-col gap-4">
                     <div className="rounded-xl px-4 py-3" style={{ background: 'rgba(76,217,100,0.08)', border: '1px solid rgba(76,217,100,0.2)' }}>
-                        <p className="text-[#888] text-[10px] tracking-widest font-semibold mb-1">WALLET ACTUEL</p>
+                        <p className="text-[#888] text-[10px] tracking-widest font-semibold mb-1">{t('settings.wallet_current')}</p>
                         <p className="text-[#4CD964] font-mono text-xs break-all">{currentAddress}</p>
                     </div>
                     <button onClick={handleConnect}
                         className="w-full rounded-xl py-3 font-bold text-sm"
                         style={{ background: '#FF9500', color: '#0D0D0D' }}>
-                        CHANGER DE WALLET
+                        {t('settings.wallet_change')}
                     </button>
                     <button onClick={handleUnlink}
                         className="w-full rounded-xl py-3 font-bold text-sm"
                         style={{ background: 'rgba(255,59,48,0.1)', color: '#FF3B30', border: '1px solid rgba(255,59,48,0.3)' }}>
-                        DÉLIER CE WALLET
+                        {t('settings.wallet_unlink')}
                     </button>
                 </div>
             ) : (
@@ -343,7 +352,7 @@ function ModalWallet({ currentAddress, onClose }) {
                             <line x1="12" y1="17" x2="12.01" y2="17"/>
                         </svg>
                         <p className="text-[#888] text-xs leading-relaxed">
-                            Lie ton wallet MetaMask pour effectuer des dépôts et retraits en crypto directement depuis l'application.
+                            {t('settings.wallet_info')}
                         </p>
                     </div>
 
@@ -363,7 +372,7 @@ function ModalWallet({ currentAddress, onClose }) {
                                 <path d="M21 12a9 9 0 1 1-6.219-8.56"/>
                             </svg>
                         )}
-                        {status === 'signing' ? 'Signe dans MetaMask...' : status === 'connecting' ? 'Connexion...' : '🦊 CONNECTER METAMASK'}
+                        {status === 'signing' ? t('settings.wallet_signing') : status === 'connecting' ? t('settings.wallet_connecting') : `🦊 ${t('settings.wallet_btn')}`}
                     </button>
                 </div>
             )}
@@ -391,7 +400,6 @@ export default function Settings() {
         <AppLayout>
             <TopBar />
 
-            {/* Header */}
             <div className="flex items-center gap-3 px-4 pt-2 pb-4">
                 <Link href="/profil">
                     <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#FFF" strokeWidth="2.5" strokeLinecap="round">
@@ -402,70 +410,62 @@ export default function Settings() {
                 <h1 className="text-white font-black text-xl">{t('settings.title')}</h1>
             </div>
 
-            {/* PROFIL */}
-            <Section title="PROFIL">
-                <Row icon={<UserIcon />} label="Pseudo" value={username}
+            <Section title={t('settings.section_profil')}>
+                <Row icon={<UserIcon />} label={t('settings.pseudo_label')} value={username}
                     onClick={() => setModal('pseudo')} />
-                <Row icon={<EditIcon />} label="Ma bio" value={bio ? bio.slice(0, 20) + (bio.length > 20 ? '…' : '') : ''}
+                <Row icon={<EditIcon />} label={t('settings.bio_label')} value={bio ? bio.slice(0, 20) + (bio.length > 20 ? '…' : '') : ''}
                     onClick={() => setModal('bio')} />
-                <Row icon={<ImgIcon />} label="Photo de profil"
+                <Row icon={<ImgIcon />} label={t('settings.profile_photo')}
                     onClick={() => setModal('photo')} last />
             </Section>
 
-            {/* WALLET */}
-            <Section title="WALLET METAMASK">
+            <Section title={t('settings.section_wallet')}>
                 <Row
                     icon={<WalletIcon connected={!!walletAddress} />}
-                    label={walletAddress ? 'Wallet lié' : 'Connecter MetaMask'}
-                    value={walletAddress ? `${walletAddress.slice(0, 6)}…${walletAddress.slice(-4)}` : 'Non lié'}
+                    label={walletAddress ? t('settings.wallet_linked') : t('settings.modal_wallet_connect_title')}
+                    value={walletAddress ? `${walletAddress.slice(0, 6)}…${walletAddress.slice(-4)}` : t('settings.wallet_not_linked')}
                     onClick={() => setModal('wallet')}
                     last
                 />
             </Section>
 
-            {/* SÉCURITÉ */}
-            <Section title="SÉCURITÉ">
-                <Row icon={<LockIcon />} label="Changer le mot de passe"
+            <Section title={t('settings.section_security')}>
+                <Row icon={<LockIcon />} label={t('settings.change_password')}
                     onClick={() => setModal('password')} />
-                <Row icon={<ShieldIcon />} label="Authentification 2 facteurs" value="Inactif"
+                <Row icon={<ShieldIcon />} label={t('settings.two_fa')} value={t('settings.inactive')}
                     onClick={() => {}} last />
             </Section>
 
-            {/* NOTIFICATIONS */}
-            <Section title="NOTIFICATIONS">
-                <Row icon={<BellIcon color="#CCCCCC" />} label="Défis reçus"
+            <Section title={t('settings.section_notifications')}>
+                <Row icon={<BellIcon color="#CCCCCC" />} label={t('settings.notif_challenges')}
                     toggle toggled={notifs.defis} onToggle={() => toggle('defis')} />
-                <Row icon={<BellIcon color="#CCCCCC" />} label="Résultats de match"
+                <Row icon={<BellIcon color="#CCCCCC" />} label={t('settings.notif_results')}
                     toggle toggled={notifs.resultats} onToggle={() => toggle('resultats')} />
-                <Row icon={<BellIcon color="#CCCCCC" />} label="Litiges & Support"
+                <Row icon={<BellIcon color="#CCCCCC" />} label={t('settings.notif_disputes')}
                     toggle toggled={notifs.litiges} onToggle={() => toggle('litiges')} />
-                <Row icon={<BellIcon color="#CCCCCC" />} label="Promotions"
+                <Row icon={<BellIcon color="#CCCCCC" />} label={t('settings.notif_promos')}
                     toggle toggled={notifs.promo} onToggle={() => toggle('promo')} last />
             </Section>
 
-            {/* CONFIDENTIALITÉ */}
-            <Section title="CONFIDENTIALITÉ">
-                <Row icon={<EyeIcon />} label="Profil public"
+            <Section title={t('settings.section_privacy')}>
+                <Row icon={<EyeIcon />} label={t('settings.public_profile')}
                     toggle toggled={profil.public} onToggle={() => setProfil(p => ({ ...p, public: !p.public }))} />
-                <Row icon={<EyeIcon />} label="Afficher mon solde RB"
+                <Row icon={<EyeIcon />} label={t('settings.show_balance')}
                     toggle toggled={profil.solde} onToggle={() => setProfil(p => ({ ...p, solde: !p.solde }))} last />
             </Section>
 
-            {/* LANGUE */}
             <Section title={t('settings.language').toUpperCase()}>
                 <Row icon={<GlobeIcon />} label={t('settings.language')} value={currentLang}
                     onClick={toggleLang} last />
             </Section>
 
-            {/* COMPTE */}
-            <Section title="COMPTE">
-                <Row icon={<TrashIcon />} label="Supprimer mon compte"
+            <Section title={t('settings.section_account')}>
+                <Row icon={<TrashIcon />} label={t('settings.delete_account')}
                     onClick={() => setModal('delete')} danger last />
             </Section>
 
             <div className="h-6" />
 
-            {/* Modals */}
             {modal === 'pseudo'   && <ModalPseudo   currentUsername={username}                onClose={() => setModal(null)} />}
             {modal === 'bio'      && <ModalBio      currentBio={bio}                           onClose={() => setModal(null)} />}
             {modal === 'password' && <ModalPassword                                            onClose={() => setModal(null)} />}

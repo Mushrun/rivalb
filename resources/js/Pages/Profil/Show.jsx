@@ -1,11 +1,11 @@
 import { useState } from 'react';
 import { Link, usePage } from '@inertiajs/react';
+import { useTranslation } from 'react-i18next';
 import AppLayout from '../../Components/AppLayout';
 import TopBar from '../../Components/TopBar';
 import { resolveMediaUrl } from '../../utils/media';
 
 const sentimentColor = { positive: '#4CD964', negative: '#FF3B30', neutre: '#FF9500' };
-const sentimentLabel = { positive: 'FIABLE', negative: 'LITIGIEUX', neutre: 'À SURVEILLER' };
 
 function Avatar({ path, username, size = 20 }) {
     const url = resolveMediaUrl(path);
@@ -25,7 +25,7 @@ function Avatar({ path, username, size = 20 }) {
 }
 
 function PlayerHeader({ profile, tab, setTab, challengeCount, reviewCount }) {
-    const positiveReviews = reviewCount ?? 0;
+    const { t } = useTranslation();
     return (
         <>
             <TopBar />
@@ -38,21 +38,20 @@ function PlayerHeader({ profile, tab, setTab, challengeCount, reviewCount }) {
                     </div>
                     <div className="flex-1">
                         <h2 className="text-white font-bold text-xl">{profile.username}</h2>
-                        <p className="text-[#888] text-xs">Membre depuis {profile.member_since}</p>
+                        <p className="text-[#888] text-xs">{t('profil.member_since_label')} {profile.member_since}</p>
                     </div>
-                    <Link href={`/challenge/create/1`}
+                    <Link href="/challenge/create/1"
                         className="px-4 py-2 rounded-xl text-white font-bold text-xs"
                         style={{ background: '#FF3B30' }}>
-                        DÉFIER
+                        {t('profil.challenge_btn')}
                     </Link>
                 </div>
 
-                {/* Stats */}
                 <div className="grid grid-cols-3 gap-2 mb-4">
                     {[
-                        { label: 'VICTOIRES', value: profile.wins,   color: '#4CD964' },
-                        { label: 'DÉFAITES',  value: profile.losses, color: '#FF3B30' },
-                        { label: 'COMBATS',   value: profile.total,  color: '#FFFFFF' },
+                        { label: t('profil.wins_label'),   value: profile.wins,   color: '#4CD964' },
+                        { label: t('profil.losses_label'), value: profile.losses, color: '#FF3B30' },
+                        { label: t('profil.fights_label'), value: profile.total,  color: '#FFFFFF' },
                     ].map(s => (
                         <div key={s.label} className="rounded-xl p-3 flex flex-col items-center"
                             style={{ background: '#1A1A1A' }}>
@@ -62,10 +61,9 @@ function PlayerHeader({ profile, tab, setTab, challengeCount, reviewCount }) {
                     ))}
                 </div>
 
-                {/* Fiabilité */}
                 <div className="rounded-xl px-4 py-3 mb-4 flex items-center justify-between"
                     style={{ background: '#1A1A1A' }}>
-                    <span className="text-[#888] text-xs">Fiabilité</span>
+                    <span className="text-[#888] text-xs">{t('profil.reliability_label')}</span>
                     <div className="flex items-center gap-2">
                         <div className="w-24 h-1.5 rounded-full" style={{ background: '#2A2A2A' }}>
                             <div className="h-full rounded-full"
@@ -75,17 +73,16 @@ function PlayerHeader({ profile, tab, setTab, challengeCount, reviewCount }) {
                     </div>
                 </div>
 
-                {/* Tabs */}
                 <div className="flex border-b mb-4" style={{ borderColor: '#1E1E1E' }}>
                     {[
-                        { key: 'INFOS',    label: 'INFOS' },
-                        { key: 'ADS',      label: `ADS (${challengeCount})` },
-                        { key: 'FEEDBACK', label: `FEEDBACK (${reviewCount})` },
-                    ].map(t => (
-                        <button key={t.key} onClick={() => setTab(t.key)}
+                        { key: 'INFOS',    label: t('profil.tabs_infos') },
+                        { key: 'ADS',      label: t('profil.tabs_ads', { n: challengeCount }) },
+                        { key: 'FEEDBACK', label: t('profil.tabs_feedback', { n: reviewCount }) },
+                    ].map(item => (
+                        <button key={item.key} onClick={() => setTab(item.key)}
                             className="flex-1 pb-2 text-xs font-semibold tracking-wider"
-                            style={{ color: tab === t.key ? '#FF3B30' : '#555', borderBottom: tab === t.key ? '2px solid #FF3B30' : '2px solid transparent' }}>
-                            {t.label}
+                            style={{ color: tab === item.key ? '#FF3B30' : '#555', borderBottom: tab === item.key ? '2px solid #FF3B30' : '2px solid transparent' }}>
+                            {item.label}
                         </button>
                     ))}
                 </div>
@@ -95,17 +92,18 @@ function PlayerHeader({ profile, tab, setTab, challengeCount, reviewCount }) {
 }
 
 function InfosTab({ profile }) {
+    const { t } = useTranslation();
     return (
         <div className="px-4 flex flex-col gap-4">
             <div>
-                <p className="text-[#888] text-[11px] font-bold tracking-widest mb-2">INFORMATIONS</p>
+                <p className="text-[#888] text-[11px] font-bold tracking-widest mb-2">{t('profil.section_info')}</p>
                 <div className="rounded-2xl overflow-hidden" style={{ background: '#1A1A1A' }}>
                     <div className="flex items-center justify-between px-4 py-4" style={{ borderBottom: '1px solid #2A2A2A' }}>
-                        <span className="text-[#CCC] text-sm">Total Combats</span>
+                        <span className="text-[#CCC] text-sm">{t('profil.total_fights')}</span>
                         <span className="text-white font-bold text-sm">{profile.total}</span>
                     </div>
                     <div className="flex items-center justify-between px-4 py-4">
-                        <span className="text-[#CCC] text-sm">Membre depuis</span>
+                        <span className="text-[#CCC] text-sm">{t('profil.member_since_label')}</span>
                         <span className="text-white font-bold text-sm">{profile.member_since}</span>
                     </div>
                 </div>
@@ -113,7 +111,7 @@ function InfosTab({ profile }) {
 
             {profile.bio && (
                 <div>
-                    <p className="text-[#888] text-[11px] font-bold tracking-widest mb-2">RÉSUMÉ</p>
+                    <p className="text-[#888] text-[11px] font-bold tracking-widest mb-2">{t('profil.section_summary')}</p>
                     <div className="rounded-2xl px-4 py-4" style={{ background: '#1A1A1A' }}>
                         <p className="text-[#CCC] text-sm leading-relaxed">{profile.bio}</p>
                     </div>
@@ -124,18 +122,19 @@ function InfosTab({ profile }) {
 }
 
 function AdsTab({ challenges }) {
+    const { t } = useTranslation();
     if (!challenges?.length) return (
         <div className="flex flex-col items-center py-10 gap-2 px-4">
             <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#333" strokeWidth="1.5">
                 <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>
             </svg>
-            <p className="text-[#555] text-sm">Aucun défi actif</p>
+            <p className="text-[#555] text-sm">{t('profil.no_challenges')}</p>
         </div>
     );
 
     return (
         <div className="px-4">
-            <p className="text-[#888] text-[11px] font-bold tracking-widest mb-3">DÉFIS ACTIFS</p>
+            <p className="text-[#888] text-[11px] font-bold tracking-widest mb-3">{t('profil.active_challenges')}</p>
             <div className="flex flex-col gap-3">
                 {challenges.map(c => (
                     <div key={c.id} className="rounded-2xl p-4" style={{ background: '#1A1A1A' }}>
@@ -155,7 +154,7 @@ function AdsTab({ challenges }) {
                         <Link href={`/defis/${c.id}`}
                             className="w-full rounded-xl py-2 font-bold text-xs tracking-wider flex items-center justify-center gap-1.5 mt-3"
                             style={{ background: '#2A2A2A', color: '#CCC', border: '1px solid #3A3A3A' }}>
-                            En savoir plus
+                            {t('profil.learn_more')}
                             <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
                                 <line x1="5" y1="12" x2="19" y2="12"/>
                                 <polyline points="12 5 19 12 12 19"/>
@@ -169,15 +168,22 @@ function AdsTab({ challenges }) {
 }
 
 function FeedbackTab({ reviews }) {
-    const [filter, setFilter] = useState('TOUS');
+    const { t } = useTranslation();
+    const [filter, setFilter] = useState('ALL');
+
+    const sentimentLabel = {
+        positive: t('profil.reliable'),
+        negative: t('profil.litigious'),
+        neutre:   t('profil.watch'),
+    };
 
     const total    = reviews?.length ?? 0;
     const positive = reviews?.filter(r => r.sentiment === 'positive').length ?? 0;
     const negative = reviews?.filter(r => r.sentiment === 'negative').length ?? 0;
     const pct      = total > 0 ? Math.round((positive / total) * 100) : 0;
 
-    const filtered = filter === 'POSITIFS' ? reviews?.filter(r => r.sentiment === 'positive')
-        : filter === 'NÉGATIFS'           ? reviews?.filter(r => r.sentiment === 'negative')
+    const filtered = filter === 'POSITIVE' ? reviews?.filter(r => r.sentiment === 'positive')
+        : filter === 'NEGATIVE'            ? reviews?.filter(r => r.sentiment === 'negative')
         : reviews;
 
     if (!total) return (
@@ -187,7 +193,7 @@ function FeedbackTab({ reviews }) {
                 <line x1="12" y1="8" x2="12" y2="12"/>
                 <line x1="12" y1="16" x2="12.01" y2="16"/>
             </svg>
-            <p className="text-[#555] text-sm">Aucun avis pour l'instant</p>
+            <p className="text-[#555] text-sm">{t('profil.no_reviews')}</p>
         </div>
     );
 
@@ -201,14 +207,14 @@ function FeedbackTab({ reviews }) {
                 </svg>
                 <span className="text-white font-black text-xl">{pct}%</span>
                 <span className="text-[#666] text-sm">|</span>
-                <span className="text-[#AAA] text-sm">({total}) Avis</span>
+                <span className="text-[#AAA] text-sm">{t('profil.reviews_count', { n: total })}</span>
             </div>
 
             <div className="flex items-center gap-2 mb-4">
                 {[
-                    { key: 'TOUS',     label: `Tous (${total})` },
-                    { key: 'POSITIFS', label: `Positifs (${positive})` },
-                    { key: 'NÉGATIFS', label: `Négatifs (${negative})` },
+                    { key: 'ALL',      label: t('profil.filter_all', { n: total }) },
+                    { key: 'POSITIVE', label: t('profil.filter_positive', { n: positive }) },
+                    { key: 'NEGATIVE', label: t('profil.filter_negative', { n: negative }) },
                 ].map(f => (
                     <button key={f.key} onClick={() => setFilter(f.key)}
                         className="px-3 py-1.5 rounded-xl text-xs font-semibold"

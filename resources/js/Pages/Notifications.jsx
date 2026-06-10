@@ -57,7 +57,7 @@ export default function Notifications() {
                         <h1 className="text-white font-black text-lg leading-none">{t('notifications.title')}</h1>
                         {unreadCount > 0 && (
                             <p className="text-[#FF3B30] text-xs font-semibold mt-0.5">
-                                {unreadCount} {unreadCount > 1 ? 'non lues' : 'non lue'}
+                                {unreadCount} {t(unreadCount > 1 ? 'notifications.unread_other' : 'notifications.unread_one')}
                             </p>
                         )}
                     </div>

@@ -3,13 +3,17 @@ import { Link, router, usePage } from '@inertiajs/react';
 import { useTranslation } from 'react-i18next';
 import AppLayout from '../Components/AppLayout';
 
-const statusLabel = { en_attente: 'EN ATTENTE', valide: 'VALIDÉ', refuse: 'REFUSÉ' };
 const statusColor = { en_attente: '#FF9500', valide: '#4CD964', refuse: '#FF3B30' };
 const statusBg    = { en_attente: 'rgba(255,149,0,0.12)', valide: 'rgba(76,217,100,0.12)', refuse: 'rgba(255,59,48,0.12)' };
 
 export default function Retrait() {
     const { balance_rb, balance_usdt, minAmountRb, minAmountUsdt, rate, history, errors, flash, auth } = usePage().props;
     const { t } = useTranslation();
+    const statusLabel = {
+        en_attente: t('retrait.status_waiting'),
+        valide:     t('retrait.status_validated'),
+        refuse:     t('retrait.status_refused'),
+    };
 
     const walletAddress   = auth?.user?.wallet_address ?? '';
     const walletConnected = !!walletAddress;
@@ -171,7 +175,7 @@ export default function Retrait() {
                                 <p className="text-[#FF3B30] text-xs mt-1.5">{t('retrait.insufficient')}</p>
                             )}
                             {rbVal > 0 && rbVal < minRb && (
-                                <p className="text-[#FF9500] text-xs mt-1.5">Minimum {minRb} RB</p>
+                                <p className="text-[#FF9500] text-xs mt-1.5">{t('retrait.min_rb_amount', { min: minRb })}</p>
                             )}
                             {errors?.amount_rb && <p className="text-[#FF3B30] text-xs mt-1">{errors.amount_rb}</p>}
                         </>
