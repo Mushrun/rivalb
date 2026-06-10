@@ -227,9 +227,14 @@ export default function Retrait() {
                 {/* Récap USDT direct */}
                 {isUsdt && amountOk && (
                     <div className="rounded-2xl p-4" style={{ background: '#1A1A1A' }}>
-                        <div className="flex items-center justify-between">
+                        <div className="flex items-center justify-between mb-2">
                             <span className="text-[#888] text-xs">{t('retrait.usdt_withdrawn')}</span>
-                            <span className="text-[#FF3B30] font-bold text-lg">-{numVal.toFixed(2)} USDT</span>
+                            <span className="text-[#FF3B30] font-bold text-sm">-{numVal.toFixed(2)} USDT</span>
+                        </div>
+                        <div className="h-px my-2" style={{ background: '#2A2A2A' }} />
+                        <div className="flex items-center justify-between">
+                            <span className="text-[#888] text-xs">{t('retrait.you_receive')}</span>
+                            <span className="text-[#4CD964] font-black text-lg">{numVal.toFixed(2)} USDT</span>
                         </div>
                     </div>
                 )}
