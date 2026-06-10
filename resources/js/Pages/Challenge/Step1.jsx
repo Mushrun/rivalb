@@ -1,6 +1,7 @@
 import BottomNav from '../../Components/BottomNav';
 import { useState } from 'react';
 import { Link, router } from '@inertiajs/react';
+import { useTranslation } from 'react-i18next';
 
 function StepProgress({ current, total }) {
     return (
@@ -14,6 +15,7 @@ function StepProgress({ current, total }) {
 }
 
 export default function ChallengeStep1() {
+    const { t } = useTranslation();
     const [selected, setSelected] = useState('1v1');
 
     return (
@@ -28,22 +30,22 @@ export default function ChallengeStep1() {
                             <line x1="6" y1="6" x2="18" y2="18"/>
                         </svg>
                     </button>
-                    <span className="text-[#FF3B30] font-black text-base tracking-widest">CRÉER UN DÉFI</span>
+                    <span className="text-[#FF3B30] font-black text-base tracking-widest">{t('challenge.create_title')}</span>
                     <div className="w-8" />
                 </div>
 
                 {/* Step info */}
                 <div className="flex items-center justify-between px-4 mb-2">
-                    <span className="text-[#CCCCCC] text-sm font-medium">Étape 1 sur 6</span>
-                    <span className="text-[#888888] text-xs font-semibold tracking-widest">TYPE</span>
+                    <span className="text-[#CCCCCC] text-sm font-medium">{t('challenge.step_indicator', { step: 1, total: 6 })}</span>
+                    <span className="text-[#888888] text-xs font-semibold tracking-widest">{t('challenge.type_tag')}</span>
                 </div>
 
                 <StepProgress current={1} total={6} />
 
                 {/* Title */}
                 <div className="px-4 mb-2">
-                    <p className="text-[#CCCCCC] text-sm text-center mb-1">Choisir un type de défi</p>
-                    <p className="text-[#888888] text-xs text-center">Sélectionnez le format de votre affrontement.</p>
+                    <p className="text-[#CCCCCC] text-sm text-center mb-1">{t('challenge.type_subtitle')}</p>
+                    <p className="text-[#888888] text-xs text-center">{t('challenge.type_hint')}</p>
                 </div>
 
                 {/* Options */}
@@ -66,9 +68,9 @@ export default function ChallengeStep1() {
                                     </svg>
                                 </div>
                                 <div>
-                                    <p className="text-white font-bold text-sm mb-1">Défi 1v1</p>
+                                    <p className="text-white font-bold text-sm mb-1">{t('challenge.type_1v1_label')}</p>
                                     <p className="text-[#888888] text-xs leading-relaxed">
-                                        Tu choisis ton combattant et les adversaires autorisés. Celui qui accepte choisit un combattant parmi ta liste.
+                                        {t('challenge.type_1v1_desc')}
                                     </p>
                                 </div>
                             </div>
@@ -101,9 +103,9 @@ export default function ChallengeStep1() {
                                     </svg>
                                 </div>
                                 <div>
-                                    <p className="text-white font-bold text-sm mb-1">Défi 3v3</p>
+                                    <p className="text-white font-bold text-sm mb-1">{t('challenge.type_3v3_label')}</p>
                                     <p className="text-[#888888] text-xs leading-relaxed">
-                                        Tu choisis tes 3 combattants et les adversaires autorisés. Celui qui accepte choisit 3 combattants parmi ta liste.
+                                        {t('challenge.type_3v3_desc')}
                                     </p>
                                 </div>
                             </div>
@@ -125,7 +127,7 @@ export default function ChallengeStep1() {
                         onClick={() => { sessionStorage.setItem('ch_type', selected); router.visit('/challenge/create/2'); }}
                         className="w-full rounded-2xl py-3 text-white font-bold text-sm flex items-center justify-center gap-2"
                         style={{ background: '#FF3B30' }}>
-                        Continuer <span className="text-lg">→</span>
+                        {t('challenge.continue_btn')} <span className="text-lg">→</span>
                     </button>
                 </div>
             <BottomNav />

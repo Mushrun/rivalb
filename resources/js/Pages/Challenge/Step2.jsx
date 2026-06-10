@@ -1,6 +1,7 @@
 import BottomNav from '../../Components/BottomNav';
 import { useState, useEffect } from 'react';
 import { Link, router, usePage } from '@inertiajs/react';
+import { useTranslation } from 'react-i18next';
 import FIGHTERS from '../../data/fighters';
 
 const VISIBLE_DEFAULT = 9;
@@ -17,6 +18,7 @@ function StepProgress({ current, total }) {
 }
 
 export default function ChallengeStep2() {
+    const { t } = useTranslation();
     const { activeFighters = [] } = usePage().props;
 
     // Si la DB a des fighters actifs, on filtre — sinon on affiche tout
@@ -73,9 +75,9 @@ export default function ChallengeStep2() {
                         </div>
                     </Link>
                     <div className="text-center">
-                        <p className="text-[#888888] text-[10px] tracking-widest font-semibold">ÉTAPE 2/6</p>
+                        <p className="text-[#888888] text-[10px] tracking-widest font-semibold">{t('challenge.step_indicator', { step: 2, total: 6 })}</p>
                         <p className="text-white font-bold text-sm">
-                            {type === '3v3' ? 'Personnages (3)' : 'Personnage'}
+                            {type === '3v3' ? t('challenge.fighters_3v3') : t('challenge.fighter_1v1')}
                         </p>
                     </div>
                     <div className="w-9" />
@@ -87,14 +89,14 @@ export default function ChallengeStep2() {
                 <div className="px-4 flex items-start justify-between mb-5">
                     <div>
                         <h2 className="text-white font-black text-3xl leading-tight">
-                            {type === '3v3' ? <>CHOISIS<br/>TES 3 FIGHTERS</> : <>CHOISIS<br/>TON FIGHTER</>}
+                            {type === '3v3' ? t('challenge.choose_fighters_3v3') : t('challenge.choose_fighter_1v1')}
                         </h2>
                     </div>
                     <div className="text-right">
-                        <p className="text-[#888888] text-xs tracking-wider">FORMAT {type.toUpperCase()}</p>
+                        <p className="text-[#888888] text-xs tracking-wider">{t('challenge.format_prefix')} {type.toUpperCase()}</p>
                         <span className="px-2.5 py-1 rounded-lg text-white font-semibold text-xs"
                             style={{ background: '#3A1A1A', color: isReady ? '#4CD964' : '#FFAA99' }}>
-                            {selected.size}/{maxSelect} Sélectionné{maxSelect > 1 ? 's' : ''}
+                            {t('challenge.selected_count', { n: selected.size, max: maxSelect })}
                         </span>
                     </div>
                 </div>
@@ -141,7 +143,7 @@ export default function ChallengeStep2() {
                     className="mx-4 mt-3 rounded-2xl py-2.5 flex items-center justify-center gap-2"
                     style={{ background: '#1A0A0A', border: '1px solid #2A1A1A' }}>
                     <span className="text-[#CCCCCC] text-xs font-semibold">
-                        {showAll ? 'VOIR MOINS' : `VOIR PLUS (${characters.length - VISIBLE_DEFAULT} de plus)`}
+                        {showAll ? t('challenge.see_less') : t('challenge.see_more', { n: characters.length - VISIBLE_DEFAULT })}
                     </span>
                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#CCCCCC" strokeWidth="2.5" strokeLinecap="round"
                         style={{ transform: showAll ? 'rotate(180deg)' : 'rotate(0deg)', transition: 'transform 0.2s' }}>
@@ -158,7 +160,7 @@ export default function ChallengeStep2() {
                         onClick={handleNext}
                         className="w-full rounded-2xl py-3 text-white font-bold text-sm flex items-center justify-center gap-2 disabled:opacity-40"
                         style={{ background: '#FF3B30' }}>
-                        VALIDER LA SÉLECTION <span className="text-lg">→</span>
+                        {t('challenge.validate_selection')} <span className="text-lg">→</span>
                     </button>
                 </div>
             <BottomNav />

@@ -1,6 +1,7 @@
 import BottomNav from '../../Components/BottomNav';
 import { useState } from 'react';
 import { Link, router, usePage } from '@inertiajs/react';
+import { useTranslation } from 'react-i18next';
 
 function StepProgress({ current, total }) {
     return (
@@ -14,6 +15,7 @@ function StepProgress({ current, total }) {
 }
 
 export default function ChallengeStep5() {
+    const { t } = useTranslation();
     const { balance = 0, balance_usdt = 0 } = usePage().props;
 
     const [currency, setCurrency] = useState('rb');
@@ -44,7 +46,7 @@ export default function ChallengeStep5() {
                             <line x1="6" y1="6" x2="18" y2="18"/>
                         </svg>
                     </Link>
-                    <span className="text-[#CCCCCC] text-sm font-medium">ÉTAPE 5 SUR 6</span>
+                    <span className="text-[#CCCCCC] text-sm font-medium">{t('challenge.step_indicator', { step: 5, total: 6 })}</span>
                     <div className="w-5" />
                 </div>
 
@@ -56,7 +58,7 @@ export default function ChallengeStep5() {
 
                 {/* Main card */}
                 <div className="mx-4 rounded-3xl p-6" style={{ background: '#1A0A0A' }}>
-                    <h2 className="text-white font-black text-2xl text-center mb-5">Définir la mise</h2>
+                    <h2 className="text-white font-black text-2xl text-center mb-5">{t('challenge.set_bet')}</h2>
 
                     {/* Sélection devise */}
                     <div className="flex rounded-xl p-1 gap-1 mb-5" style={{ background: '#0D0505' }}>
@@ -91,7 +93,7 @@ export default function ChallengeStep5() {
 
                     {/* Solde dispo */}
                     <p className="text-center text-[#666] text-xs mb-4">
-                        Solde disponible :{' '}
+                        {t('challenge.balance_label')}{' '}
                         <span className="text-[#FF7766] font-bold">
                             {currency === 'usdt' ? `${parseFloat(balance_usdt).toFixed(2)} USDT` : `${balance} RB`}
                         </span>
@@ -107,7 +109,7 @@ export default function ChallengeStep5() {
                                     <line x1="12" y1="17" x2="12.01" y2="17"/>
                                 </svg>
                                 <span className="text-[#FF7766] text-xs">
-                                    {value < 1 ? 'Minimum 1' : `Maximum ${max} (ton solde)`}
+                                    {value < 1 ? t('challenge.min_one') : t('challenge.max_balance', { max })}
                                 </span>
                             </div>
                         </div>
@@ -122,7 +124,7 @@ export default function ChallengeStep5() {
                                     <line x1="12" y1="9" x2="12" y2="13"/>
                                     <line x1="12" y1="17" x2="12.01" y2="17"/>
                                 </svg>
-                                <span className="text-[#FF7766] text-xs">Tu peux perdre ce montant</span>
+                                <span className="text-[#FF7766] text-xs">{t('challenge.risk_warning')}</span>
                             </div>
                         </div>
                     )}
@@ -142,7 +144,7 @@ export default function ChallengeStep5() {
                         }}
                         className="w-full rounded-2xl py-3 font-bold text-sm flex items-center justify-center gap-2"
                         style={{ background: valid ? '#FF7766' : '#2A1A1A', color: valid ? '#1A0808' : '#555' }}>
-                        Continuer <span className="text-lg">→</span>
+                        {t('challenge.continue_btn')} <span className="text-lg">→</span>
                     </button>
                 </div>
             <BottomNav />

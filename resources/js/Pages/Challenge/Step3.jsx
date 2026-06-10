@@ -1,6 +1,7 @@
 import BottomNav from '../../Components/BottomNav';
 import { useState } from 'react';
 import { Link, router } from '@inertiajs/react';
+import { useTranslation } from 'react-i18next';
 import FIGHTERS from '../../data/fighters';
 
 const characters = FIGHTERS;
@@ -17,6 +18,7 @@ function StepProgress({ current, total }) {
 }
 
 export default function ChallengeStep3() {
+    const { t } = useTranslation();
     const [selected, setSelected] = useState(new Set());
 
     const toggle = (id) => {
@@ -43,7 +45,7 @@ export default function ChallengeStep3() {
                         </svg>
                     </Link>
                     <div className="text-center">
-                        <p className="text-[#888888] text-[10px] tracking-widest font-semibold">ÉTAPE 3/6</p>
+                        <p className="text-[#888888] text-[10px] tracking-widest font-semibold">{t('challenge.step_indicator', { step: 3, total: 6 })}</p>
                     </div>
                     <div className="w-9" />
                 </div>
@@ -52,10 +54,10 @@ export default function ChallengeStep3() {
 
                 {/* Title */}
                 <h2 className="text-white font-black text-3xl leading-tight mb-2">
-                    Quels adversaires<br/>acceptes-tu?
+                    {t('challenge.allowed_title')}
                 </h2>
                 <p className="text-[#888888] text-sm mb-5">
-                    Choisis les personnages que ton adversaire pourra utiliser.
+                    {t('challenge.allowed_hint')}
                 </p>
 
                 {/* Counter + Select all */}
@@ -72,7 +74,7 @@ export default function ChallengeStep3() {
                     </div>
                     <div className="flex-1">
                         <span className="text-white font-bold text-sm">{selected.size} / TOUS</span>
-                        <p className="text-[#888888] text-xs">personnages autorisés</p>
+                        <p className="text-[#888888] text-xs">{t('challenge.chars_allowed')}</p>
                     </div>
                     <button onClick={allSelected ? deselectAll : selectAll}
                         className="px-3 py-2 rounded-xl text-xs font-bold"
@@ -81,7 +83,7 @@ export default function ChallengeStep3() {
                             background: allSelected ? '#3A1A1A' : 'transparent',
                             color: allSelected ? '#FF7766' : '#FFFFFF',
                         }}>
-                        {allSelected ? 'TOUT DÉCOCHER' : 'TOUT COCHER'}
+                        {allSelected ? t('challenge.uncheck_all') : t('challenge.check_all')}
                     </button>
                 </div>
 
@@ -128,7 +130,7 @@ export default function ChallengeStep3() {
                         }}
                         className="w-full rounded-2xl py-3 text-[#1A0808] font-bold text-sm flex items-center justify-center gap-2"
                         style={{ background: '#FFAA88' }}>
-                        Continuer <span className="text-lg">→</span>
+                        {t('challenge.continue_btn')} <span className="text-lg">→</span>
                     </button>
                 </div>
             <BottomNav />

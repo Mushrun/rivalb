@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { Link, router, usePage } from '@inertiajs/react';
+import { useTranslation } from 'react-i18next';
 import AppLayout from '../Components/AppLayout';
 import TopBar from '../Components/TopBar';
 
@@ -16,12 +17,13 @@ function derivePhase(match) {
 }
 
 function StepBar({ phase }) {
+    const { t } = useTranslation();
     const steps = [
-        { key: 'waiting',    label: 'Prêt' },
-        { key: 'playing',    label: 'En jeu' },
-        { key: 'submit',     label: 'Résultat' },
-        { key: 'validating', label: 'Validation' },
-        { key: 'done',       label: 'Terminé' },
+        { key: 'waiting',    label: t('match.step_ready') },
+        { key: 'playing',    label: t('match.step_playing') },
+        { key: 'submit',     label: t('match.step_result') },
+        { key: 'validating', label: t('match.step_validation') },
+        { key: 'done',       label: t('match.step_done') },
     ];
     const idx = PHASES.indexOf(phase);
     return (
@@ -66,6 +68,7 @@ function StepBar({ phase }) {
 }
 
 function PlayerVS({ match }) {
+    const { t } = useTranslation();
     return (
         <div className="mx-4 rounded-2xl p-4 mb-3 flex items-center gap-3" style={{ background: '#1A1A1A' }}>
             <div className="flex-1 flex flex-col items-center gap-1">
@@ -74,7 +77,7 @@ function PlayerVS({ match }) {
                     {match.player1.username?.[0]?.toUpperCase()}
                 </div>
                 <p className="text-white font-bold text-xs">{match.player1.username}</p>
-                <p className="text-[#888] text-[9px] tracking-wider">Créateur</p>
+                <p className="text-[#888] text-[9px] tracking-wider">{t('match.creator')}</p>
             </div>
             <div className="flex flex-col items-center gap-1">
                 <span className="text-[#FF3B30] font-black text-lg">VS</span>
@@ -87,7 +90,7 @@ function PlayerVS({ match }) {
                     {match.player2.username?.[0]?.toUpperCase()}
                 </div>
                 <p className="text-white font-bold text-xs">{match.player2.username}</p>
-                <p className="text-[#888] text-[9px] tracking-wider">Adversaire</p>
+                <p className="text-[#888] text-[9px] tracking-wider">{t('match.opponent')}</p>
             </div>
         </div>
     );
@@ -95,6 +98,7 @@ function PlayerVS({ match }) {
 
 /* ─── PHASE: waiting ─── */
 function PhaseWaiting({ match, me }) {
+    const { t } = useTranslation();
     const [loading,   setLoading]   = useState(false);
     const [matchLink, setMatchLink] = useState('');
 
@@ -113,7 +117,7 @@ function PhaseWaiting({ match, me }) {
     return (
         <div className="px-4 flex flex-col gap-3">
             <div className="rounded-2xl p-4" style={{ background: '#1A1A1A' }}>
-                <p className="text-[#888] text-[10px] tracking-widest font-semibold mb-3">CONFIRMATION DES JOUEURS</p>
+                <p className="text-[#888] text-[10px] tracking-widest font-semibold mb-3">{t('match.player_confirm')}</p>
                 <div className="flex flex-col gap-3">
                     {[
                         { label: match.player1.username, ready: match.player1_ready, color: '#8B5CF6' },
@@ -133,12 +137,12 @@ function PhaseWaiting({ match, me }) {
                                     <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round">
                                         <polyline points="20 6 9 17 4 12"/>
                                     </svg>
-                                    PRÊT
+                                    {t('match.ready')}
                                 </span>
                             ) : (
                                 <span className="text-[#FF9500] text-xs font-bold px-2 py-1 rounded-lg"
                                     style={{ background: 'rgba(255,149,0,0.15)' }}>
-                                    EN ATTENTE
+                                    {t('match.waiting_tag')}
                                 </span>
                             )}
                         </div>
@@ -151,14 +155,14 @@ function PhaseWaiting({ match, me }) {
                     {isCreator && (
                         <div className="rounded-2xl p-4" style={{ background: '#1A1A1A' }}>
                             <p className="text-[#888] text-[10px] tracking-widest font-semibold mb-2">
-                                LIEN DU MATCH SHADOW FIGHT 4
+                                {t('match.match_link_title')}
                             </p>
                             <p className="text-[#666] text-xs mb-3">
-                                Crée le match dans SF4, copie le lien et colle-le ici. Il sera envoyé automatiquement dans le chat.
+                                {t('match.match_link_hint')}
                             </p>
                             <input
                                 type="text"
-                                placeholder="Colle le lien SF4 ici..."
+                                placeholder={t('match.match_link_placeholder')}
                                 value={matchLink}
                                 onChange={e => setMatchLink(e.target.value)}
                                 className="w-full rounded-xl px-4 py-3 text-white text-sm outline-none"
@@ -178,7 +182,7 @@ function PhaseWaiting({ match, me }) {
                                 <polyline points="20 6 9 17 4 12"/>
                             </svg>
                         )}
-                        JE SUIS PRÊT
+                        {t('match.im_ready')}
                     </button>
                 </div>
             ) : (
@@ -188,7 +192,7 @@ function PhaseWaiting({ match, me }) {
                         <circle cx="12" cy="12" r="10"/>
                         <polyline points="12 6 12 12 16 14"/>
                     </svg>
-                    <span className="text-[#FF9500] text-sm font-semibold">En attente de {opponentName}...</span>
+                    <span className="text-[#FF9500] text-sm font-semibold">{t('match.waiting_opponent', { name: opponentName })}</span>
                 </div>
             )}
         </div>
@@ -197,6 +201,7 @@ function PhaseWaiting({ match, me }) {
 
 /* ─── PHASE: playing ─── */
 function PhasePlaying({ match, onSubmitResult }) {
+    const { t } = useTranslation();
     return (
         <div className="px-4 flex flex-col gap-3">
             <div className="rounded-2xl p-5 flex flex-col items-center gap-3"
@@ -207,19 +212,19 @@ function PhasePlaying({ match, onSubmitResult }) {
                         <polygon points="5 3 19 12 5 21 5 3"/>
                     </svg>
                 </div>
-                <p className="text-[#FF3B30] font-black text-lg tracking-widest">MATCH EN COURS</p>
+                <p className="text-[#FF3B30] font-black text-lg tracking-widest">{t('match.match_in_progress')}</p>
                 <p className="text-[#888] text-xs text-center">
-                    Lancez {match.game} et jouez votre partie. Revenez ici pour soumettre le résultat.
+                    {t('match.launch_game', { game: match.game })}
                 </p>
             </div>
 
             <div className="rounded-2xl p-4" style={{ background: '#1A1A1A' }}>
-                <p className="text-[#888] text-[10px] tracking-widest font-semibold mb-3">RAPPEL DES RÈGLES</p>
+                <p className="text-[#888] text-[10px] tracking-widest font-semibold mb-3">{t('match.rules_title')}</p>
                 <div className="flex flex-col gap-2">
                     {[
-                        { label: 'Format',      value: match.rules?.format || 'Classic' },
-                        { label: 'Jeu',         value: match.game },
-                        { label: 'Mise en jeu', value: `${match.bet_amount} RB chacun` },
+                        { label: t('match.format_label'), value: match.rules?.format || 'Classic' },
+                        { label: t('match.game_label'),   value: match.game },
+                        { label: t('match.stake_label'),  value: t('match.stake_value', { amount: match.bet_amount }) },
                     ].map(r => (
                         <div key={r.label} className="flex items-center justify-between">
                             <span className="text-[#666] text-sm">{r.label}</span>
@@ -236,7 +241,7 @@ function PhasePlaying({ match, onSubmitResult }) {
                     <line x1="12" y1="9" x2="12" y2="13"/>
                     <line x1="12" y1="17" x2="12.01" y2="17"/>
                 </svg>
-                <p className="text-[#FF9500] text-xs">Prenez une capture d'écran du résultat final pour preuve.</p>
+                <p className="text-[#FF9500] text-xs">{t('match.screenshot_warning')}</p>
             </div>
 
             <button onClick={onSubmitResult}
@@ -246,7 +251,7 @@ function PhasePlaying({ match, onSubmitResult }) {
                     <path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/>
                     <circle cx="12" cy="13" r="3"/>
                 </svg>
-                SOUMETTRE MON RÉSULTAT
+                {t('match.submit_result_btn')}
             </button>
         </div>
     );
@@ -254,6 +259,7 @@ function PhasePlaying({ match, onSubmitResult }) {
 
 /* ─── PHASE: submit ─── */
 function PhaseSubmit({ match }) {
+    const { t } = useTranslation();
     const [outcome,     setOutcome]     = useState(null);
     const [file,        setFile]        = useState(null);
     const [preview,     setPreview]     = useState(null);
@@ -292,7 +298,7 @@ function PhaseSubmit({ match }) {
             )}
 
             <div className="rounded-2xl p-4" style={{ background: '#1A1A1A' }}>
-                <p className="text-[#888] text-[10px] tracking-widest font-semibold mb-3">QUE S'EST-IL PASSÉ ?</p>
+                <p className="text-[#888] text-[10px] tracking-widest font-semibold mb-3">{t('match.what_happened')}</p>
                 <div className="flex gap-3">
                     <button onClick={() => setOutcome('win')}
                         className="flex-1 rounded-xl py-4 flex flex-col items-center gap-2"
@@ -309,7 +315,7 @@ function PhaseSubmit({ match }) {
                             <path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"/>
                             <path d="M18 2H6v7a6 6 0 0 0 12 0V2z"/>
                         </svg>
-                        <span className="font-bold text-sm" style={{ color: outcome === 'win' ? '#4CD964' : '#666' }}>J'AI GAGNÉ</span>
+                        <span className="font-bold text-sm" style={{ color: outcome === 'win' ? '#4CD964' : '#666' }}>{t('match.i_won')}</span>
                         <span className="text-[10px]" style={{ color: outcome === 'win' ? '#4CD964' : '#444' }}>+{match.bet_amount} RB</span>
                     </button>
 
@@ -324,14 +330,14 @@ function PhaseSubmit({ match }) {
                             <path d="M10 15v4a3 3 0 0 0 3 3l4-9V2H5.72a2 2 0 0 0-2 1.7l-1.38 9a2 2 0 0 0 2 2.3H10z"/>
                             <path d="M17 2h2.67A2.31 2.31 0 0 1 22 4v7a2.31 2.31 0 0 1-2.33 2H17"/>
                         </svg>
-                        <span className="font-bold text-sm" style={{ color: outcome === 'loss' ? '#FF3B30' : '#666' }}>J'AI PERDU</span>
+                        <span className="font-bold text-sm" style={{ color: outcome === 'loss' ? '#FF3B30' : '#666' }}>{t('match.i_lost')}</span>
                         <span className="text-[10px]" style={{ color: outcome === 'loss' ? '#FF3B30' : '#444' }}>-{match.bet_amount} RB</span>
                     </button>
                 </div>
             </div>
 
             <div className="rounded-2xl p-4" style={{ background: '#1A1A1A' }}>
-                <p className="text-[#888] text-[10px] tracking-widest font-semibold mb-3">CAPTURE D'ÉCRAN (optionnelle)</p>
+                <p className="text-[#888] text-[10px] tracking-widest font-semibold mb-3">{t('match.screenshot_optional')}</p>
                 <input ref={fileRef} type="file" accept="image/*" className="hidden" onChange={handleFile} />
                 {preview ? (
                     <div className="relative rounded-xl overflow-hidden mb-2" style={{ aspectRatio: '16/9' }}>
@@ -352,7 +358,7 @@ function PhaseSubmit({ match }) {
                             <path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/>
                             <circle cx="12" cy="13" r="3"/>
                         </svg>
-                        <span className="text-[#555] text-xs">Appuyer pour ajouter une photo</span>
+                        <span className="text-[#555] text-xs">{t('match.add_photo')}</span>
                     </button>
                 )}
             </div>
@@ -365,10 +371,10 @@ function PhaseSubmit({ match }) {
                         <path d="M21 12a9 9 0 1 1-6.219-8.56"/>
                     </svg>
                 ) : null}
-                CONFIRMER MON RÉSULTAT
+                {t('match.confirm_result')}
             </button>
             <p className="text-[#444] text-xs text-center">
-                Le résultat sera soumis à la validation de ton adversaire.
+                {t('match.result_note')}
             </p>
         </div>
     );
@@ -376,6 +382,7 @@ function PhaseSubmit({ match }) {
 
 /* ─── PHASE: validating ─── */
 function PhaseValidating({ match, me }) {
+    const { t } = useTranslation();
     const myResult     = match.my_result;
     const myScreenshot = match.my_screenshot;
     const opponentName = me === 'player1' ? match.player2.username : match.player1.username;
@@ -390,19 +397,19 @@ function PhaseValidating({ match, me }) {
                         <polyline points="12 6 12 12 16 14"/>
                     </svg>
                 </div>
-                <p className="text-white font-bold text-base">En attente de l'adversaire</p>
+                <p className="text-white font-bold text-base">{t('match.waiting_opp_title')}</p>
                 <p className="text-[#888] text-xs text-center">
-                    Tu as déclaré avoir{' '}
+                    {t('match.declared_win')}{' '}
                     <span className="font-bold" style={{ color: myResult === 'win' ? '#4CD964' : '#FF3B30' }}>
-                        {myResult === 'win' ? 'GAGNÉ' : 'PERDU'}
+                        {myResult === 'win' ? t('match.declared_won_label') : t('match.declared_lost_label')}
                     </span>
-                    . En attente de la confirmation de{' '}
+                    . {t('match.waiting_confirm')}{' '}
                     <span className="text-white font-semibold">{opponentName}</span>.
                 </p>
             </div>
 
             <div className="rounded-2xl p-4" style={{ background: '#1A1A1A' }}>
-                <p className="text-[#888] text-[10px] tracking-widest font-semibold mb-3">TON RÉSULTAT SOUMIS</p>
+                <p className="text-[#888] text-[10px] tracking-widest font-semibold mb-3">{t('match.submitted_result')}</p>
                 <div className="flex items-center gap-3 p-3 rounded-xl" style={{ background: '#0D0D0D' }}>
                     <div className="w-10 h-10 rounded-lg flex items-center justify-center"
                         style={{ background: myResult === 'win' ? 'rgba(76,217,100,0.15)' : 'rgba(255,59,48,0.15)' }}>
@@ -412,8 +419,8 @@ function PhaseValidating({ match, me }) {
                         </svg>
                     </div>
                     <div>
-                        <p className="text-white font-bold text-sm">{myResult === 'win' ? 'Victoire' : 'Défaite'}</p>
-                        <p className="text-[#888] text-xs">Résultat enregistré ✓</p>
+                        <p className="text-white font-bold text-sm">{myResult === 'win' ? t('match.declared_won_label') : t('match.declared_lost_label')}</p>
+                        <p className="text-[#888] text-xs">{t('match.result_recorded')}</p>
                     </div>
                     <span className="ml-auto font-black text-base"
                         style={{ color: myResult === 'win' ? '#4CD964' : '#FF3B30' }}>
@@ -423,7 +430,7 @@ function PhaseValidating({ match, me }) {
 
                 {myScreenshot && (
                     <div className="mt-3">
-                        <p className="text-[#888] text-[10px] tracking-widest font-semibold mb-2">TA CAPTURE D'ÉCRAN</p>
+                        <p className="text-[#888] text-[10px] tracking-widest font-semibold mb-2">{t('match.your_screenshot')}</p>
                         <a href={myScreenshot} target="_blank" rel="noreferrer"
                             className="block relative rounded-xl overflow-hidden"
                             style={{ aspectRatio: '16/9' }}>
@@ -448,11 +455,11 @@ function PhaseValidating({ match, me }) {
                     <polyline points="1 4 1 10 7 10"/>
                     <path d="M3.51 15a9 9 0 1 0 .49-4.6"/>
                 </svg>
-                Actualiser le statut
+                {t('match.refresh')}
             </button>
 
             <p className="text-[#444] text-xs text-center">
-                La page se mettra à jour automatiquement dès que l'adversaire aura soumis son résultat.
+                {t('match.refresh_note')}
             </p>
         </div>
     );
@@ -460,6 +467,7 @@ function PhaseValidating({ match, me }) {
 
 /* ─── PHASE: done ─── */
 function AvisModal({ matchId, opponentName, onClose }) {
+    const { t } = useTranslation();
     const [sentiment, setSentiment] = useState(null);
     const [comment,   setComment]   = useState('');
     const [sending,   setSending]   = useState(false);
@@ -485,14 +493,14 @@ function AvisModal({ matchId, opponentName, onClose }) {
                         <polyline points="20 6 9 17 4 12"/>
                     </svg>
                 </div>
-                <p className="text-white font-bold text-base">Avis envoyé !</p>
+                <p className="text-white font-bold text-base">{t('match.review_sent')}</p>
                 <p className="text-[#888] text-xs text-center">
-                    Ton avis sur <span className="text-white font-semibold">{opponentName}</span> a été publié.
+                    {t('match.review_sent_sub', { name: opponentName })}
                 </p>
                 <button onClick={onClose}
                     className="w-full rounded-xl py-3 font-bold text-sm mt-1"
                     style={{ background: '#FF3B30', color: '#FFF' }}>
-                    FERMER
+                    {t('match.close')}
                 </button>
             </div>
         </div>
@@ -504,7 +512,7 @@ function AvisModal({ matchId, opponentName, onClose }) {
             <div className="w-full max-w-[390px] rounded-2xl p-5"
                 style={{ background: '#1A1A1A' }} onClick={e => e.stopPropagation()}>
                 <div className="flex items-center justify-between mb-4">
-                    <h3 className="text-white font-bold text-base">Laisser un avis</h3>
+                    <h3 className="text-white font-bold text-base">{t('match.review_modal_title')}</h3>
                     <button onClick={onClose}>
                         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#666" strokeWidth="2.5" strokeLinecap="round">
                             <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
@@ -512,13 +520,13 @@ function AvisModal({ matchId, opponentName, onClose }) {
                     </button>
                 </div>
                 <p className="text-[#888] text-xs mb-4">
-                    Comment s'est passé le match avec <span className="text-white font-semibold">{opponentName}</span> ?
+                    {t('match.review_modal_how')} <span className="text-white font-semibold">{opponentName}</span> ?
                 </p>
 
                 <div className="flex gap-3 mb-4">
                     {[
-                        { key: 'positive', label: 'POSITIF', color: '#4CD964' },
-                        { key: 'negative', label: 'NÉGATIF', color: '#FF3B30' },
+                        { key: 'positive', label: t('match.positive'), color: '#4CD964' },
+                        { key: 'negative', label: t('match.negative'), color: '#FF3B30' },
                     ].map(s => (
                         <button key={s.key} onClick={() => setSentiment(s.key)}
                             className="flex-1 rounded-xl py-4 flex flex-col items-center gap-2"
@@ -536,7 +544,7 @@ function AvisModal({ matchId, opponentName, onClose }) {
                 </div>
 
                 <textarea value={comment} onChange={e => setComment(e.target.value)}
-                    placeholder="Ajoute un commentaire (optionnel)..."
+                    placeholder={t('match.review_comment')}
                     rows={3} maxLength={500}
                     className="w-full rounded-xl px-4 py-3 text-white text-sm outline-none resize-none mb-4"
                     style={{ background: '#0D0D0D', border: '1px solid #2A2A2A' }} />
@@ -549,7 +557,7 @@ function AvisModal({ matchId, opponentName, onClose }) {
                             <path d="M21 12a9 9 0 1 1-6.219-8.56"/>
                         </svg>
                     )}
-                    PUBLIER L'AVIS
+                    {t('match.publish_review')}
                 </button>
             </div>
         </div>
@@ -557,6 +565,7 @@ function AvisModal({ matchId, opponentName, onClose }) {
 }
 
 function PhaseDone({ match, me, userId }) {
+    const { t } = useTranslation();
     const won          = match.winner?.id === userId;
     const opponentName = me === 'player1' ? match.player2.username : match.player1.username;
     const [showAvis, setShowAvis] = useState(false);
@@ -592,30 +601,28 @@ function PhaseDone({ match, me, userId }) {
                     </svg>
                 </div>
                 <p className="font-black text-2xl" style={{ color: won ? '#4CD964' : '#FF3B30' }}>
-                    {won ? 'VICTOIRE !' : 'DÉFAITE'}
+                    {won ? t('match.victory') : t('match.defeat')}
                 </p>
                 <div className="flex items-center gap-2">
-                    <span className="text-[#888] text-sm">Gains :</span>
+                    <span className="text-[#888] text-sm">{t('match.gains')}</span>
                     <span className="font-black text-xl" style={{ color: won ? '#4CD964' : '#FF3B30' }}>
                         {won ? `+${match.bet_amount * 2}` : `-${match.bet_amount}`} RB
                     </span>
                 </div>
                 <p className="text-[#666] text-xs text-center">
-                    {won
-                        ? 'Les fonds ont été crédités sur ton solde.'
-                        : 'Ta mise a été transférée au vainqueur.'}
+                    {won ? t('match.funds_credited') : t('match.stake_transferred')}
                 </p>
             </div>
 
             <div className="rounded-2xl p-4" style={{ background: '#1A1A1A' }}>
-                <p className="text-[#888] text-[10px] tracking-widest font-semibold mb-3">RÉSUMÉ DU MATCH</p>
+                <p className="text-[#888] text-[10px] tracking-widest font-semibold mb-3">{t('match.match_summary')}</p>
                 <div className="flex flex-col gap-2">
                     {[
-                        { label: 'Adversaire',    value: opponentName },
-                        { label: 'Jeu',           value: match.game },
-                        { label: 'Format',        value: match.rules?.format || 'Classic' },
-                        { label: 'Mise initiale', value: `${match.bet_amount} RB` },
-                        { label: 'Résultat',      value: won ? `+${match.bet_amount * 2} RB` : `-${match.bet_amount} RB`, color: won ? '#4CD964' : '#FF3B30' },
+                        { label: t('match.opponent_name_label'), value: opponentName },
+                        { label: t('match.game_label'),          value: match.game },
+                        { label: t('match.format_label'),        value: match.rules?.format || 'Classic' },
+                        { label: t('match.initial_stake'),       value: `${match.bet_amount} RB` },
+                        { label: t('match.result_label'),        value: won ? `+${match.bet_amount * 2} RB` : `-${match.bet_amount} RB`, color: won ? '#4CD964' : '#FF3B30' },
                     ].map(r => (
                         <div key={r.label} className="flex items-center justify-between">
                             <span className="text-[#666] text-sm">{r.label}</span>
@@ -633,7 +640,7 @@ function PhaseDone({ match, me, userId }) {
                         <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
                         <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
                     </svg>
-                    Laisser un avis à {opponentName}
+                    {t('match.leave_review_btn')} {opponentName}
                 </button>
             ) : (
                 <div className="rounded-2xl py-3 flex items-center justify-center gap-2"
@@ -641,18 +648,18 @@ function PhaseDone({ match, me, userId }) {
                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#4CD964" strokeWidth="2.5" strokeLinecap="round">
                         <polyline points="20 6 9 17 4 12"/>
                     </svg>
-                    <span className="text-[#4CD964] text-sm font-semibold">Avis publié</span>
+                    <span className="text-[#4CD964] text-sm font-semibold">{t('match.review_published')}</span>
                 </div>
             )}
 
             <div className="flex gap-3">
                 <Link href="/battle" className="flex-1 rounded-2xl py-3 font-bold text-sm text-center"
                     style={{ background: '#1A1A1A', color: '#CCCCCC' }}>
-                    Retour aux Défis
+                    {t('match.back_to_battles')}
                 </Link>
                 <Link href="/challenge/create/1" className="flex-1 rounded-2xl py-3 font-bold text-sm text-center"
                     style={{ background: '#FF3B30', color: '#FFFFFF' }}>
-                    Nouveau Défi
+                    {t('match.new_challenge')}
                 </Link>
             </div>
 
@@ -669,6 +676,7 @@ function PhaseDone({ match, me, userId }) {
 
 /* ─── PHASE: dispute ─── */
 function PhaseDispute({ disputeId }) {
+    const { t } = useTranslation();
     return (
         <div className="px-4 flex flex-col gap-3">
             <div className="rounded-2xl p-5 flex flex-col items-center gap-3"
@@ -681,20 +689,18 @@ function PhaseDispute({ disputeId }) {
                         <line x1="12" y1="17" x2="12.01" y2="17"/>
                     </svg>
                 </div>
-                <p className="text-[#FF9500] font-bold text-base">Litige ouvert</p>
-                <p className="text-[#888] text-xs text-center">
-                    Les deux résultats sont contradictoires. Un administrateur va examiner les preuves et trancher.
-                </p>
+                <p className="text-[#FF9500] font-bold text-base">{t('match.dispute_title')}</p>
+                <p className="text-[#888] text-xs text-center">{t('match.dispute_desc')}</p>
             </div>
 
             <div className="rounded-2xl p-4" style={{ background: '#1A1A1A' }}>
-                <p className="text-[#888] text-[10px] tracking-widest font-semibold mb-3">QUE SE PASSE-T-IL MAINTENANT ?</p>
+                <p className="text-[#888] text-[10px] tracking-widest font-semibold mb-3">{t('match.dispute_what_happens')}</p>
                 <div className="flex flex-col gap-3">
                     {[
-                        'Les captures d\'écran des deux joueurs sont examinées',
-                        'Décision sous 24h ouvrables',
-                        'La mise reste en séquestre jusqu\'à la décision',
-                        'La décision de l\'admin est définitive',
+                        t('match.dispute_step1'),
+                        t('match.dispute_step2'),
+                        t('match.dispute_step3'),
+                        t('match.dispute_step4'),
                     ].map((text, i) => (
                         <div key={i} className="flex items-start gap-3">
                             <div className="w-5 h-5 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5"
@@ -712,13 +718,13 @@ function PhaseDispute({ disputeId }) {
                     <Link href={`/litiges/${disputeId}`}
                         className="flex-1 rounded-2xl py-3 font-bold text-sm text-center"
                         style={{ background: '#FF9500', color: '#0D0D0D' }}>
-                        VOIR LE LITIGE
+                        {t('match.see_dispute')}
                     </Link>
                 )}
                 <Link href="/battle"
                     className="flex-1 rounded-2xl py-3 font-bold text-sm text-center"
                     style={{ background: '#1A1A1A', color: '#CCCCCC', border: '1px solid #2A2A2A' }}>
-                    Retour aux Défis
+                    {t('match.back_to_battles')}
                 </Link>
             </div>
         </div>
@@ -728,6 +734,7 @@ function PhaseDispute({ disputeId }) {
 /* ─── MAIN ─── */
 export default function Match() {
     const { match: matchData, me, auth } = usePage().props;
+    const { t } = useTranslation();
     const userId = auth?.user?.id;
 
     const [localPhase, setLocalPhase] = useState(() => derivePhase(matchData));
@@ -740,13 +747,13 @@ export default function Match() {
     }, [matchData.status, matchData.my_result]);
 
     const phaseLabel = {
-        waiting:    'EN ATTENTE',
-        playing:    'EN JEU',
-        submit:     'RÉSULTAT',
-        validating: 'VALIDATION',
-        done:       'TERMINÉ',
-        dispute:    'LITIGE',
-    }[localPhase] ?? 'EN ATTENTE';
+        waiting:    t('match.phase_waiting'),
+        playing:    t('match.phase_playing'),
+        submit:     t('match.phase_submit'),
+        validating: t('match.phase_validating'),
+        done:       t('match.phase_done'),
+        dispute:    t('match.phase_dispute'),
+    }[localPhase] ?? t('match.phase_waiting');
 
     const phaseColor = localPhase === 'done'
         ? '#4CD964'

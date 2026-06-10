@@ -1,4 +1,5 @@
 import { Link, router, usePage } from '@inertiajs/react';
+import { useTranslation } from 'react-i18next';
 import AppLayout from '../../Components/AppLayout';
 import { resolveMediaUrl } from '../../utils/media';
 
@@ -21,72 +22,74 @@ function Avatar({ path, username, size = 24 }) {
 
 export default function ProfilIndex() {
     const { profile } = usePage().props;
+    const { t } = useTranslation();
 
     const reliability = profile?.reliability_score ?? 100;
     const wins        = profile?.wins   ?? 0;
     const losses      = profile?.losses ?? 0;
     const total       = profile?.total  ?? 0;
 
+    const menuItems = [
+        { icon: 'settings', label: t('profil.menu_settings'), href: '/settings' },
+        { icon: 'list',     label: t('profil.menu_history'),  href: '/historique' },
+        { icon: 'help',     label: t('profil.menu_support'),  href: '/support' },
+    ];
+
     return (
         <AppLayout>
             <div className="flex flex-col items-center px-4 pt-8">
 
-                {/* Avatar */}
                 <Avatar path={profile?.avatar_path} username={profile?.username} size={96} />
 
                 <h1 className="text-white font-bold text-2xl mt-3 mb-1">{profile?.username}</h1>
                 {profile?.bio && (
                     <p className="text-[#666] text-xs text-center max-w-xs mb-1">{profile.bio}</p>
                 )}
-                <p className="text-[#888] text-sm mb-6">Membre depuis {profile?.member_since}</p>
+                <p className="text-[#888] text-sm mb-6">{t('profil.member_since')} {profile?.member_since}</p>
 
                 {/* Stats */}
                 <div className="w-full rounded-2xl p-4 mb-4 flex items-center justify-between"
                     style={{ background: '#1A1A1A' }}>
                     <div className="flex-1 flex flex-col items-center">
                         <span className="text-white font-black text-2xl">{wins}</span>
-                        <span className="text-[#888] text-xs tracking-wider mt-0.5">VICTOIRES</span>
+                        <span className="text-[#888] text-xs tracking-wider mt-0.5">{t('profil.wins_label')}</span>
                     </div>
                     <div className="w-px h-10" style={{ background: '#2A2A2A' }}/>
                     <div className="flex-1 flex flex-col items-center">
                         <span className="text-white font-black text-2xl">{losses}</span>
-                        <span className="text-[#888] text-xs tracking-wider mt-0.5">DÉFAITES</span>
+                        <span className="text-[#888] text-xs tracking-wider mt-0.5">{t('profil.losses_label')}</span>
                     </div>
                     <div className="w-px h-10" style={{ background: '#2A2A2A' }}/>
                     <div className="flex-1 flex flex-col items-center">
                         <span className="text-white font-black text-2xl">{total}</span>
-                        <span className="text-[#888] text-xs tracking-wider mt-0.5">COMBATS</span>
+                        <span className="text-[#888] text-xs tracking-wider mt-0.5">{t('profil.fights_label')}</span>
                     </div>
                 </div>
 
                 {/* Fiabilité */}
                 <div className="w-full rounded-2xl p-4 mb-3" style={{ background: '#1A1A1A' }}>
                     <div className="flex items-center justify-between mb-3">
-                        <span className="text-white font-semibold text-sm">Fiabilité</span>
+                        <span className="text-white font-semibold text-sm">{t('profil.reliability_label')}</span>
                         <span className="text-[#FF3B30] font-bold text-sm">{reliability}%</span>
                     </div>
                     <div className="w-full h-1.5 rounded-full mb-2" style={{ background: '#2A2A2A' }}>
                         <div className="h-full rounded-full transition-all"
                             style={{ width: `${reliability}%`, background: 'linear-gradient(to right, #FF3B30, #FF6B30)' }} />
                     </div>
-                    <p className="text-[#666] text-xs">Basé sur vos 50 derniers combats et interactions P2P.</p>
+                    <p className="text-[#666] text-xs">{t('profil.reliability_hint')}</p>
                 </div>
 
                 {/* Solde */}
                 <div className="w-full rounded-2xl p-4 mb-4 flex items-center justify-between"
                     style={{ background: '#1A1A1A' }}>
-                    <span className="text-[#888] text-sm">Solde RB</span>
+                    <span className="text-[#888] text-sm">{t('profil.balance_rb_label')}</span>
                     <span className="text-white font-black text-lg">{(profile?.balance_rb ?? 0).toLocaleString()} RB</span>
                 </div>
 
                 {/* Menu */}
                 <div className="w-full flex flex-col gap-2 mb-4">
-                    {[
-                        { icon: 'settings', label: 'Paramètres',                href: '/settings' },
-                        { icon: 'list',     label: 'Historique de transactions', href: '/historique' },
-                        { icon: 'help',     label: 'Feedback & Support',         href: '/support' },
-                    ].map(item => (
-                        <Link key={item.label} href={item.href}
+                    {menuItems.map(item => (
+                        <Link key={item.href} href={item.href}
                             className="w-full rounded-2xl px-4 py-3 flex items-center justify-between"
                             style={{ background: '#1A1A1A' }}>
                             <div className="flex items-center gap-3">
@@ -104,7 +107,7 @@ export default function ProfilIndex() {
                 <button onClick={() => router.post('/logout')}
                     className="w-full rounded-2xl py-3 flex items-center justify-center mb-8"
                     style={{ background: '#1A1A1A' }}>
-                    <span className="text-white font-semibold text-xs tracking-widest">SE DÉCONNECTER</span>
+                    <span className="text-white font-semibold text-xs tracking-widest">{t('profil.logout')}</span>
                 </button>
             </div>
         </AppLayout>

@@ -1,34 +1,8 @@
-import { useState, useRef } from 'react';
+import { useState } from 'react';
 import { Link } from '@inertiajs/react';
+import { useTranslation } from 'react-i18next';
 import AppLayout from '../Components/AppLayout';
 import TopBar from '../Components/TopBar';
-
-const faqs = [
-    {
-        q: 'Comment fonctionne le système de mise ?',
-        a: 'Les deux joueurs misent le même montant en RB. La mise est placée en séquestre jusqu\'à la fin du match. Le gagnant récupère la totalité.',
-    },
-    {
-        q: 'Que se passe-t-il en cas de litige ?',
-        a: 'Si les deux joueurs soumettent des résultats contradictoires, un litige est ouvert. Un administrateur examine les captures d\'écran et tranche sous 24h.',
-    },
-    {
-        q: 'Comment recharger mes RB ?',
-        a: 'Va dans Historique → Transactions → RECHARGER. Tu peux utiliser Mobile Money ou d\'autres méthodes disponibles dans ta région.',
-    },
-    {
-        q: 'Comment retirer mes RB ?',
-        a: 'Va dans Historique → Transactions → RETIRER. Le minimum de retrait est de 50 RB. Le délai de traitement est de 24-48h.',
-    },
-    {
-        q: 'Ma fiabilité a baissé, pourquoi ?',
-        a: 'La fiabilité est calculée sur tes 50 derniers matchs. Elle baisse si tu annules des défis, abandonnes des matchs ou reçois des avis négatifs.',
-    },
-    {
-        q: 'Comment signaler un joueur ?',
-        a: 'Sur le profil du joueur, appuie sur les 3 points en haut à droite pour accéder à l\'option "Signaler".',
-    },
-];
 
 function FAQItem({ item }) {
     const [open, setOpen] = useState(false);
@@ -72,12 +46,13 @@ function Modal({ title, onClose, children }) {
 }
 
 function ModalFeedback({ onClose }) {
+    const { t } = useTranslation();
     const [type, setType] = useState('bug');
     const [msg, setMsg]   = useState('');
     const [sent, setSent] = useState(false);
 
     if (sent) return (
-        <Modal title="Feedback envoyé" onClose={onClose}>
+        <Modal title={t('support.feedback_sent_title')} onClose={onClose}>
             <div className="flex flex-col items-center gap-3 py-4">
                 <div className="w-14 h-14 rounded-full flex items-center justify-center"
                     style={{ background: 'rgba(76,217,100,0.15)' }}>
@@ -85,38 +60,38 @@ function ModalFeedback({ onClose }) {
                         <polyline points="20 6 9 17 4 12"/>
                     </svg>
                 </div>
-                <p className="text-white font-bold text-base">Merci !</p>
-                <p className="text-[#888] text-xs text-center">Ton message a été transmis à l'équipe. On te répondra par email si nécessaire.</p>
+                <p className="text-white font-bold text-base">{t('support.feedback_thanks')}</p>
+                <p className="text-[#888] text-xs text-center">{t('support.feedback_sent_sub')}</p>
                 <button onClick={onClose}
                     className="w-full rounded-xl py-3 font-bold text-sm mt-2"
                     style={{ background: '#FF3B30', color: '#FFF' }}>
-                    FERMER
+                    {t('support.close')}
                 </button>
             </div>
         </Modal>
     );
 
     return (
-        <Modal title="Envoyer un feedback" onClose={onClose}>
-            <p className="text-[#888] text-xs mb-3">Type de retour</p>
+        <Modal title={t('support.send_feedback_title')} onClose={onClose}>
+            <p className="text-[#888] text-xs mb-3">{t('support.feedback_type_label')}</p>
             <div className="flex gap-2 mb-4">
                 {[
-                    { key: 'bug',       label: '🐛 Bug' },
-                    { key: 'suggestion',label: '💡 Idée' },
-                    { key: 'autre',     label: '💬 Autre' },
-                ].map(t => (
-                    <button key={t.key} onClick={() => setType(t.key)}
+                    { key: 'bug',        label: t('support.type_bug') },
+                    { key: 'suggestion', label: t('support.type_idea') },
+                    { key: 'autre',      label: t('support.type_other') },
+                ].map(item => (
+                    <button key={item.key} onClick={() => setType(item.key)}
                         className="flex-1 py-2 rounded-xl text-xs font-semibold transition-all"
                         style={{
-                            background: type === t.key ? '#FF3B30' : '#2A2A2A',
-                            color: type === t.key ? '#FFF' : '#888',
+                            background: type === item.key ? '#FF3B30' : '#2A2A2A',
+                            color: type === item.key ? '#FFF' : '#888',
                         }}>
-                        {t.label}
+                        {item.label}
                     </button>
                 ))}
             </div>
             <textarea value={msg} onChange={e => setMsg(e.target.value)}
-                placeholder="Décris ton problème ou ton idée..."
+                placeholder={t('support.feedback_placeholder')}
                 rows={4}
                 className="w-full rounded-xl px-4 py-3 text-white text-sm outline-none resize-none mb-4"
                 style={{ background: '#0D0D0D', border: '1px solid #2A2A2A' }} />
@@ -124,21 +99,22 @@ function ModalFeedback({ onClose }) {
                 disabled={!msg.trim()}
                 className="w-full rounded-xl py-3 font-bold text-sm transition-opacity"
                 style={{ background: '#FF3B30', color: '#FFF', opacity: msg.trim() ? 1 : 0.4 }}>
-                ENVOYER
+                {t('support.send_btn')}
             </button>
         </Modal>
     );
 }
 
 function ModalContact({ onClose }) {
+    const { t } = useTranslation();
     return (
-        <Modal title="Contacter le support" onClose={onClose}>
-            <p className="text-[#888] text-xs mb-4">Choisis ton canal de contact préféré.</p>
+        <Modal title={t('support.contact_modal_title')} onClose={onClose}>
+            <p className="text-[#888] text-xs mb-4">{t('support.contact_modal_sub')}</p>
             <div className="flex flex-col gap-2">
                 {[
-                    { icon: '✉️', label: 'Email', value: 'support@rivalbet.com', action: 'mailto:support@rivalbet.com' },
-                    { icon: '💬', label: 'Discord', value: 'discord.gg/rivalbet', action: '#' },
-                    { icon: '📸', label: 'Instagram', value: '@rivalbet.off', action: '#' },
+                    { icon: '✉️', label: 'Email',     value: 'support@rivalbet.com', action: 'mailto:support@rivalbet.com' },
+                    { icon: '💬', label: 'Discord',   value: 'discord.gg/rivalbet',  action: '#' },
+                    { icon: '📸', label: 'Instagram', value: '@rivalbet.off',         action: '#' },
                 ].map(c => (
                     <a key={c.label} href={c.action}
                         className="flex items-center gap-3 rounded-xl px-4 py-3"
@@ -157,20 +133,47 @@ function ModalContact({ onClose }) {
             <button onClick={onClose}
                 className="w-full rounded-xl py-3 font-bold text-sm mt-4"
                 style={{ background: '#2A2A2A', color: '#CCC' }}>
-                FERMER
+                {t('support.close')}
             </button>
         </Modal>
     );
 }
 
 export default function Support() {
+    const { t } = useTranslation();
     const [modal, setModal] = useState(null);
+
+    const faqs = [
+        {
+            q: t('support.faq_q1', 'Comment fonctionne le système de mise ?'),
+            a: t('support.faq_a1', "Les deux joueurs misent le même montant en RB. La mise est placée en séquestre jusqu'à la fin du match. Le gagnant récupère la totalité."),
+        },
+        {
+            q: t('support.faq_q2', 'Que se passe-t-il en cas de litige ?'),
+            a: t('support.faq_a2', "Si les deux joueurs soumettent des résultats contradictoires, un litige est ouvert. Un administrateur examine les captures d'écran et tranche sous 24h."),
+        },
+        {
+            q: t('support.faq_q3', 'Comment recharger mes RB ?'),
+            a: t('support.faq_a3', "Va dans Historique → Transactions → RECHARGER. Tu peux utiliser Mobile Money ou d'autres méthodes disponibles dans ta région."),
+        },
+        {
+            q: t('support.faq_q4', 'Comment retirer mes RB ?'),
+            a: t('support.faq_a4', "Va dans Historique → Transactions → RETIRER. Le minimum de retrait est de 500 RB. Le délai de traitement est de 24-48h."),
+        },
+        {
+            q: t('support.faq_q5', 'Ma fiabilité a baissé, pourquoi ?'),
+            a: t('support.faq_a5', "La fiabilité est calculée sur tes 50 derniers matchs. Elle baisse si tu annules des défis, abandonnes des matchs ou reçois des avis négatifs."),
+        },
+        {
+            q: t('support.faq_q6', 'Comment signaler un joueur ?'),
+            a: t('support.faq_a6', "Sur le profil du joueur, appuie sur les 3 points en haut à droite pour accéder à l'option \"Signaler\"."),
+        },
+    ];
 
     return (
         <AppLayout>
             <TopBar />
 
-            {/* Header */}
             <div className="flex items-center gap-3 px-4 pt-2 pb-4">
                 <Link href="/profil">
                     <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#FFF" strokeWidth="2.5" strokeLinecap="round">
@@ -178,10 +181,9 @@ export default function Support() {
                         <polyline points="12 19 5 12 12 5"/>
                     </svg>
                 </Link>
-                <h1 className="text-white font-black text-xl">Aide & Support</h1>
+                <h1 className="text-white font-black text-xl">{t('support.title_full')}</h1>
             </div>
 
-            {/* Actions rapides */}
             <div className="flex gap-3 px-4 mb-5">
                 <button onClick={() => setModal('feedback')}
                     className="flex-1 rounded-2xl p-4 flex flex-col items-center gap-2"
@@ -193,7 +195,7 @@ export default function Support() {
                             <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
                         </svg>
                     </div>
-                    <span className="text-white font-semibold text-xs text-center">Donner un feedback</span>
+                    <span className="text-white font-semibold text-xs text-center">{t('support.feedback_btn')}</span>
                 </button>
                 <button onClick={() => setModal('contact')}
                     className="flex-1 rounded-2xl p-4 flex flex-col items-center gap-2"
@@ -204,22 +206,18 @@ export default function Support() {
                             <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
                         </svg>
                     </div>
-                    <span className="text-white font-semibold text-xs text-center">Contacter le support</span>
+                    <span className="text-white font-semibold text-xs text-center">{t('support.contact_btn')}</span>
                 </button>
             </div>
 
-            {/* FAQ */}
             <div className="px-4 mb-2">
-                <p className="text-[#555] text-[10px] font-bold tracking-widest mb-2">QUESTIONS FRÉQUENTES</p>
+                <p className="text-[#555] text-[10px] font-bold tracking-widest mb-2">{t('support.faq_title')}</p>
             </div>
             <div className="mx-4 rounded-2xl overflow-hidden" style={{ background: '#1A1A1A' }}>
-                {faqs.map((item, i) => (
-                    <FAQItem key={i} item={item} />
-                ))}
+                {faqs.map((item, i) => <FAQItem key={i} item={item} />)}
             </div>
 
-            {/* Version */}
-            <p className="text-center text-[#333] text-xs mt-6 mb-4">RIVALBET v1.0.0 — Tous droits réservés</p>
+            <p className="text-center text-[#333] text-xs mt-6 mb-4">{t('support.version_text')}</p>
 
             {modal === 'feedback' && <ModalFeedback onClose={() => setModal(null)} />}
             {modal === 'contact'  && <ModalContact  onClose={() => setModal(null)} />}

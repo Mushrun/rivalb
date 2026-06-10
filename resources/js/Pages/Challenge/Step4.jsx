@@ -1,12 +1,13 @@
 import BottomNav from '../../Components/BottomNav';
 import { useState } from 'react';
 import { Link, router } from '@inertiajs/react';
+import { useTranslation } from 'react-i18next';
 
-const rules = [
-    { key: 'combat', label: 'RÈGLES DE\nCOMBAT', value: 'COMBAT CLASSIQUE', info: true },
-    { key: 'position', label: 'POSITION', value: 'FORÊT DE BAMBOUS', info: false },
-    { key: 'heros', label: 'PARAMÈTRES\nDES HÉROS', value: 'NIVEAUX RÉELS', info: false },
-    { key: 'duree', label: 'DURÉE\nDE\nMANCHE', value: '100 SEC', info: true },
+const rulesConfig = [
+    { key: 'combat', tKey: 'challenge.rule_combat', value: 'COMBAT CLASSIQUE', info: true },
+    { key: 'position', tKey: 'challenge.rule_position', value: 'FORÊT DE BAMBOUS', info: false },
+    { key: 'heros', tKey: 'challenge.rule_heroes', value: 'NIVEAUX RÉELS', info: false },
+    { key: 'duree', tKey: 'challenge.rule_duration', value: '100 SEC', info: true },
 ];
 
 const valueOptions = {
@@ -28,6 +29,8 @@ function StepProgress({ current, total }) {
 }
 
 export default function ChallengeStep4() {
+    const { t } = useTranslation();
+    const rules = rulesConfig.map(r => ({ ...r, label: t(r.tKey) }));
     const [values, setValues] = useState({
         combat: 'COMBAT CLASSIQUE',
         position: 'FORÊT DE BAMBOUS',
@@ -55,8 +58,8 @@ export default function ChallengeStep4() {
                         </svg>
                     </Link>
                     <div className="text-center">
-                        <p className="text-[#CCAAA0] text-sm font-semibold">Paramètres</p>
-                        <p className="text-[#888888] text-[10px] tracking-widest">ÉTAPE 4 SUR 6</p>
+                        <p className="text-[#CCAAA0] text-sm font-semibold">{t('challenge.settings_label')}</p>
+                        <p className="text-[#888888] text-[10px] tracking-widest">{t('challenge.step_indicator', { step: 4, total: 6 })}</p>
                     </div>
                     <div className="w-6" />
                 </div>
@@ -67,9 +70,9 @@ export default function ChallengeStep4() {
 
                 {/* Title */}
                 <div className="px-4 mb-6">
-                    <h2 className="text-white font-black text-2xl mb-1">Paramètres du combat</h2>
+                    <h2 className="text-white font-black text-2xl mb-1">{t('challenge.combat_settings')}</h2>
                     <p className="text-[#888888] text-sm leading-relaxed">
-                        Définissez les règles strictes de cet affrontement. Ces paramètres sont définitifs une fois le défi lancé.
+                        {t('challenge.combat_settings_hint')}
                     </p>
                 </div>
 
@@ -121,7 +124,7 @@ export default function ChallengeStep4() {
                         }}
                         className="w-full rounded-2xl py-3 font-bold text-sm flex items-center justify-center gap-2"
                         style={{ background: '#FFAA88', color: '#1A0808' }}>
-                        Étape Suivante <span className="text-lg">→</span>
+                        {t('challenge.next_step')} <span className="text-lg">→</span>
                     </button>
                 </div>
             <BottomNav />

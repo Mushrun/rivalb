@@ -1,7 +1,9 @@
 import { useState } from 'react';
 import { Link, useForm } from '@inertiajs/react';
+import { useTranslation } from 'react-i18next';
 
 export default function ResetPassword({ token, email }) {
+    const { t } = useTranslation();
     const [showPassword, setShowPassword] = useState(false);
     const [showConfirm,  setShowConfirm]  = useState(false);
 
@@ -13,13 +15,13 @@ export default function ResetPassword({ token, email }) {
     });
 
     const rules = [
-        { label: 'Au moins 8 caractères', met: data.password.length >= 8 },
-        { label: 'Une lettre majuscule',  met: /[A-Z]/.test(data.password) },
-        { label: 'Un chiffre',            met: /[0-9]/.test(data.password) },
+        { label: t('auth.rule_8chars'),   met: data.password.length >= 8 },
+        { label: t('auth.rule_uppercase'), met: /[A-Z]/.test(data.password) },
+        { label: t('auth.rule_number'),    met: /[0-9]/.test(data.password) },
     ];
 
     const strength = rules.filter(r => r.met).length;
-    const strengthLabel = ['Faible', 'Faible', 'Moyen', 'Fort'][strength];
+    const strengthLabel = [t('auth.strength_weak'), t('auth.strength_weak'), t('auth.strength_medium'), t('auth.strength_strong')][strength];
     const strengthColor = ['#FF3B30', '#FF3B30', '#FF9500', '#4CD964'][strength];
 
     const handleSubmit = (e) => {
@@ -47,10 +49,10 @@ export default function ResetPassword({ token, email }) {
                         </svg>
                     </div>
                     <h1 className="text-[24px] font-bold text-white text-center">
-                        Nouveau mot de passe
+                        {t('auth.new_password_title')}
                     </h1>
                     <p className="text-[#888888] text-sm text-center mt-2 leading-relaxed">
-                        Choisis un mot de passe fort pour sécuriser ton compte.
+                        {t('auth.new_password_subtitle')}
                     </p>
                 </div>
 
@@ -74,12 +76,12 @@ export default function ResetPassword({ token, email }) {
                     {/* Password */}
                     <div>
                         <label className="text-[11px] font-semibold tracking-widest text-[#888888] mb-2 block">
-                            NOUVEAU MOT DE PASSE
+                            {t('auth.new_password_label')}
                         </label>
                         <div className="relative">
                             <input
                                 type={showPassword ? 'text' : 'password'}
-                                placeholder="Min. 8 caractères"
+                                placeholder={t('auth.new_password_placeholder')}
                                 value={data.password}
                                 onChange={e => setData('password', e.target.value)}
                                 className="w-full rounded-xl px-4 py-3.5 pr-12 text-white text-sm outline-none"
@@ -111,7 +113,7 @@ export default function ResetPassword({ token, email }) {
                         </div>
                         {data.password.length > 0 && (
                             <p className="text-[10px] mt-1" style={{ color: strengthColor }}>
-                                {strengthLabel}{strength < 3 ? ' — ajoute des chiffres et des symboles' : ' — mot de passe sécurisé'}
+                                {strengthLabel}{strength < 3 ? ` — ${t('auth.strength_hint')}` : ` — ${t('auth.strength_ok')}`}
                             </p>
                         )}
                     </div>
@@ -119,12 +121,12 @@ export default function ResetPassword({ token, email }) {
                     {/* Confirm */}
                     <div>
                         <label className="text-[11px] font-semibold tracking-widest text-[#888888] mb-2 block">
-                            CONFIRMER LE MOT DE PASSE
+                            {t('auth.confirm_password_label')}
                         </label>
                         <div className="relative">
                             <input
                                 type={showConfirm ? 'text' : 'password'}
-                                placeholder="Répète ton mot de passe"
+                                placeholder={t('auth.repeat_password')}
                                 value={data.password_confirmation}
                                 onChange={e => setData('password_confirmation', e.target.value)}
                                 className="w-full rounded-xl px-4 py-3.5 pr-12 text-white text-sm outline-none"
@@ -164,7 +166,7 @@ export default function ResetPassword({ token, email }) {
                         disabled={processing}
                         className="w-full rounded-xl py-3 font-bold text-sm tracking-widest text-white disabled:opacity-60"
                         style={{ background: '#FF3B30' }}>
-                        {processing ? 'RÉINITIALISATION...' : 'RÉINITIALISER LE MOT DE PASSE'}
+                        {processing ? t('auth.reset_processing') : t('auth.reset_btn')}
                     </button>
                 </form>
             </div>

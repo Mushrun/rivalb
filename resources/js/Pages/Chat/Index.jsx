@@ -1,15 +1,8 @@
 import { useState } from 'react';
 import { Link, usePage } from '@inertiajs/react';
+import { useTranslation } from 'react-i18next';
 import AppLayout from '../../Components/AppLayout';
 import TopBar from '../../Components/TopBar';
-
-const statusLabel = {
-    en_attente: { label: 'En attente', color: '#FF9500' },
-    en_cours:   { label: 'En cours',   color: '#4CD964' },
-    litige:     { label: 'Litige',     color: '#FF3B30' },
-    termine:    { label: 'Terminé',    color: '#555' },
-    annule:     { label: 'Annulé',     color: '#555' },
-};
 
 function Avatar({ username }) {
     return (
@@ -22,7 +15,16 @@ function Avatar({ username }) {
 
 export default function ChatIndex() {
     const { conversations = [] } = usePage().props;
+    const { t } = useTranslation();
     const [query, setQuery] = useState('');
+
+    const statusLabel = {
+        en_attente: { label: t('chat.status_waiting'),     color: '#FF9500' },
+        en_cours:   { label: t('chat.status_in_progress'), color: '#4CD964' },
+        litige:     { label: t('chat.status_dispute'),     color: '#FF3B30' },
+        termine:    { label: t('chat.status_done'),        color: '#555' },
+        annule:     { label: t('chat.status_cancelled'),   color: '#555' },
+    };
 
     const totalUnread = conversations.reduce((sum, c) => sum + (c.unread_count || 0), 0);
 
@@ -37,18 +39,18 @@ export default function ChatIndex() {
         <AppLayout>
             <TopBar />
 
-            {/* Header */}
             <div className="px-4 pt-2 pb-3">
                 <div className="flex items-center justify-between mb-3">
                     <div>
-                        <h1 className="text-white font-bold text-2xl">Messages</h1>
+                        <h1 className="text-white font-bold text-2xl">{t('chat.messages_title')}</h1>
                         {totalUnread > 0 && (
-                            <p className="text-[#FF3B30] text-xs font-semibold">{totalUnread} non lu{totalUnread > 1 ? 's' : ''}</p>
+                            <p className="text-[#FF3B30] text-xs font-semibold">
+                                {totalUnread} {totalUnread > 1 ? t('chat.status_waiting') : t('chat.status_waiting')} non lu{totalUnread > 1 ? 's' : ''}
+                            </p>
                         )}
                     </div>
                 </div>
 
-                {/* Barre de recherche */}
                 <div className="flex items-center gap-2 px-3 py-2.5 rounded-2xl"
                     style={{ background: '#1A1A1A' }}>
                     <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#555" strokeWidth="2.5" strokeLinecap="round">
@@ -59,7 +61,7 @@ export default function ChatIndex() {
                         type="text"
                         value={query}
                         onChange={e => setQuery(e.target.value)}
-                        placeholder="Rechercher un adversaire..."
+                        placeholder={t('chat.search_placeholder')}
                         className="flex-1 bg-transparent text-white text-sm outline-none placeholder-[#444]"
                     />
                     {query && (
@@ -73,7 +75,6 @@ export default function ChatIndex() {
                 </div>
             </div>
 
-            {/* Liste avec overflow */}
             <div className="overflow-y-auto" style={{ maxHeight: 'calc(100vh - 220px)', paddingBottom: '100px' }}>
                 {conversations.length === 0 ? (
                     <div className="mx-4 rounded-2xl p-10 flex flex-col items-center gap-3" style={{ background: '#1A1A1A' }}>
@@ -81,12 +82,12 @@ export default function ChatIndex() {
                             <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
                         </svg>
                         <p className="text-[#555] text-sm text-center">
-                            Aucune conversation pour l'instant.<br/>Rejoins un défi pour commencer à chatter.
+                            {t('chat.no_conversations')}<br/>{t('chat.no_conversations_sub')}
                         </p>
                         <Link href="/battle"
                             className="px-4 py-2 rounded-xl font-bold text-xs"
                             style={{ background: '#FF3B30', color: '#FFF' }}>
-                            Voir les défis
+                            {t('chat.see_battles')}
                         </Link>
                     </div>
                 ) : filtered.length === 0 ? (
@@ -95,7 +96,7 @@ export default function ChatIndex() {
                             <circle cx="11" cy="11" r="8"/>
                             <line x1="21" y1="21" x2="16.65" y2="16.65"/>
                         </svg>
-                        <p className="text-[#555] text-sm">Aucun résultat pour "{query}"</p>
+                        <p className="text-[#555] text-sm">{t('chat.no_results_prefix')} "{query}"</p>
                     </div>
                 ) : (
                     <div className="flex flex-col">
@@ -128,7 +129,7 @@ export default function ChatIndex() {
                                             <p className="text-sm truncate flex-1"
                                                 style={{ color: hasUnread ? '#CCCCCC' : '#888', fontWeight: hasUnread ? '600' : '400' }}>
                                                 {conv.last_message
-                                                    ? (conv.last_message.is_mine ? 'Vous : ' : '') + conv.last_message.body
+                                                    ? (conv.last_message.is_mine ? t('chat.you_prefix') : '') + conv.last_message.body
                                                     : `${conv.game} · ${conv.bet_amount} RB`}
                                             </p>
                                             <div className="flex flex-col items-end flex-shrink-0">
@@ -136,10 +137,10 @@ export default function ChatIndex() {
                                                     {s.label}
                                                 </span>
                                                 {conv.status === 'termine' && conv.my_outcome === 'win' && (
-                                                    <span className="text-[10px] font-bold" style={{ color: '#4CD964' }}>Victoire</span>
+                                                    <span className="text-[10px] font-bold" style={{ color: '#4CD964' }}>{t('chat.victory_label')}</span>
                                                 )}
                                                 {conv.status === 'termine' && conv.my_outcome === 'loss' && (
-                                                    <span className="text-[10px] font-bold" style={{ color: '#FF3B30' }}>Perdu</span>
+                                                    <span className="text-[10px] font-bold" style={{ color: '#FF3B30' }}>{t('chat.lost_label')}</span>
                                                 )}
                                             </div>
                                         </div>
