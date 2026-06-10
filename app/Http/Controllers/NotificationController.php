@@ -22,9 +22,11 @@ class NotificationController extends Controller
                 'type'     => $n->type,
                 'title'    => $n->title,
                 'body'     => $n->body,
+                'data'     => $n->data ?? [],
                 'link'     => $this->deriveLink($n->type, $n->data),
                 'read'     => !is_null($n->read_at),
                 'date'     => $this->formatDate($n->created_at),
+                'date_key' => $this->dateKey($n->created_at),
                 'time'     => $n->created_at->diffForHumans(),
             ]);
 
@@ -71,5 +73,12 @@ class NotificationController extends Controller
         if ($date->isToday())     return "Aujourd'hui";
         if ($date->isYesterday()) return 'Hier';
         return $date->format('d/m/Y');
+    }
+
+    private function dateKey(\Carbon\Carbon $date): ?string
+    {
+        if ($date->isToday())     return 'today';
+        if ($date->isYesterday()) return 'yesterday';
+        return null;
     }
 }

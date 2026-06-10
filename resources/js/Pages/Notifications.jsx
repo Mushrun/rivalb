@@ -18,6 +18,52 @@ const typeIcon = {
 
 const defaultIcon = { bg: 'rgba(255,59,48,0.15)', color: '#FF3B30', svg: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg> };
 
+function getNotifText(n, t) {
+    const d = n.data ?? {};
+    const key = n.type;
+
+    const titles = {
+        defi_recu:      t('notifications.defi_recu_title'),
+        defi_rejoint:   t('notifications.defi_rejoint_title'),
+        defi_annule:    t('notifications.defi_annule_title'),
+        match_demarre:  t('notifications.match_demarre_title'),
+        match_gagne:    t('notifications.match_gagne_title'),
+        match_perdu:    t('notifications.match_perdu_title'),
+        litige_ouvert:  t('notifications.litige_ouvert_title'),
+        litige_gagne:   t('notifications.litige_gagne_title'),
+        litige_perdu:   t('notifications.litige_perdu_title'),
+        depot_valide:   t('notifications.depot_valide_title'),
+        depot_refuse:   t('notifications.depot_refuse_title'),
+        retrait_valide: t('notifications.retrait_valide_title'),
+        joueur_pret:    t('notifications.joueur_pret_title'),
+        nouveau_message:t('notifications.nouveau_message_title'),
+    };
+
+    const bodies = {
+        defi_recu:      t('notifications.defi_recu_body',      { username: d.username ?? '' }),
+        defi_rejoint:   t('notifications.defi_rejoint_body',   { username: d.username ?? '' }),
+        defi_annule:    t('notifications.defi_annule_body',    { amount: d.amount_rb ?? 0 }),
+        match_demarre:  t('notifications.match_demarre_body'),
+        match_gagne:    t('notifications.match_gagne_body',    { amount: d.amount ?? 0 }),
+        match_perdu:    t('notifications.match_perdu_body'),
+        litige_ouvert:  t('notifications.litige_ouvert_body'),
+        litige_gagne:   t('notifications.litige_gagne_body',   { amount: d.amount ?? 0 }),
+        litige_perdu:   t('notifications.litige_perdu_body'),
+        depot_valide:   d.amount_usdt > 0
+                            ? t('notifications.depot_valide_body_usdt', { amount: d.amount_usdt })
+                            : t('notifications.depot_valide_body_rb',   { amount: d.amount_rb ?? 0 }),
+        depot_refuse:   t('notifications.depot_refuse_body',   { amount: d.amount_rb ?? 0 }),
+        retrait_valide: t('notifications.retrait_valide_body', { amount: d.amount_rb ?? 0 }),
+        joueur_pret:    t('notifications.joueur_pret_body',    { username: d.username ?? '' }),
+        nouveau_message:t('notifications.nouveau_message_body',{ username: d.username ?? '' }),
+    };
+
+    return {
+        title: titles[key] ?? n.title,
+        body:  bodies[key] ?? n.body,
+    };
+}
+
 export default function Notifications() {
     const { notifications = [] } = usePage().props;
     const { t } = useTranslation();
@@ -83,43 +129,50 @@ export default function Notifications() {
                         <p className="text-[#555] text-sm">{t('notifications.none')}</p>
                     </div>
                 ) : (
-                    Object.entries(groups).map(([date, items]) => (
-                        <div key={date}>
-                            <p className="text-[#444] text-[10px] font-bold tracking-widest mb-2">
-                                {date.toUpperCase()}
-                            </p>
-                            <div className="flex flex-col gap-2">
-                                {items.map(n => {
-                                    const icon = typeIcon[n.type] ?? defaultIcon;
-                                    return (
-                                        <button key={n.id} onClick={() => handleClick(n)}
-                                            className="flex items-start gap-3 rounded-2xl p-3.5 text-left w-full"
-                                            style={{
-                                                background: n.read ? '#111' : '#1A1A1A',
-                                                border: n.read ? '1px solid transparent' : '1px solid #2A2A2A',
-                                            }}>
-                                            <div className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0 mt-0.5"
-                                                style={{ background: icon.bg, color: icon.color }}>
-                                                {icon.svg}
-                                            </div>
-                                            <div className="flex-1 min-w-0">
-                                                <p className="text-sm font-bold leading-tight"
-                                                    style={{ color: n.read ? '#888' : '#FFF' }}>
-                                                    {n.title}
-                                                </p>
-                                                <p className="text-[#555] text-xs mt-0.5 leading-relaxed">{n.body}</p>
-                                                <p className="text-[#444] text-[10px] mt-1">{n.time}</p>
-                                            </div>
-                                            {!n.read && (
-                                                <div className="w-2 h-2 rounded-full flex-shrink-0 mt-1.5"
-                                                    style={{ background: '#FF3B30' }} />
-                                            )}
-                                        </button>
-                                    );
-                                })}
+                    Object.entries(groups).map(([date, items]) => {
+                        const dateKey = items[0]?.date_key;
+                        const dateLabel = dateKey
+                            ? t(`notifications.${dateKey}`).toUpperCase()
+                            : date.toUpperCase();
+                        return (
+                            <div key={date}>
+                                <p className="text-[#444] text-[10px] font-bold tracking-widest mb-2">
+                                    {dateLabel}
+                                </p>
+                                <div className="flex flex-col gap-2">
+                                    {items.map(n => {
+                                        const icon = typeIcon[n.type] ?? defaultIcon;
+                                        const { title, body } = getNotifText(n, t);
+                                        return (
+                                            <button key={n.id} onClick={() => handleClick(n)}
+                                                className="flex items-start gap-3 rounded-2xl p-3.5 text-left w-full"
+                                                style={{
+                                                    background: n.read ? '#111' : '#1A1A1A',
+                                                    border: n.read ? '1px solid transparent' : '1px solid #2A2A2A',
+                                                }}>
+                                                <div className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0 mt-0.5"
+                                                    style={{ background: icon.bg, color: icon.color }}>
+                                                    {icon.svg}
+                                                </div>
+                                                <div className="flex-1 min-w-0">
+                                                    <p className="text-sm font-bold leading-tight"
+                                                        style={{ color: n.read ? '#888' : '#FFF' }}>
+                                                        {title}
+                                                    </p>
+                                                    <p className="text-[#555] text-xs mt-0.5 leading-relaxed">{body}</p>
+                                                    <p className="text-[#444] text-[10px] mt-1">{n.time}</p>
+                                                </div>
+                                                {!n.read && (
+                                                    <div className="w-2 h-2 rounded-full flex-shrink-0 mt-1.5"
+                                                        style={{ background: '#FF3B30' }} />
+                                                )}
+                                            </button>
+                                        );
+                                    })}
+                                </div>
                             </div>
-                        </div>
-                    ))
+                        );
+                    })
                 )}
             </div>
         </AppLayout>

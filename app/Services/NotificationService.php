@@ -22,7 +22,7 @@ class NotificationService
     {
         $this->send($user, 'defi_recu', 'Nouveau défi reçu',
             "{$creatorUsername} te défie. Accepte et montre ce que tu vaux !",
-            ['challenge_id' => $challengeId]
+            ['challenge_id' => $challengeId, 'username' => $creatorUsername]
         );
     }
 
@@ -30,7 +30,7 @@ class NotificationService
     {
         $this->send($user, 'defi_rejoint', 'Défi accepté',
             "{$opponentUsername} a accepté ton défi. Le match va commencer.",
-            ['challenge_id' => $challengeId]
+            ['challenge_id' => $challengeId, 'username' => $opponentUsername]
         );
     }
 
@@ -121,7 +121,7 @@ class NotificationService
     {
         $this->send($user, 'joueur_pret', 'Adversaire prêt',
             "{$username} a marqué prêt. À toi de confirmer !",
-            ['match_id' => $matchId]
+            ['match_id' => $matchId, 'username' => $username]
         );
     }
 
@@ -129,7 +129,7 @@ class NotificationService
     {
         $this->send($user, 'nouveau_message', 'Nouveau message',
             "{$senderUsername} t'a envoyé un message.",
-            ['match_id' => $matchId]
+            ['match_id' => $matchId, 'username' => $senderUsername]
         );
 
         \Illuminate\Support\Facades\Mail::to($user->email)
