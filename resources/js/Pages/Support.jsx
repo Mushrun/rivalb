@@ -112,9 +112,9 @@ function ModalContact({ onClose }) {
             <p className="text-[#888] text-xs mb-4">{t('support.contact_modal_sub')}</p>
             <div className="flex flex-col gap-2">
                 {[
-                    { icon: '✉️', label: 'Email',     value: 'support@rivalbet.com', action: 'mailto:support@rivalbet.com' },
-                    { icon: '💬', label: 'Discord',   value: 'discord.gg/rivalbet',  action: '#' },
-                    { icon: '📸', label: 'Instagram', value: '@rivalbet.off',         action: '#' },
+                    { icon: '✉️', label: 'Email',    value: 'contact@rivalb.com',              action: 'mailto:contact@rivalb.com' },
+                    { icon: '✈️', label: 'Telegram', value: 'Rivalbet Community',              action: 'https://t.me/rivalbet' },
+                    { icon: '📸', label: 'Instagram', value: '@rivalbet.off',                  action: '#' },
                 ].map(c => (
                     <a key={c.label} href={c.action}
                         className="flex items-center gap-3 rounded-xl px-4 py-3"
