@@ -113,7 +113,7 @@ function ModalContact({ onClose }) {
             <div className="flex flex-col gap-2">
                 {[
                     { icon: '✉️', label: 'Email',    value: 'contact@rivalb.com',              action: 'mailto:contact@rivalb.com' },
-                    { icon: '✈️', label: 'Telegram', value: 'Rivalbet Community',              action: 'https://t.me/rivalbet' },
+                    { icon: '✈️', label: 'Telegram', value: 'Rivalbet Community',              action: 'https://t.me/+fxNMoUcVk1JiMTE0' },
                     { icon: '📸', label: 'Instagram', value: '@rivalbet.off',                  action: '#' },
                 ].map(c => (
                     <a key={c.label} href={c.action}
