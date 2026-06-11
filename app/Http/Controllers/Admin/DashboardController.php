@@ -52,6 +52,18 @@ class DashboardController extends Controller
             ->where('status', 'valide')
             ->sum('amount_usdt'), 4);
 
+        // Total retraits RB validés
+        $totalRetraitRb = (int) Transaction::where('type', 'retrait')
+            ->where('status', 'valide')
+            ->where(fn($q) => $q->whereNull('currency')->orWhere('currency', 'rb'))
+            ->sum('amount_rb');
+
+        // Total retraits USDT validés
+        $totalRetraitUsdt = round((float) Transaction::where('type', 'retrait')
+            ->where('currency', 'usdt')
+            ->where('status', 'valide')
+            ->sum('amount_usdt'), 4);
+
         // Litiges récents
         $recentLitiges = Dispute::with(['gameMatch.player1', 'gameMatch.player2', 'gameMatch.challenge'])
             ->where('status', 'ouvert')
@@ -87,6 +99,8 @@ class DashboardController extends Controller
                 ['label' => 'Commission RB',       'value' => number_format($commissionRb) . ' RB',                'delta' => 'Total plateforme',                     'color' => '#FFAA88'],
                 ['label' => 'Commission USDT',     'value' => number_format($commissionUsdt, 4) . ' USDT',         'delta' => 'Total plateforme',                     'color' => '#4CD964'],
                 ['label' => 'Total dépôts USDT',   'value' => number_format($totalDepotUsdt, 4) . ' USDT',         'delta' => 'Dépôts validés',                       'color' => '#4CD964'],
+                ['label' => 'Total retraits RB',   'value' => number_format($totalRetraitRb) . ' RB',             'delta' => 'Retraits validés',                     'color' => '#FF3B30'],
+                ['label' => 'Total retraits USDT', 'value' => number_format($totalRetraitUsdt, 4) . ' USDT',      'delta' => 'Retraits validés',                     'color' => '#FF3B30'],
                 ['label' => 'Tx en attente',       'value' => (string) $pendingTx,                                 'delta' => 'À valider',                            'color' => '#FF9500'],
             ],
             'recentLitiges' => $recentLitiges,
