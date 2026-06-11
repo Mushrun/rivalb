@@ -2,6 +2,31 @@ import { useState } from 'react';
 import { Link, usePage } from '@inertiajs/react';
 import { useTranslation } from 'react-i18next';
 
+function LangToggle() {
+    const { i18n } = useTranslation();
+    const { auth } = usePage().props;
+    const lang = i18n.language?.startsWith('en') ? 'en' : 'fr';
+    const toggle = () => {
+        const newLang = lang === 'fr' ? 'en' : 'fr';
+        i18n.changeLanguage(newLang);
+        if (auth?.user) {
+            const token = document.querySelector('meta[name="csrf-token"]')?.content ?? '';
+            fetch('/user/locale', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': token },
+                body: JSON.stringify({ locale: newLang }),
+            }).catch(() => {});
+        }
+    };
+    return (
+        <button onClick={toggle}
+            className="text-[10px] font-black px-2 py-0.5 rounded-lg border transition-all"
+            style={{ background: 'rgba(255,59,48,0.08)', borderColor: 'rgba(255,59,48,0.3)', color: '#FF3B30' }}>
+            {lang === 'fr' ? 'EN' : 'FR'}
+        </button>
+    );
+}
+
 function Navbar({ isAuth }) {
     const { t } = useTranslation();
     return (
@@ -24,6 +49,7 @@ function Navbar({ isAuth }) {
                 </div>
 
                 <div className="flex items-center gap-3">
+                    <LangToggle />
                     {isAuth ? (
                         <Link href="/defis" className="px-4 py-2 rounded-xl text-sm font-bold text-white" style={{ background: '#FF3B30' }}>
                             {t('landing.nav_play')}
