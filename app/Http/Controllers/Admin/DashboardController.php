@@ -34,10 +34,17 @@ class DashboardController extends Controller
 
         $pendingTx    = Transaction::where('status', 'en_attente')->count();
 
-        // Commission totale gagnée
-        $commission = Transaction::where('type', 'match_perte')
+        // Commissions matchs RB
+        $commissionRb = (int) Transaction::where('type', 'match_perte')
             ->where('status', 'valide')
+            ->where(fn($q) => $q->whereNull('currency')->orWhere('currency', 'rb'))
             ->sum('amount_rb');
+
+        // Commissions matchs USDT
+        $commissionUsdt = round((float) Transaction::where('type', 'match_perte')
+            ->where('status', 'valide')
+            ->where('currency', 'usdt')
+            ->sum('amount_usdt'), 4);
 
         // Litiges récents
         $recentLitiges = Dispute::with(['gameMatch.player1', 'gameMatch.player2', 'gameMatch.challenge'])
@@ -67,12 +74,13 @@ class DashboardController extends Controller
 
         return Inertia::render('Admin/Dashboard', [
             'stats' => [
-                ['label' => 'Utilisateurs',      'value' => number_format($totalUsers),   'delta' => '+' . $newUsersMonth . ' ce mois',       'color' => '#4CD964'],
-                ['label' => 'Défis actifs',       'value' => (string) $activeDefis,        'delta' => '+' . $newDefisToday . " aujourd'hui",   'color' => '#FF9500'],
-                ['label' => 'Matchs joués',       'value' => number_format($totalMatchs),  'delta' => '+' . $matchsMonth . ' ce mois',         'color' => '#FF3B30'],
-                ['label' => 'Litiges ouverts',    'value' => (string) $openLitiges,        'delta' => $urgentLitiges . ' urgents',              'color' => '#FF3B30'],
-                ['label' => 'Commission gagnée',  'value' => number_format($commission) . ' RB', 'delta' => 'Total plateforme',               'color' => '#FFAA88'],
-                ['label' => 'Tx en attente',      'value' => (string) $pendingTx,          'delta' => 'À valider',                             'color' => '#4CD964'],
+                ['label' => 'Utilisateurs',       'value' => number_format($totalUsers),                          'delta' => '+' . $newUsersMonth . ' ce mois',     'color' => '#4CD964'],
+                ['label' => 'Défis actifs',        'value' => (string) $activeDefis,                               'delta' => '+' . $newDefisToday . " aujourd'hui", 'color' => '#FF9500'],
+                ['label' => 'Matchs joués',        'value' => number_format($totalMatchs),                         'delta' => '+' . $matchsMonth . ' ce mois',       'color' => '#FF3B30'],
+                ['label' => 'Litiges ouverts',     'value' => (string) $openLitiges,                               'delta' => $urgentLitiges . ' urgents',            'color' => '#FF3B30'],
+                ['label' => 'Commission RB',       'value' => number_format($commissionRb) . ' RB',                'delta' => 'Total plateforme',                     'color' => '#FFAA88'],
+                ['label' => 'Commission USDT',     'value' => number_format($commissionUsdt, 4) . ' USDT',         'delta' => 'Total plateforme',                     'color' => '#4CD964'],
+                ['label' => 'Tx en attente',       'value' => (string) $pendingTx,                                 'delta' => 'À valider',                            'color' => '#4CD964'],
             ],
             'recentLitiges' => $recentLitiges,
             'recentUsers'   => $recentUsers,

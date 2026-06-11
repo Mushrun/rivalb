@@ -125,11 +125,12 @@ class MatchService
 
             if ($commission > 0) {
                 \App\Models\Transaction::create([
-                    'user_id'   => $winnerId,
-                    'type'      => 'match_perte',
-                    'currency'  => $currency,
-                    'amount_rb' => $currency === 'rb' ? $commission : 0,
-                    'status'    => 'valide',
+                    'user_id'     => $winnerId,
+                    'type'        => 'match_perte',
+                    'currency'    => $currency,
+                    'amount_rb'   => $currency === 'rb'   ? $commission : 0,
+                    'amount_usdt' => $currency === 'usdt' ? $commission : null,
+                    'status'      => 'valide',
                 ]);
             }
 
