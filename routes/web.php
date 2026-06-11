@@ -23,11 +23,12 @@ use App\Http\Controllers\MatchController;
 use App\Http\Controllers\MessageController;
 use App\Http\Controllers\HistoriqueController;
 use App\Http\Controllers\NotificationController;
+use App\Http\Controllers\LandingController;
 use App\Http\Controllers\WalletController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
-Route::get('/', fn() => redirect('/login'));
+Route::get('/', [LandingController::class, 'index']);
 
 // Wallet routes publiques (login MetaMask sans être connecté)
 Route::get('/wallet/nonce/{address}', [WalletController::class, 'nonce']);
