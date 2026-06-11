@@ -51,7 +51,7 @@ function Navbar({ isAuth }) {
                 <div className="flex items-center gap-3">
                     <LangToggle />
                     {isAuth ? (
-                        <Link href="/defis" className="px-4 py-2 rounded-xl text-sm font-bold text-white" style={{ background: '#FF3B30' }}>
+                        <Link href="/battle" className="px-4 py-2 rounded-xl text-sm font-bold text-white" style={{ background: '#FF3B30' }}>
                             {t('landing.nav_play')}
                         </Link>
                     ) : (
