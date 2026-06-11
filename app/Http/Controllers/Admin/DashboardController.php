@@ -46,6 +46,12 @@ class DashboardController extends Controller
             ->where('currency', 'usdt')
             ->sum('amount_usdt'), 4);
 
+        // Total dépôts USDT validés
+        $totalDepotUsdt = round((float) Transaction::where('type', 'depot')
+            ->where('currency', 'usdt')
+            ->where('status', 'valide')
+            ->sum('amount_usdt'), 4);
+
         // Litiges récents
         $recentLitiges = Dispute::with(['gameMatch.player1', 'gameMatch.player2', 'gameMatch.challenge'])
             ->where('status', 'ouvert')
@@ -80,7 +86,8 @@ class DashboardController extends Controller
                 ['label' => 'Litiges ouverts',     'value' => (string) $openLitiges,                               'delta' => $urgentLitiges . ' urgents',            'color' => '#FF3B30'],
                 ['label' => 'Commission RB',       'value' => number_format($commissionRb) . ' RB',                'delta' => 'Total plateforme',                     'color' => '#FFAA88'],
                 ['label' => 'Commission USDT',     'value' => number_format($commissionUsdt, 4) . ' USDT',         'delta' => 'Total plateforme',                     'color' => '#4CD964'],
-                ['label' => 'Tx en attente',       'value' => (string) $pendingTx,                                 'delta' => 'À valider',                            'color' => '#4CD964'],
+                ['label' => 'Total dépôts USDT',   'value' => number_format($totalDepotUsdt, 4) . ' USDT',         'delta' => 'Dépôts validés',                       'color' => '#4CD964'],
+                ['label' => 'Tx en attente',       'value' => (string) $pendingTx,                                 'delta' => 'À valider',                            'color' => '#FF9500'],
             ],
             'recentLitiges' => $recentLitiges,
             'recentUsers'   => $recentUsers,
