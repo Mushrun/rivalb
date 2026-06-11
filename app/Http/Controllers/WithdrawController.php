@@ -89,6 +89,7 @@ class WithdrawController extends Controller
                             'user_id'     => $parrain->id,
                             'type'        => 'commission_parrainage',
                             'currency'    => 'usdt',
+                            'amount_rb'   => 0,
                             'amount_usdt' => $parrainShare,
                             'status'      => 'valide',
                         ]);
@@ -99,6 +100,7 @@ class WithdrawController extends Controller
                     'user_id'        => $user->id,
                     'type'           => 'retrait',
                     'currency'       => 'usdt',
+                    'amount_rb'      => 0,
                     'amount_usdt'    => $net,
                     'wallet_address' => $user->wallet_address,
                     'status'         => 'en_attente',
@@ -135,11 +137,12 @@ class WithdrawController extends Controller
                 if ($parrain) {
                     $parrain->increment('balance_rb', $parrainShare);
                     Transaction::create([
-                        'user_id'   => $parrain->id,
-                        'type'      => 'commission_parrainage',
-                        'currency'  => 'rb',
-                        'amount_rb' => $parrainShare,
-                        'status'    => 'valide',
+                        'user_id'     => $parrain->id,
+                        'type'        => 'commission_parrainage',
+                        'currency'    => 'rb',
+                        'amount_rb'   => $parrainShare,
+                        'amount_usdt' => 0,
+                        'status'      => 'valide',
                     ]);
                 }
             }
