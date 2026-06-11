@@ -52,9 +52,11 @@ export default function AdminTransactions() {
         });
     };
 
-    const totalDeposits  = transactions.filter(t => t.type === 'depot'   && t.status === 'valide').reduce((s, t) => s + t.amount_rb, 0);
-    const totalWithdraws = transactions.filter(t => t.type === 'retrait'  && t.status === 'valide').reduce((s, t) => s + t.amount_rb, 0);
-    const pending        = transactions.filter(t => t.status === 'en_attente').length;
+    const totalDepositsRb    = transactions.filter(t => t.type === 'depot'   && t.status === 'valide' && (t.currency === 'rb' || !t.currency)).reduce((s, t) => s + (t.amount_rb ?? 0), 0);
+    const totalDepositsUsdt  = transactions.filter(t => t.type === 'depot'   && t.status === 'valide' && t.currency === 'usdt').reduce((s, t) => s + (parseFloat(t.amount_usdt) || 0), 0);
+    const totalWithdrawsRb   = transactions.filter(t => t.type === 'retrait' && t.status === 'valide' && (t.currency === 'rb' || !t.currency)).reduce((s, t) => s + (t.amount_rb ?? 0), 0);
+    const totalWithdrawsUsdt = transactions.filter(t => t.type === 'retrait' && t.status === 'valide' && t.currency === 'usdt').reduce((s, t) => s + (parseFloat(t.amount_usdt) || 0), 0);
+    const pending            = transactions.filter(t => t.status === 'en_attente').length;
 
     return (
         <AdminLayout title="Transactions">
@@ -69,12 +71,14 @@ export default function AdminTransactions() {
             )}
 
             {/* Stats */}
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-5">
+            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 mb-5">
                 {[
-                    { label: 'Total dépôts',  value: `+${totalDeposits.toLocaleString()} RB`,  color: '#4CD964' },
-                    { label: 'Total retraits', value: `-${totalWithdraws.toLocaleString()} RB`, color: '#FF3B30' },
-                    { label: 'En attente',     value: pending,                                   color: '#FF9500' },
-                    { label: 'Transactions',   value: transactions.length,                       color: '#FFF' },
+                    { label: 'Dépôts RB',      value: `+${totalDepositsRb.toLocaleString()} RB`,       color: '#4CD964' },
+                    { label: 'Dépôts USDT',    value: `+${totalDepositsUsdt.toFixed(2)} USDT`,         color: '#4CD964' },
+                    { label: 'Retraits RB',    value: `-${totalWithdrawsRb.toLocaleString()} RB`,       color: '#FF3B30' },
+                    { label: 'Retraits USDT',  value: `-${totalWithdrawsUsdt.toFixed(2)} USDT`,        color: '#FF3B30' },
+                    { label: 'En attente',     value: pending,                                          color: '#FF9500' },
+                    { label: 'Transactions',   value: transactions.length,                              color: '#FFF' },
                 ].map(s => (
                     <div key={s.label} className="rounded-xl px-3 py-3 text-center" style={{ background: '#1A1A1A' }}>
                         <p className="font-black text-lg" style={{ color: s.color }}>{s.value}</p>
