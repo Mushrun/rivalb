@@ -6,7 +6,7 @@ const navItems = [
     { href: '/admin/users',        label: 'Utilisateurs',    icon: 'users' },
     { href: '/admin/defis',        label: 'Défis',           icon: 'swords' },
     { href: '/admin/matchs',       label: 'Matchs',          icon: 'trophy' },
-    { href: '/admin/litiges',      label: 'Litiges',         icon: 'alert', badge: 3 },
+    { href: '/admin/litiges',      label: 'Litiges',         icon: 'alert', badge: 'disputes' },
     { href: '/admin/transactions', label: 'Transactions',    icon: 'wallet' },
     { href: '/admin/combattants',  label: 'Combattants',     icon: 'fighter' },
     { href: '/admin/admins',       label: 'Administrateurs', icon: 'shield' },
@@ -31,6 +31,7 @@ export default function AdminLayout({ children, title }) {
     const { url, props } = usePage();
     const [sideOpen, setSideOpen] = useState(false);
     const admin = props.auth?.admin;
+    const openDisputesCount = props.open_disputes_count ?? 0;
 
     return (
         <div className="flex min-h-screen" style={{ background: '#0A0A0A' }}>
@@ -67,10 +68,10 @@ export default function AdminLayout({ children, title }) {
                                 }}>
                                 <NavIcon type={item.icon} />
                                 <span className="text-sm font-semibold">{item.label}</span>
-                                {item.badge && (
+                                {item.badge === 'disputes' && openDisputesCount > 0 && (
                                     <span className="ml-auto w-5 h-5 rounded-full text-[10px] font-bold flex items-center justify-center"
                                         style={{ background: '#FF3B30', color: '#FFF' }}>
-                                        {item.badge}
+                                        {openDisputesCount}
                                     </span>
                                 )}
                             </Link>

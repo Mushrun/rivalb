@@ -2,6 +2,7 @@
 
 namespace App\Http\Middleware;
 
+use App\Models\Dispute;
 use App\Models\Message;
 use App\Models\Notification;
 use Closure;
@@ -85,6 +86,9 @@ class HandleInertiaRequests extends Middleware
                     ->where('sender_id', '!=', $request->user()->id)
                     ->whereNull('read_at')
                     ->count()
+                : 0,
+            'open_disputes_count' => $request->user('admin')
+                ? Dispute::where('status', 'ouvert')->count()
                 : 0,
             'flash' => [
                 'status'  => $request->session()->get('status'),
