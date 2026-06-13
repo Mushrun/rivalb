@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Link, usePage } from '@inertiajs/react';
 import { useTranslation } from 'react-i18next';
 import axios from 'axios';
@@ -25,7 +25,96 @@ function Avatar({ path, username, size = 20 }) {
     );
 }
 
-function FollowButton({ profileId, initialFollowing, initialFollowers }) {
+function UserListModal({ title, profileId, endpoint, onClose }) {
+    const { t } = useTranslation();
+    const [users,   setUsers]   = useState([]);
+    const [loading, setLoading] = useState(true);
+
+    const csrf = () => document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') ?? '';
+
+    useEffect(() => {
+        axios.get(`/profil/${profileId}/${endpoint}`)
+            .then(res => setUsers(res.data.users))
+            .finally(() => setLoading(false));
+    }, [profileId, endpoint]);
+
+    const toggleFollow = async (user) => {
+        try {
+            const res = user.is_following
+                ? await axios.delete(`/profil/${user.id}/follow`, { headers: { 'X-CSRF-TOKEN': csrf() } })
+                : await axios.post(`/profil/${user.id}/follow`,   {}, { headers: { 'X-CSRF-TOKEN': csrf() } });
+            setUsers(prev => prev.map(u => u.id === user.id
+                ? { ...u, is_following: res.data.is_following }
+                : u
+            ));
+        } catch { /* silencieux */ }
+    };
+
+    return (
+        <div className="fixed inset-0 z-50 flex items-end justify-center"
+            style={{ background: 'rgba(0,0,0,0.7)' }}
+            onClick={onClose}>
+            <div className="w-full max-w-[430px] rounded-t-3xl overflow-hidden flex flex-col"
+                style={{ background: '#111118', maxHeight: '75vh' }}
+                onClick={e => e.stopPropagation()}>
+
+                {/* Handle */}
+                <div className="flex justify-center pt-3 pb-1">
+                    <div className="w-10 h-1 rounded-full" style={{ background: '#333' }} />
+                </div>
+
+                {/* Header */}
+                <div className="flex items-center justify-between px-4 py-3"
+                    style={{ borderBottom: '1px solid #1E1E1E' }}>
+                    <h3 className="text-white font-bold text-base">{title}</h3>
+                    <button onClick={onClose}>
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#666" strokeWidth="2.5" strokeLinecap="round">
+                            <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+                        </svg>
+                    </button>
+                </div>
+
+                {/* Liste */}
+                <div className="overflow-y-auto flex-1 py-2">
+                    {loading ? (
+                        <div className="flex justify-center py-10">
+                            <svg className="animate-spin" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#FF3B30" strokeWidth="2.5">
+                                <path d="M21 12a9 9 0 1 1-6.219-8.56"/>
+                            </svg>
+                        </div>
+                    ) : users.length === 0 ? (
+                        <p className="text-center text-[#555] text-sm py-10">{t('profil.no_users_list')}</p>
+                    ) : users.map(user => (
+                        <div key={user.id} className="flex items-center gap-3 px-4 py-3"
+                            style={{ borderBottom: '1px solid #1A1A1A' }}>
+                            <Link href={`/profil/${user.id}`} onClick={onClose}
+                                className="flex items-center gap-3 flex-1 min-w-0">
+                                <div className="w-11 h-11 rounded-full flex items-center justify-center font-bold text-white flex-shrink-0"
+                                    style={{ background: '#FF3B30' }}>
+                                    {user.username?.[0]?.toUpperCase()}
+                                </div>
+                                <span className="text-white font-semibold text-sm truncate">{user.username}</span>
+                            </Link>
+                            {!user.is_me && (
+                                <button onClick={() => toggleFollow(user)}
+                                    className="px-4 py-1.5 rounded-xl font-bold text-xs flex-shrink-0"
+                                    style={{
+                                        background: user.is_following ? '#2A2A2A' : '#FF3B30',
+                                        color:      user.is_following ? '#888'    : '#FFF',
+                                        border:     user.is_following ? '1px solid #3A3A3A' : 'none',
+                                    }}>
+                                    {user.is_following ? t('profil.following_btn') : t('profil.follow_btn')}
+                                </button>
+                            )}
+                        </div>
+                    ))}
+                </div>
+            </div>
+        </div>
+    );
+}
+
+function FollowButton({ profileId, initialFollowing, initialFollowers, onOpenFollowers }) {
     const { t } = useTranslation();
     const [isFollowing, setIsFollowing] = useState(initialFollowing);
     const [followers,   setFollowers]   = useState(initialFollowers);
@@ -61,14 +150,15 @@ function FollowButton({ profileId, initialFollowing, initialFollowers }) {
                 }}>
                 {loading ? '...' : isFollowing ? t('profil.following_btn') : t('profil.follow_btn')}
             </button>
-            <span className="text-[#555] text-[10px]">
+            <button onClick={onOpenFollowers}
+                className="text-[#555] text-[10px] hover:text-[#888] transition-colors">
                 {followers} {t('profil.followers_label')}
-            </span>
+            </button>
         </div>
     );
 }
 
-function PlayerHeader({ profile, tab, setTab, challengeCount, reviewCount }) {
+function PlayerHeader({ profile, tab, setTab, challengeCount, reviewCount, onOpenFollowers, onOpenFollowing }) {
     const { t } = useTranslation();
     return (
         <>
@@ -83,14 +173,16 @@ function PlayerHeader({ profile, tab, setTab, challengeCount, reviewCount }) {
                     <div className="flex-1">
                         <h2 className="text-white font-bold text-xl">{profile.username}</h2>
                         <p className="text-[#888] text-xs">{t('profil.member_since_label')} {profile.member_since}</p>
-                        <p className="text-[#555] text-[11px] mt-0.5">
+                        <button onClick={onOpenFollowing}
+                            className="text-[#555] text-[11px] mt-0.5 hover:text-[#888] transition-colors">
                             <span className="text-white font-semibold">{profile.following}</span> {t('profil.following_count')}
-                        </p>
+                        </button>
                     </div>
                     <FollowButton
                         profileId={profile.id}
                         initialFollowing={profile.is_following}
                         initialFollowers={profile.followers}
+                        onOpenFollowers={onOpenFollowers}
                     />
                 </div>
 
@@ -302,8 +394,10 @@ function FeedbackTab({ reviews }) {
 }
 
 export default function ProfilShow() {
+    const { t } = useTranslation();
     const { profile, challenges = [], reviews = [] } = usePage().props;
-    const [tab, setTab] = useState('INFOS');
+    const [tab,   setTab]   = useState('INFOS');
+    const [modal, setModal] = useState(null); // null | 'followers' | 'following'
 
     return (
         <AppLayout>
@@ -313,12 +407,31 @@ export default function ProfilShow() {
                 setTab={setTab}
                 challengeCount={challenges.length}
                 reviewCount={reviews.length}
+                onOpenFollowers={() => setModal('followers')}
+                onOpenFollowing={() => setModal('following')}
             />
             <div className="pb-4">
                 {tab === 'INFOS'    && <InfosTab    profile={profile} />}
                 {tab === 'ADS'      && <AdsTab      challenges={challenges} />}
                 {tab === 'FEEDBACK' && <FeedbackTab reviews={reviews} />}
             </div>
+
+            {modal === 'followers' && (
+                <UserListModal
+                    title={t('profil.followers_modal_title')}
+                    profileId={profile.id}
+                    endpoint="followers"
+                    onClose={() => setModal(null)}
+                />
+            )}
+            {modal === 'following' && (
+                <UserListModal
+                    title={t('profil.following_modal_title')}
+                    profileId={profile.id}
+                    endpoint="following"
+                    onClose={() => setModal(null)}
+                />
+            )}
         </AppLayout>
     );
 }

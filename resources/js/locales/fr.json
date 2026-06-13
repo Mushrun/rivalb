@@ -110,7 +110,10 @@
     "recharge": "RECHARGER",
     "withdraw": "RETIRER",
     "learn_more": "En savoir +",
-    "reliability": "Fiabilité"
+    "reliability": "Fiabilité",
+    "following_title": "Défis de mes abonnements",
+    "all_challenges": "TOUS LES DÉFIS",
+    "no_other_challenges": "Pas d'autres défis disponibles pour l'instant."
   },
   "challenge": {
     "step1_title": "Quel jeu ?",
@@ -474,7 +477,10 @@
     "follow_btn": "Suivre",
     "following_btn": "Abonné",
     "followers_label": "abonnés",
-    "following_count": "abonnements"
+    "following_count": "abonnements",
+    "followers_modal_title": "Abonnés",
+    "following_modal_title": "Abonnements",
+    "no_users_list": "Aucun utilisateur ici."
   },
   "settings": {
     "title": "Paramètres",

@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Models\Challenge;
+use App\Models\Follow;
 use App\Models\GameMatch;
 use App\Models\User;
 use Illuminate\Support\Facades\DB;
@@ -32,7 +33,7 @@ class ChallengeService
                 $this->coinService->debit($creator, $betAmount, 'match_perte', ['status' => 'en_attente']);
             }
 
-            return Challenge::create([
+            $challenge = Challenge::create([
                 'creator_id' => $creator->id,
                 'type'       => $data['type']       ?? '1v1',
                 'game'       => $data['game']        ?? 'shadow_fight',
@@ -42,6 +43,18 @@ class ChallengeService
                 'rules'      => $data['rules']       ?? [],
                 'visibility' => $data['visibility']  ?? 'public',
             ]);
+
+            // Notifier les abonnés si le défi est public
+            if (($data['visibility'] ?? 'public') === 'public') {
+                Follow::where('followed_id', $creator->id)
+                    ->with('follower')
+                    ->get()
+                    ->each(fn($f) => $this->notifService->nouveauDefiAbonnement(
+                        $f->follower, $challenge->id, $creator->username, $betAmount, $currency
+                    ));
+            }
+
+            return $challenge;
         });
     }
 

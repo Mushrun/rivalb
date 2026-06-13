@@ -110,7 +110,10 @@
     "recharge": "DEPOSIT",
     "withdraw": "WITHDRAW",
     "learn_more": "Learn more",
-    "reliability": "Reliability"
+    "reliability": "Reliability",
+    "following_title": "From people you follow",
+    "all_challenges": "ALL CHALLENGES",
+    "no_other_challenges": "No other challenges available right now."
   },
   "challenge": {
     "step1_title": "Which game?",
@@ -474,7 +477,10 @@
     "follow_btn": "Follow",
     "following_btn": "Following",
     "followers_label": "followers",
-    "following_count": "following"
+    "following_count": "following",
+    "followers_modal_title": "Followers",
+    "following_modal_title": "Following",
+    "no_users_list": "Nobody here yet."
   },
   "settings": {
     "title": "Settings",

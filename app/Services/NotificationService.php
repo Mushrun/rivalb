@@ -125,6 +125,23 @@ class NotificationService
         );
     }
 
+    public function nouveauFollower(User $user, string $followerUsername): void
+    {
+        $this->send($user, 'nouveau_follower', 'Nouvel abonné',
+            "{$followerUsername} vient de te suivre.",
+            ['username' => $followerUsername]
+        );
+    }
+
+    public function nouveauDefiAbonnement(User $user, int $challengeId, string $creatorUsername, int $betAmount, string $currency = 'rb'): void
+    {
+        $amountStr = $currency === 'usdt' ? "{$betAmount} USDT" : "{$betAmount} RB";
+        $this->send($user, 'defi_abonnement', 'Nouveau défi',
+            "{$creatorUsername} vient de publier un défi de {$amountStr}. Rejoins-le !",
+            ['challenge_id' => $challengeId, 'username' => $creatorUsername]
+        );
+    }
+
     public function nouveauMessage(User $user, int $matchId, string $senderUsername, string $messageBody = ''): void
     {
         $this->send($user, 'nouveau_message', 'Nouveau message',

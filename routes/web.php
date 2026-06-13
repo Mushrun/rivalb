@@ -78,9 +78,11 @@ Route::middleware('auth')->group(function () {
     Route::post('/profil/avatar',   [ProfileController::class, 'uploadAvatar']);
     Route::post('/profil/password', [ProfileController::class, 'updatePassword']);
     Route::post('/user/locale',    [ProfileController::class, 'updateLocale']);
-    Route::get('/profil/{id}',      [ProfileController::class, 'show'])->whereNumber('id');
-    Route::post('/profil/{id}/follow',   [ProfileController::class, 'follow'])->whereNumber('id');
-    Route::delete('/profil/{id}/follow', [ProfileController::class, 'unfollow'])->whereNumber('id');
+    Route::get('/profil/{id}',             [ProfileController::class, 'show'])->whereNumber('id');
+    Route::post('/profil/{id}/follow',     [ProfileController::class, 'follow'])->whereNumber('id');
+    Route::delete('/profil/{id}/follow',   [ProfileController::class, 'unfollow'])->whereNumber('id');
+    Route::get('/profil/{id}/followers',   [ProfileController::class, 'followersList'])->whereNumber('id');
+    Route::get('/profil/{id}/following',   [ProfileController::class, 'followingList'])->whereNumber('id');
     Route::get('/parrainage',  [ParrainageController::class, 'index']);
     Route::get('/settings',    fn() => Inertia::render('Settings'));
     Route::get('/support',     fn() => Inertia::render('Support'));

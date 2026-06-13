@@ -7,6 +7,7 @@ use App\Models\Follow;
 use App\Models\GameMatch;
 use App\Models\Review;
 use App\Models\User;
+use App\Services\NotificationService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
@@ -16,6 +17,7 @@ use Inertia\Inertia;
 
 class ProfileController extends Controller
 {
+    public function __construct(private NotificationService $notifService) {}
     public function index()
     {
         return Inertia::render('Profil/Index', [
@@ -73,7 +75,14 @@ class ProfileController extends Controller
         $me = Auth::user();
         if ($me->id === $id) return response()->json(['error' => 'forbidden'], 403);
 
-        Follow::firstOrCreate(['follower_id' => $me->id, 'followed_id' => $id]);
+        $follow = Follow::firstOrCreate(['follower_id' => $me->id, 'followed_id' => $id]);
+
+        if ($follow->wasRecentlyCreated) {
+            $target = User::find($id);
+            if ($target) {
+                $this->notifService->nouveauFollower($target, $me->username);
+            }
+        }
 
         return response()->json([
             'followers'    => Follow::where('followed_id', $id)->count(),
@@ -91,6 +100,46 @@ class ProfileController extends Controller
             'followers'    => Follow::where('followed_id', $id)->count(),
             'is_following' => false,
         ]);
+    }
+
+    public function followersList(int $id)
+    {
+        $me          = Auth::user();
+        $myFollowing = $me ? Follow::where('follower_id', $me->id)->pluck('followed_id')->flip()->toArray() : [];
+
+        $users = Follow::where('followed_id', $id)
+            ->with('follower')
+            ->latest('created_at')
+            ->get()
+            ->map(fn($f) => [
+                'id'           => $f->follower->id,
+                'username'     => $f->follower->username,
+                'avatar_path'  => $f->follower->avatar_path,
+                'is_following' => isset($myFollowing[$f->follower->id]),
+                'is_me'        => $me && $f->follower->id === $me->id,
+            ]);
+
+        return response()->json(['users' => $users]);
+    }
+
+    public function followingList(int $id)
+    {
+        $me          = Auth::user();
+        $myFollowing = $me ? Follow::where('follower_id', $me->id)->pluck('followed_id')->flip()->toArray() : [];
+
+        $users = Follow::where('follower_id', $id)
+            ->with('followed')
+            ->latest('created_at')
+            ->get()
+            ->map(fn($f) => [
+                'id'           => $f->followed->id,
+                'username'     => $f->followed->username,
+                'avatar_path'  => $f->followed->avatar_path,
+                'is_following' => isset($myFollowing[$f->followed->id]),
+                'is_me'        => $me && $f->followed->id === $me->id,
+            ]);
+
+        return response()->json(['users' => $users]);
     }
 
     public function updateLocale(Request $request)

@@ -8,8 +8,47 @@ function ReliabilityDot({ value }) {
     return <span className="w-2 h-2 rounded-full inline-block" style={{ background: color }} />;
 }
 
+function ChallengeCard({ c }) {
+    const { t } = useTranslation();
+    return (
+        <div className="flex items-center gap-3 rounded-2xl p-3.5" style={{ background: '#1A1A1A' }}>
+            {/* Avatar + Info → profil */}
+            <Link href={`/profil/${c.creator.id}`} className="flex items-center gap-3 flex-1 min-w-0">
+                <div className="w-12 h-12 rounded-xl overflow-hidden flex-shrink-0 flex items-center justify-center font-bold text-white text-lg"
+                    style={{ background: '#FF3B30' }}>
+                    {c.creator.username?.[0]?.toUpperCase()}
+                </div>
+                <div className="min-w-0">
+                    <div className="flex items-center gap-1.5 mb-0.5">
+                        <span className="text-white font-semibold text-sm truncate">{c.creator.username}</span>
+                        <span className="text-[#555] text-xs">{c.type}</span>
+                    </div>
+                    <div className="flex items-center gap-1">
+                        <ReliabilityDot value={c.creator.reliability_score} />
+                        <span className="text-[10px] text-[#888]">{t('battle.reliability')} {c.creator.reliability_score}%</span>
+                        <span className="text-[#555] text-xs mx-1">·</span>
+                        <span className="text-[#888] text-xs">{c.created_at}</span>
+                    </div>
+                </div>
+            </Link>
+
+            {/* Amount + button */}
+            <div className="flex flex-col items-end gap-2 flex-shrink-0">
+                <span className="text-[#FF3B30] font-black text-lg">
+                    {c.bet_amount} {c.currency === 'usdt' ? 'USDT' : 'RB'}
+                </span>
+                <Link href={`/defis/${c.id}`}
+                    className="px-3 py-1.5 rounded-lg font-bold text-xs"
+                    style={{ background: '#2A2A2A', color: '#CCCCCC', border: '1px solid #3A3A3A' }}>
+                    {t('battle.learn_more')}
+                </Link>
+            </div>
+        </div>
+    );
+}
+
 export default function Battle() {
-    const { challenges = [], auth } = usePage().props;
+    const { challenges = [], followed_challenges = [], auth } = usePage().props;
     const { t } = useTranslation();
     const balance     = auth?.user?.balance_rb   ?? 0;
     const balanceUsdt = auth?.user?.balance_usdt ?? 0;
@@ -46,15 +85,39 @@ export default function Battle() {
                 </div>
             </div>
 
-            {/* Header */}
-            <div className="px-4 mt-5 mb-3">
-                <h2 className="text-white font-bold text-base">{t('battle.title')}</h2>
-                <p className="text-[#555555] text-xs mt-0.5">{t('battle.subtitle')}</p>
-            </div>
+            {/* Section : défis des abonnements */}
+            {followed_challenges.length > 0 && (
+                <div className="px-4 mt-5">
+                    <div className="flex items-center gap-2 mb-3">
+                        <span className="text-white font-bold text-base">{t('battle.following_title')}</span>
+                        <span className="px-2 py-0.5 rounded-full text-[10px] font-bold"
+                            style={{ background: 'rgba(255,59,48,0.15)', color: '#FF3B30' }}>
+                            {followed_challenges.length}
+                        </span>
+                    </div>
+                    <div className="flex flex-col gap-2">
+                        {followed_challenges.map(c => <ChallengeCard key={c.id} c={c} />)}
+                    </div>
 
-            {/* List */}
-            <div className="flex flex-col gap-2 px-4">
-                {challenges.length === 0 ? (
+                    {/* Séparateur */}
+                    <div className="flex items-center gap-3 my-5">
+                        <div className="flex-1 h-px" style={{ background: '#1E1E1E' }} />
+                        <span className="text-[#444] text-[10px] font-semibold tracking-widest">{t('battle.all_challenges')}</span>
+                        <div className="flex-1 h-px" style={{ background: '#1E1E1E' }} />
+                    </div>
+                </div>
+            )}
+
+            {/* Section : tous les défis */}
+            {followed_challenges.length === 0 && (
+                <div className="px-4 mt-5 mb-3">
+                    <h2 className="text-white font-bold text-base">{t('battle.title')}</h2>
+                    <p className="text-[#555555] text-xs mt-0.5">{t('battle.subtitle')}</p>
+                </div>
+            )}
+
+            <div className="flex flex-col gap-2 px-4 pb-6">
+                {challenges.length === 0 && followed_challenges.length === 0 ? (
                     <div className="rounded-2xl p-8 flex flex-col items-center gap-2" style={{ background: '#1A1A1A' }}>
                         <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#333" strokeWidth="1.5">
                             <polyline points="14.5 17.5 3 6 3 3 6 3 17.5 14.5"/>
@@ -64,42 +127,12 @@ export default function Battle() {
                             {t('battle.no_challenges')}<br/>{t('battle.launch_first')}
                         </p>
                     </div>
+                ) : challenges.length === 0 ? (
+                    <div className="rounded-2xl p-6 flex flex-col items-center gap-2" style={{ background: '#1A1A1A' }}>
+                        <p className="text-[#555] text-sm text-center">{t('battle.no_other_challenges')}</p>
+                    </div>
                 ) : (
-                    challenges.map(c => (
-                        <div key={c.id} className="flex items-center gap-3 rounded-2xl p-3.5" style={{ background: '#1A1A1A' }}>
-                            {/* Avatar + Info → profil */}
-                            <Link href={`/profil/${c.creator.id}`} className="flex items-center gap-3 flex-1 min-w-0">
-                                <div className="w-12 h-12 rounded-xl overflow-hidden flex-shrink-0 flex items-center justify-center font-bold text-white text-lg"
-                                    style={{ background: '#FF3B30' }}>
-                                    {c.creator.username?.[0]?.toUpperCase()}
-                                </div>
-                                <div className="min-w-0">
-                                    <div className="flex items-center gap-1.5 mb-0.5">
-                                        <span className="text-white font-semibold text-sm truncate">{c.creator.username}</span>
-                                        <span className="text-[#555] text-xs">{c.type}</span>
-                                    </div>
-                                    <div className="flex items-center gap-1">
-                                        <ReliabilityDot value={c.creator.reliability_score} />
-                                        <span className="text-[10px] text-[#888]">{t('battle.reliability')} {c.creator.reliability_score}%</span>
-                                        <span className="text-[#555] text-xs mx-1">·</span>
-                                        <span className="text-[#888] text-xs">{c.created_at}</span>
-                                    </div>
-                                </div>
-                            </Link>
-
-                            {/* Amount + button */}
-                            <div className="flex flex-col items-end gap-2 flex-shrink-0">
-                                <span className="text-[#FF3B30] font-black text-lg">
-                                    {c.bet_amount} {c.currency === 'usdt' ? 'USDT' : 'RB'}
-                                </span>
-                                <Link href={`/defis/${c.id}`}
-                                    className="px-3 py-1.5 rounded-lg font-bold text-xs"
-                                    style={{ background: '#2A2A2A', color: '#CCCCCC', border: '1px solid #3A3A3A' }}>
-                                    {t('battle.learn_more')}
-                                </Link>
-                            </div>
-                        </div>
-                    ))
+                    challenges.map(c => <ChallengeCard key={c.id} c={c} />)
                 )}
             </div>
         </AppLayout>

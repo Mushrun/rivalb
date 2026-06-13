@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreChallengeRequest;
 use App\Models\Challenge;
+use App\Models\Follow;
 use App\Models\GameMatch;
 use App\Services\ChallengeService;
 use Illuminate\Http\Request;
@@ -17,29 +18,45 @@ class ChallengeController extends Controller
     {
         $userId = auth()->id();
 
+        $formatChallenge = fn($c) => [
+            'id'         => $c->id,
+            'type'       => $c->type,
+            'game'       => $c->game,
+            'bet_amount' => $c->bet_amount,
+            'currency'   => $c->currency ?? 'rb',
+            'created_at' => $c->created_at->diffForHumans(),
+            'creator'    => [
+                'id'                => $c->creator->id,
+                'username'          => $c->creator->username,
+                'reliability_score' => $c->creator->reliability_score,
+                'avatar_path'       => $c->creator->avatar_path,
+            ],
+        ];
+
+        $followedIds = Follow::where('follower_id', $userId)->pluck('followed_id');
+
+        $followedChallenges = $followedIds->isNotEmpty()
+            ? Challenge::with('creator')
+                ->where('status', 'ouvert')
+                ->where('visibility', 'public')
+                ->whereIn('creator_id', $followedIds)
+                ->latest()
+                ->get()
+                ->map($formatChallenge)
+            : collect();
+
         $challenges = Challenge::with('creator')
             ->where('status', 'ouvert')
             ->where('visibility', 'public')
             ->where('creator_id', '!=', $userId)
+            ->whereNotIn('creator_id', $followedIds)
             ->latest()
             ->get()
-            ->map(fn($c) => [
-                'id'         => $c->id,
-                'type'       => $c->type,
-                'game'       => $c->game,
-                'bet_amount' => $c->bet_amount,
-                'currency'   => $c->currency ?? 'rb',
-                'created_at' => $c->created_at->diffForHumans(),
-                'creator'    => [
-                    'id'                => $c->creator->id,
-                    'username'          => $c->creator->username,
-                    'reliability_score' => $c->creator->reliability_score,
-                    'avatar_path'       => $c->creator->avatar_path,
-                ],
-            ]);
+            ->map($formatChallenge);
 
         return Inertia::render('Battle', [
-            'challenges' => $challenges,
+            'challenges'         => $challenges,
+            'followed_challenges' => $followedChallenges,
         ]);
     }
 
