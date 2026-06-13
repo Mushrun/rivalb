@@ -193,28 +193,6 @@ export default function Register() {
                         )}
                     </div>
 
-                    {/* Code de parrainage */}
-                    <div>
-                        <label className="text-[11px] font-semibold tracking-widest text-[#888888] mb-2 block">
-                            {t('auth.referral_code_label')} <span className="text-[#555] normal-case font-normal">{t('auth.referral_code_optional')}</span>
-                        </label>
-                        <input
-                            type="text"
-                            placeholder="EX: AB12CD34"
-                            value={data.referral_code}
-                            onChange={e => setData('referral_code', e.target.value.toUpperCase())}
-                            maxLength={10}
-                            className="w-full rounded-xl px-4 py-3.5 text-white text-sm outline-none font-mono tracking-widest"
-                            style={{
-                                background: '#0D0D0D',
-                                border: `1px solid ${data.referral_code ? '#FF3B30' : '#2A2A2A'}`,
-                            }}
-                        />
-                        {errors.referral_code && (
-                            <p className="text-[#FF3B30] text-xs mt-1">{errors.referral_code}</p>
-                        )}
-                    </div>
-
                     {/* CGU */}
                     <div className="flex items-start gap-3 pt-1">
                         <div className="w-5 h-5 rounded-md flex-shrink-0 flex items-center justify-center mt-0.5"
