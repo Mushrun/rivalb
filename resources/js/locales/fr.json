@@ -166,6 +166,7 @@
     "balance_label": "Solde disponible :",
     "min_one": "Minimum 1",
     "max_balance": "Maximum {{max}} (ton solde)",
+    "usdt_max_label": "Mise max USDT : {{max}} $",
     "risk_warning": "Tu peux perdre ce montant",
     "final_step": "ÉTAPE FINALE",
     "validation_title": "Validation",

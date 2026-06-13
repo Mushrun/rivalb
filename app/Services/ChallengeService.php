@@ -18,8 +18,10 @@ class ChallengeService
     public function create(User $creator, array $data): Challenge
     {
         return DB::transaction(function () use ($creator, $data) {
-            $betAmount = (int) $data['bet_amount'];
             $currency  = $data['currency'] ?? 'rb';
+            $betAmount = $currency === 'usdt'
+                ? round((float) $data['bet_amount'], 4)
+                : (int) $data['bet_amount'];
 
             if ($currency === 'usdt') {
                 if (! $this->coinService->hasEnoughUsdt($creator, $betAmount)) {

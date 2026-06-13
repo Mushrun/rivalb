@@ -21,12 +21,20 @@ export default function ChallengeStep5() {
     const [currency, setCurrency] = useState('rb');
     const [raw,      setRaw]      = useState('');
 
-    const max   = currency === 'usdt' ? parseFloat(balance_usdt) : balance;
-    const value = parseInt(raw, 10) || 0;
-    const valid = value >= 1 && value <= max;
+    const USDT_MAX = 3;
+    const maxBalance = currency === 'usdt' ? parseFloat(balance_usdt) : balance;
+    const max        = currency === 'usdt' ? Math.min(USDT_MAX, maxBalance) : maxBalance;
+    const value      = currency === 'usdt' ? (parseFloat(raw) || 0) : (parseInt(raw, 10) || 0);
+    const valid      = value >= (currency === 'usdt' ? 0.01 : 1) && value <= max;
 
     const handleChange = (e) => {
-        setRaw(e.target.value.replace(/[^0-9]/g, ''));
+        if (currency === 'usdt') {
+            // Autoriser chiffres + un seul point décimal, max 4 décimales
+            const v = e.target.value.replace(/[^0-9.]/g, '').replace(/^(\d*\.?\d{0,4}).*$/, '$1');
+            setRaw(v);
+        } else {
+            setRaw(e.target.value.replace(/[^0-9]/g, ''));
+        }
     };
 
     const handleCurrency = (c) => {
@@ -91,13 +99,19 @@ export default function ChallengeStep5() {
                         </span>
                     </div>
 
-                    {/* Solde dispo */}
-                    <p className="text-center text-[#666] text-xs mb-4">
+                    {/* Solde dispo + limite USDT */}
+                    <p className="text-center text-[#666] text-xs mb-1">
                         {t('challenge.balance_label')}{' '}
                         <span className="text-[#FF7766] font-bold">
                             {currency === 'usdt' ? `${parseFloat(balance_usdt).toFixed(2)} USDT` : `${balance} RB`}
                         </span>
                     </p>
+                    {currency === 'usdt' && (
+                        <p className="text-center text-[#FF9500] text-xs font-semibold mb-4">
+                            {t('challenge.usdt_max_label', { max: USDT_MAX })}
+                        </p>
+                    )}
+                    {currency !== 'usdt' && <div className="mb-4" />}
 
                     {raw !== '' && !valid && (
                         <div className="flex items-center justify-center gap-2 mb-4">
@@ -109,7 +123,7 @@ export default function ChallengeStep5() {
                                     <line x1="12" y1="17" x2="12.01" y2="17"/>
                                 </svg>
                                 <span className="text-[#FF7766] text-xs">
-                                    {value < 1 ? t('challenge.min_one') : t('challenge.max_balance', { max })}
+                                    {value < 0.01 ? t('challenge.min_one') : t('challenge.max_balance', { max })}
                                 </span>
                             </div>
                         </div>
@@ -137,7 +151,7 @@ export default function ChallengeStep5() {
                     <button
                         disabled={!valid}
                         onClick={() => {
-                            sessionStorage.setItem('ch_bet', value);
+                            sessionStorage.setItem('ch_bet', currency === 'usdt' ? value : Math.floor(value));
                             sessionStorage.setItem('ch_currency', currency);
                             sessionStorage.setItem('ch_visibility', 'public');
                             router.visit('/challenge/create/6');

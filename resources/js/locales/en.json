@@ -166,6 +166,7 @@
     "balance_label": "Available balance:",
     "min_one": "Minimum 1",
     "max_balance": "Maximum {{max}} (your balance)",
+    "usdt_max_label": "Max USDT bet: ${{max}}",
     "risk_warning": "You can lose this amount",
     "final_step": "FINAL STEP",
     "validation_title": "Validation",
