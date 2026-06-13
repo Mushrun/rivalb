@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Link, usePage } from '@inertiajs/react';
 import { useTranslation } from 'react-i18next';
+import axios from 'axios';
 import AppLayout from '../../Components/AppLayout';
 import TopBar from '../../Components/TopBar';
 import { resolveMediaUrl } from '../../utils/media';
@@ -24,6 +25,49 @@ function Avatar({ path, username, size = 20 }) {
     );
 }
 
+function FollowButton({ profileId, initialFollowing, initialFollowers }) {
+    const { t } = useTranslation();
+    const [isFollowing, setIsFollowing] = useState(initialFollowing);
+    const [followers,   setFollowers]   = useState(initialFollowers);
+    const [loading,     setLoading]     = useState(false);
+
+    const csrf = () => document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') ?? '';
+
+    const toggle = async () => {
+        if (loading) return;
+        setLoading(true);
+        try {
+            const res = isFollowing
+                ? await axios.delete(`/profil/${profileId}/follow`, { headers: { 'X-CSRF-TOKEN': csrf() } })
+                : await axios.post(`/profil/${profileId}/follow`,   {}, { headers: { 'X-CSRF-TOKEN': csrf() } });
+            setIsFollowing(res.data.is_following);
+            setFollowers(res.data.followers);
+        } catch {
+            // silencieux
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    return (
+        <div className="flex flex-col items-end gap-1">
+            <button onClick={toggle} disabled={loading}
+                className="px-5 py-2 rounded-xl font-bold text-xs transition-all"
+                style={{
+                    background: isFollowing ? '#2A2A2A' : '#FF3B30',
+                    color:      isFollowing ? '#888'    : '#FFF',
+                    border:     isFollowing ? '1px solid #3A3A3A' : 'none',
+                    minWidth:   '80px',
+                }}>
+                {loading ? '...' : isFollowing ? t('profil.following_btn') : t('profil.follow_btn')}
+            </button>
+            <span className="text-[#555] text-[10px]">
+                {followers} {t('profil.followers_label')}
+            </span>
+        </div>
+    );
+}
+
 function PlayerHeader({ profile, tab, setTab, challengeCount, reviewCount }) {
     const { t } = useTranslation();
     return (
@@ -39,12 +83,15 @@ function PlayerHeader({ profile, tab, setTab, challengeCount, reviewCount }) {
                     <div className="flex-1">
                         <h2 className="text-white font-bold text-xl">{profile.username}</h2>
                         <p className="text-[#888] text-xs">{t('profil.member_since_label')} {profile.member_since}</p>
+                        <p className="text-[#555] text-[11px] mt-0.5">
+                            <span className="text-white font-semibold">{profile.following}</span> {t('profil.following_count')}
+                        </p>
                     </div>
-                    <Link href="/challenge/create/1"
-                        className="px-4 py-2 rounded-xl text-white font-bold text-xs"
-                        style={{ background: '#FF3B30' }}>
-                        {t('profil.challenge_btn')}
-                    </Link>
+                    <FollowButton
+                        profileId={profile.id}
+                        initialFollowing={profile.is_following}
+                        initialFollowers={profile.followers}
+                    />
                 </div>
 
                 <div className="grid grid-cols-3 gap-2 mb-4">

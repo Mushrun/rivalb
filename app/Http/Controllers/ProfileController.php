@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Challenge;
+use App\Models\Follow;
 use App\Models\GameMatch;
 use App\Models\Review;
 use App\Models\User;
@@ -24,6 +25,7 @@ class ProfileController extends Controller
 
     public function show(int $id)
     {
+        $me     = Auth::user();
         $target = User::findOrFail($id);
 
         $challenges = Challenge::where('creator_id', $target->id)
@@ -52,10 +54,42 @@ class ProfileController extends Controller
                 'created_at' => $r->created_at->diffForHumans(),
             ]);
 
+        $profile               = $this->buildProfile($target);
+        $profile['followers']  = Follow::where('followed_id', $target->id)->count();
+        $profile['following']  = Follow::where('follower_id', $target->id)->count();
+        $profile['is_following'] = $me
+            ? Follow::where('follower_id', $me->id)->where('followed_id', $target->id)->exists()
+            : false;
+
         return Inertia::render('Profil/Show', [
-            'profile'    => $this->buildProfile($target),
+            'profile'    => $profile,
             'challenges' => $challenges,
             'reviews'    => $reviews,
+        ]);
+    }
+
+    public function follow(int $id)
+    {
+        $me = Auth::user();
+        if ($me->id === $id) return response()->json(['error' => 'forbidden'], 403);
+
+        Follow::firstOrCreate(['follower_id' => $me->id, 'followed_id' => $id]);
+
+        return response()->json([
+            'followers'    => Follow::where('followed_id', $id)->count(),
+            'is_following' => true,
+        ]);
+    }
+
+    public function unfollow(int $id)
+    {
+        $me = Auth::user();
+
+        Follow::where('follower_id', $me->id)->where('followed_id', $id)->delete();
+
+        return response()->json([
+            'followers'    => Follow::where('followed_id', $id)->count(),
+            'is_following' => false,
         ]);
     }
 

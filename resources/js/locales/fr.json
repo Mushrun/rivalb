@@ -470,7 +470,11 @@
     "watch": "À SURVEILLER",
     "tabs_infos": "INFOS",
     "tabs_ads": "ADS ({{n}})",
-    "tabs_feedback": "FEEDBACK ({{n}})"
+    "tabs_feedback": "FEEDBACK ({{n}})",
+    "follow_btn": "Suivre",
+    "following_btn": "Abonné",
+    "followers_label": "abonnés",
+    "following_count": "abonnements"
   },
   "settings": {
     "title": "Paramètres",

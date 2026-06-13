@@ -470,7 +470,11 @@
     "watch": "WATCHLIST",
     "tabs_infos": "INFO",
     "tabs_ads": "ADS ({{n}})",
-    "tabs_feedback": "FEEDBACK ({{n}})"
+    "tabs_feedback": "FEEDBACK ({{n}})",
+    "follow_btn": "Follow",
+    "following_btn": "Following",
+    "followers_label": "followers",
+    "following_count": "following"
   },
   "settings": {
     "title": "Settings",
