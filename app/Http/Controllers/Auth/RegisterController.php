@@ -17,7 +17,8 @@ class RegisterController extends Controller
             'username'       => ['required', 'string', 'min:3', 'max:30', 'unique:users'],
             'email'          => ['required', 'email', 'unique:users'],
             'password'       => ['required', 'confirmed', Password::min(8)],
-            'referral_code'  => ['nullable', 'string', 'max:10'],
+            'referral_code'      => ['nullable', 'string', 'max:10'],
+            'telegram_username'  => ['nullable', 'string', 'max:50'],
         ]);
 
         $referrer = null;
@@ -26,11 +27,12 @@ class RegisterController extends Controller
         }
 
         $user = User::create([
-            'name'        => $validated['username'],
-            'username'    => $validated['username'],
-            'email'       => $validated['email'],
-            'password'    => $validated['password'],
-            'referred_by' => $referrer?->id,
+            'name'               => $validated['username'],
+            'username'           => $validated['username'],
+            'email'              => $validated['email'],
+            'password'           => $validated['password'],
+            'referred_by'        => $referrer?->id,
+            'telegram_username'  => $validated['telegram_username'] ?? null,
         ]);
 
         $user->assignRole('player');

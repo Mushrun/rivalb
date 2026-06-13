@@ -19,6 +19,7 @@ export default function Register() {
         password:              '',
         password_confirmation: '',
         referral_code:         refCode,
+        telegram_username:     '',
     });
 
     const handleRegister = (e) => {
@@ -166,6 +167,30 @@ export default function Register() {
                                 </svg>
                             </button>
                         </div>
+                    </div>
+
+                    {/* Telegram */}
+                    <div>
+                        <label className="text-[11px] font-semibold tracking-widest text-[#888888] mb-2 block">
+                            {t('auth.telegram_label')} <span className="text-[#555] normal-case font-normal">{t('auth.referral_code_optional')}</span>
+                        </label>
+                        <div className="relative">
+                            <span className="absolute left-4 top-1/2 -translate-y-1/2 text-[#555] text-sm font-bold">@</span>
+                            <input
+                                type="text"
+                                placeholder={t('auth.telegram_placeholder')}
+                                value={data.telegram_username}
+                                onChange={e => setData('telegram_username', e.target.value.replace(/^@/, ''))}
+                                className="w-full rounded-xl pl-8 pr-4 py-3.5 text-white text-sm outline-none"
+                                style={{
+                                    background: '#0D0D0D',
+                                    border: `1px solid ${errors.telegram_username ? '#FF3B30' : '#2A2A2A'}`,
+                                }}
+                            />
+                        </div>
+                        {errors.telegram_username && (
+                            <p className="text-[#FF3B30] text-xs mt-1">{errors.telegram_username}</p>
+                        )}
                     </div>
 
                     {/* Code de parrainage */}

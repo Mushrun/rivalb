@@ -98,7 +98,9 @@
     "cgu_and": "and the",
     "cgu_privacy": "Privacy Policy",
     "referral_code_label": "REFERRAL CODE",
-    "referral_code_optional": "(optional)"
+    "referral_code_optional": "(optional)",
+    "telegram_label": "TELEGRAM",
+    "telegram_placeholder": "your_telegram_username"
   },
   "battle": {
     "title": "Available Challenges",

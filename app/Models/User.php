@@ -25,6 +25,7 @@ class User extends Authenticatable
         'locale',
         'referral_code',
         'referred_by',
+        'telegram_username',
     ];
 
     protected static function booted(): void

@@ -98,7 +98,9 @@
     "cgu_and": "et la",
     "cgu_privacy": "Politique de confidentialité",
     "referral_code_label": "CODE DE PARRAINAGE",
-    "referral_code_optional": "(optionnel)"
+    "referral_code_optional": "(optionnel)",
+    "telegram_label": "TELEGRAM",
+    "telegram_placeholder": "ton_pseudo_telegram"
   },
   "battle": {
     "title": "Défis disponibles",
