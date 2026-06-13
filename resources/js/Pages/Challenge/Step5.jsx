@@ -123,7 +123,16 @@ export default function ChallengeStep5() {
                                     <line x1="12" y1="17" x2="12.01" y2="17"/>
                                 </svg>
                                 <span className="text-[#FF7766] text-xs">
-                                    {value < 0.01 ? t('challenge.min_one') : t('challenge.max_balance', { max })}
+                                    {currency === 'usdt'
+                                        ? value < 0.01
+                                            ? t('challenge.min_one')
+                                            : value > USDT_MAX
+                                                ? t('challenge.usdt_max_exceeded', { max: USDT_MAX })
+                                                : t('challenge.insufficient_balance')
+                                        : value < 1
+                                            ? t('challenge.min_one')
+                                            : t('challenge.insufficient_balance')
+                                    }
                                 </span>
                             </div>
                         </div>

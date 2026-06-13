@@ -167,6 +167,8 @@
     "min_one": "Minimum 1",
     "max_balance": "Maximum {{max}} (ton solde)",
     "usdt_max_label": "Mise max USDT : {{max}} $",
+    "usdt_max_exceeded": "La mise USDT ne peut pas dépasser {{max}} $",
+    "insufficient_balance": "Solde insuffisant",
     "risk_warning": "Tu peux perdre ce montant",
     "final_step": "ÉTAPE FINALE",
     "validation_title": "Validation",
