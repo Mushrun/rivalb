@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Events\MessageSent;
+use App\Models\Follow;
 use App\Models\GameMatch;
 use App\Models\MatchResult;
 use App\Models\Message;
@@ -83,8 +84,49 @@ class MessageController extends Controller
 
         $conversations = collect(array_values($byOpponent))->sortByDesc('updated_at')->values();
 
+        // Contacts : personnes suivies avec dernier message éventuel
+        $contacts = Follow::where('follower_id', $user->id)
+            ->with('followed')
+            ->get()
+            ->map(function ($f) use ($user) {
+                $followed = $f->followed;
+
+                $matchIds = GameMatch::where(fn($q) => $q
+                    ->where('player1_id', $user->id)->where('player2_id', $followed->id)
+                    ->orWhere(fn($q2) => $q2->where('player1_id', $followed->id)->where('player2_id', $user->id))
+                )->pluck('id');
+
+                $lastMsg = Message::where(fn($q) => $q
+                    ->whereIn('match_id', $matchIds)
+                    ->orWhere(fn($q2) => $q2->where('sender_id', $user->id)->where('receiver_id', $followed->id))
+                    ->orWhere(fn($q2) => $q2->where('sender_id', $followed->id)->where('receiver_id', $user->id))
+                )->latest()->first();
+
+                $unread = Message::where(fn($q) => $q
+                    ->where(fn($q2) => $q2->where('sender_id', $followed->id)->where('receiver_id', $user->id))
+                    ->orWhere(fn($q2) => $q2->whereIn('match_id', $matchIds)->where('sender_id', $followed->id))
+                )->whereNull('read_at')->count();
+
+                return [
+                    'user_id'      => $followed->id,
+                    'username'     => $followed->username,
+                    'avatar_path'  => $followed->avatar_path,
+                    'last_message' => $lastMsg ? [
+                        'body'    => $lastMsg->type === 'result'
+                            ? (json_decode($lastMsg->body, true)['result'] === 'win' ? '🏆 Victoire déclarée' : '💀 Défaite déclarée')
+                            : $lastMsg->body,
+                        'time'    => $lastMsg->created_at->format('H:i'),
+                        'is_mine' => $lastMsg->sender_id === $user->id,
+                    ] : null,
+                    'unread_count' => $unread,
+                ];
+            })
+            ->sortByDesc(fn($c) => $c['last_message'] ? $c['last_message']['time'] : '')
+            ->values();
+
         return Inertia::render('Chat/Index', [
             'conversations' => $conversations,
+            'contacts'      => $contacts,
         ]);
     }
 
