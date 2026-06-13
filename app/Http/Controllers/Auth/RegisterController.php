@@ -35,6 +35,9 @@ class RegisterController extends Controller
 
         $user->assignRole('player');
 
+        // Bonus de bienvenue : 5 USDT offerts à l'inscription
+        $user->increment('balance_usdt', 5.00);
+
         Auth::login($user);
 
         $request->session()->regenerate();
