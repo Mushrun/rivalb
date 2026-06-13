@@ -151,25 +151,7 @@ class MessageController extends Controller
             )
             ->oldest()
             ->get()
-            ->map(function ($m) use ($user) {
-                $base = [
-                    'id'       => $m->id,
-                    'type'     => $m->type,
-                    'is_mine'  => $m->sender_id === $user->id,
-                    'time'     => $m->created_at->format('H:i'),
-                    'match_id' => $m->match_id,
-                ];
-
-                if ($m->type === 'result') {
-                    $data = json_decode($m->body, true);
-                    return array_merge($base, [
-                        'result'     => $data['result'] ?? null,
-                        'screenshot' => isset($data['screenshot']) ? asset('storage/' . $data['screenshot']) : null,
-                    ]);
-                }
-
-                return array_merge($base, ['body' => $m->body]);
-            });
+            ->map(fn($m) => $this->formatMessage($m, $user->id));
 
         Message::where(fn($q) => $q
                 ->whereIn('match_id', $matchIds)
@@ -309,14 +291,7 @@ class MessageController extends Controller
             ->where('id', '>', $afterId)
             ->oldest()
             ->get()
-            ->map(function ($m) use ($user) {
-                $base = ['id' => $m->id, 'type' => $m->type, 'is_mine' => $m->sender_id === $user->id, 'time' => $m->created_at->format('H:i'), 'match_id' => $m->match_id];
-                if ($m->type === 'result') {
-                    $data = json_decode($m->body, true);
-                    return array_merge($base, ['result' => $data['result'] ?? null, 'screenshot' => isset($data['screenshot']) ? asset('storage/' . $data['screenshot']) : null]);
-                }
-                return array_merge($base, ['body' => $m->body]);
-            });
+            ->map(fn($m) => $this->formatMessage($m, $user->id));
 
         Message::where(fn($q) => $q
                 ->where(fn($q2) => $q2->where('sender_id', $opponentId)->where('receiver_id', $user->id))
@@ -342,6 +317,38 @@ class MessageController extends Controller
         $opponentId = $match->player1_id === $user->id ? $match->player2_id : $match->player1_id;
 
         return $this->storeToUser($request, $opponentId);
+    }
+
+    // ── Formateur de message ──────────────────────────────────────────────────
+    private function formatMessage(Message $m, int $userId): array
+    {
+        $base = [
+            'id'       => $m->id,
+            'type'     => $m->type,
+            'is_mine'  => $m->sender_id === $userId,
+            'time'     => $m->created_at->format('H:i'),
+            'match_id' => $m->match_id,
+        ];
+
+        if ($m->type === 'result') {
+            $data = json_decode($m->body, true);
+            return array_merge($base, [
+                'result'     => $data['result']     ?? null,
+                'screenshot' => isset($data['screenshot']) ? asset('storage/' . $data['screenshot']) : null,
+            ]);
+        }
+
+        if ($m->type === 'transfer') {
+            $data = json_decode($m->body, true);
+            return array_merge($base, [
+                'sender'   => $data['sender']   ?? '',
+                'receiver' => $data['receiver'] ?? '',
+                'amount'   => $data['amount']   ?? 0,
+                'currency' => $data['currency'] ?? 'RB',
+            ]);
+        }
+
+        return array_merge($base, ['body' => $m->body]);
     }
 
     // ── Ancien poll par match (compatibilité Battle page) ─────────────────────

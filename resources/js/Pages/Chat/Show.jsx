@@ -637,6 +637,139 @@ function AvisBlock({ matchId, opponent, hasReviewed }) {
     );
 }
 
+function TransferMessage({ msg }) {
+    const { t } = useTranslation();
+    const isGreen = msg.currency === 'USDT';
+    return (
+        <div className={`flex flex-col gap-1 ${msg.is_mine ? 'items-end' : 'items-start'}`}>
+            <div className="rounded-2xl px-4 py-3 flex items-center gap-3"
+                style={{
+                    background: isGreen ? 'rgba(76,217,100,0.12)' : 'rgba(255,59,48,0.12)',
+                    border: `1.5px solid ${isGreen ? '#4CD964' : '#FF3B30'}`,
+                    minWidth: '180px',
+                }}>
+                <div className="w-9 h-9 rounded-full flex items-center justify-center flex-shrink-0"
+                    style={{ background: isGreen ? 'rgba(76,217,100,0.2)' : 'rgba(255,59,48,0.2)' }}>
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none"
+                        stroke={isGreen ? '#4CD964' : '#FF3B30'} strokeWidth="2.5" strokeLinecap="round">
+                        <line x1="12" y1="1" x2="12" y2="23"/>
+                        <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
+                    </svg>
+                </div>
+                <div>
+                    <p className="font-black text-base" style={{ color: isGreen ? '#4CD964' : '#FF3B30' }}>
+                        {msg.amount} {msg.currency}
+                    </p>
+                    <p className="text-[#888] text-[10px]">
+                        {msg.is_mine ? `→ ${msg.receiver}` : `← ${msg.sender}`}
+                    </p>
+                </div>
+            </div>
+            <span className="text-[#555] text-[10px] px-1">{msg.time}</span>
+        </div>
+    );
+}
+
+function SendMoneyModal({ opponent, onClose, onSent, myBalanceRb, myBalanceUsdt }) {
+    const { t } = useTranslation();
+    const [currency, setCurrency] = useState('rb');
+    const [amount,   setAmount]   = useState('');
+    const [sending,  setSending]  = useState(false);
+    const [error,    setError]    = useState('');
+
+    const maxAmount = currency === 'usdt' ? parseFloat(myBalanceUsdt ?? 0) : parseInt(myBalanceRb ?? 0);
+
+    const handleSend = async () => {
+        const val = parseFloat(amount);
+        if (!val || val <= 0) { setError(t('chat.send_money_error_amount')); return; }
+        if (val > maxAmount)  { setError(t('chat.send_money_error_balance')); return; }
+
+        setSending(true);
+        setError('');
+        const csrf = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') ?? '';
+        try {
+            const res = await axios.post(`/transfer/${opponent.id}`, { amount: val, currency }, {
+                headers: { 'X-CSRF-TOKEN': csrf },
+            });
+            onSent(res.data.message);
+            onClose();
+        } catch (e) {
+            const err = e.response?.data?.error;
+            setError(err === 'insufficient_balance'
+                ? t('chat.send_money_error_balance')
+                : t('chat.send_money_error_amount'));
+        } finally {
+            setSending(false);
+        }
+    };
+
+    return (
+        <div className="fixed inset-0 z-50 flex items-end justify-center"
+            style={{ background: 'rgba(0,0,0,0.75)' }} onClick={onClose}>
+            <div className="w-full max-w-[430px] rounded-t-3xl p-6 flex flex-col gap-4"
+                style={{ background: '#111118' }} onClick={e => e.stopPropagation()}>
+
+                <div className="flex justify-center">
+                    <div className="w-10 h-1 rounded-full" style={{ background: '#333' }} />
+                </div>
+
+                <h3 className="text-white font-bold text-base text-center">
+                    {t('chat.send_money_title', { name: opponent.username })}
+                </h3>
+
+                {/* Choix devise */}
+                <div className="flex gap-2">
+                    {['rb', 'usdt'].map(cur => (
+                        <button key={cur} onClick={() => { setCurrency(cur); setAmount(''); setError(''); }}
+                            className="flex-1 py-2.5 rounded-xl font-bold text-sm transition-all"
+                            style={{
+                                background: currency === cur
+                                    ? (cur === 'usdt' ? 'rgba(76,217,100,0.15)' : 'rgba(255,59,48,0.15)')
+                                    : '#1A1A1A',
+                                color: currency === cur
+                                    ? (cur === 'usdt' ? '#4CD964' : '#FF3B30')
+                                    : '#555',
+                                border: `1.5px solid ${currency === cur ? (cur === 'usdt' ? '#4CD964' : '#FF3B30') : '#2A2A2A'}`,
+                            }}>
+                            {cur.toUpperCase()}
+                        </button>
+                    ))}
+                </div>
+
+                {/* Solde disponible */}
+                <p className="text-[#555] text-xs text-center">
+                    {t('chat.send_money_currency')} : <span className="text-white font-semibold">
+                        {maxAmount} {currency.toUpperCase()}
+                    </span>
+                </p>
+
+                {/* Montant */}
+                <input
+                    type="number"
+                    value={amount}
+                    onChange={e => { setAmount(e.target.value); setError(''); }}
+                    placeholder={t('chat.send_money_amount_placeholder')}
+                    className="w-full rounded-xl px-4 py-3 text-white text-lg font-bold outline-none text-center"
+                    style={{ background: '#1A1A1A', border: error ? '1.5px solid #FF3B30' : '1.5px solid #2A2A2A' }}
+                />
+                {error && <p className="text-[#FF3B30] text-xs text-center -mt-2">{error}</p>}
+
+                <button onClick={handleSend} disabled={!amount || sending}
+                    className="w-full rounded-xl py-3 font-bold text-sm flex items-center justify-center gap-2"
+                    style={{
+                        background: amount && !sending ? '#FF3B30' : '#1A1A2A',
+                        color:      amount && !sending ? '#FFF'    : '#444',
+                    }}>
+                    {sending
+                        ? <svg className="animate-spin" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5"><path d="M21 12a9 9 0 1 1-6.219-8.56"/></svg>
+                        : t('chat.send_money_confirm')
+                    }
+                </button>
+            </div>
+        </div>
+    );
+}
+
 export default function ChatShow() {
     const { match, opponent, messages: initialMessages, opponent_id } = usePage().props;
     const { t } = useTranslation();
@@ -725,6 +858,11 @@ export default function ChatShow() {
 
     const [openCombattants, setOpenCombattants] = useState(false);
     const [openMatch,       setOpenMatch]       = useState(false);
+    const [showTransfer,    setShowTransfer]    = useState(false);
+
+    const { auth } = usePage().props;
+    const myBalanceRb   = auth?.user?.balance_rb   ?? 0;
+    const myBalanceUsdt = auth?.user?.balance_usdt ?? 0;
 
     return (
         <div className="flex justify-center" style={{ background: '#0A0A0F', height: '100dvh' }}>
@@ -752,6 +890,17 @@ export default function ChatShow() {
                             )}
                         </div>
                     </Link>
+
+                    {/* Bouton Envoyer */}
+                    <button onClick={() => setShowTransfer(true)}
+                        className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl font-bold text-xs flex-shrink-0"
+                        style={{ background: 'rgba(76,217,100,0.12)', color: '#4CD964', border: '1px solid rgba(76,217,100,0.25)' }}>
+                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
+                            <line x1="12" y1="1" x2="12" y2="23"/>
+                            <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
+                        </svg>
+                        {t('chat.send_money_btn')}
+                    </button>
                 </div>
 
                 {/* Accordéon Combattants */}
@@ -835,6 +984,10 @@ export default function ChatShow() {
                                 return <ResultMessage key={msg.id} msg={msg} opponent={opponent} />;
                             }
 
+                            if (msg.type === 'transfer') {
+                                return <TransferMessage key={msg.id} msg={msg} />;
+                            }
+
                             if (msg.is_mine) {
                                 return (
                                     <div key={msg.id} className="flex flex-col items-end gap-0.5">
@@ -902,6 +1055,19 @@ export default function ChatShow() {
                 </div>
             </div>
             <BottomNav />
+
+            {showTransfer && (
+                <SendMoneyModal
+                    opponent={opponent}
+                    myBalanceRb={myBalanceRb}
+                    myBalanceUsdt={myBalanceUsdt}
+                    onClose={() => setShowTransfer(false)}
+                    onSent={(msg) => {
+                        lastIdRef.current = msg.id;
+                        setMessages(prev => [...prev, msg]);
+                    }}
+                />
+            )}
         </div>
     );
 }

@@ -24,6 +24,7 @@ use App\Http\Controllers\MessageController;
 use App\Http\Controllers\HistoriqueController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\LandingController;
+use App\Http\Controllers\TransferController;
 use App\Http\Controllers\WalletController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -83,6 +84,8 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profil/{id}/follow',   [ProfileController::class, 'unfollow'])->whereNumber('id');
     Route::get('/profil/{id}/followers',   [ProfileController::class, 'followersList'])->whereNumber('id');
     Route::get('/profil/{id}/following',   [ProfileController::class, 'followingList'])->whereNumber('id');
+
+    Route::post('/transfer/{userId}', [TransferController::class, 'send'])->whereNumber('userId')->middleware('throttle:10,1');
     Route::get('/parrainage',  [ParrainageController::class, 'index']);
     Route::get('/settings',    fn() => Inertia::render('Settings'));
     Route::get('/support',     fn() => Inertia::render('Support'));
