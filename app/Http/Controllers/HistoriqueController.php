@@ -40,12 +40,13 @@ class HistoriqueController extends Controller
                 : '-';
 
             return [
-                'id'         => $match->id,
-                'name'       => $opponent->username ?? $opponent->name ?? 'Inconnu',
-                'date'       => $date,
-                'amount'     => ($won ? '+' : '-') . $bet . ' RB',
-                'won'        => $won,
-                'avis_given' => isset($reviewedMatchIds[$match->id]),
+                'id'          => $match->id,
+                'name'        => $opponent->username ?? $opponent->name ?? 'Inconnu',
+                'opponent_id' => $opponent->id ?? null,
+                'date'        => $date,
+                'amount'      => ($won ? '+' : '-') . $bet . ' RB',
+                'won'         => $won,
+                'avis_given'  => isset($reviewedMatchIds[$match->id]),
             ];
         })->values();
 

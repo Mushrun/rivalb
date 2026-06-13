@@ -134,19 +134,22 @@ function CombatsTab({ combats, stats }) {
                 ) : filtered.map(item => (
                     <div key={item.id} className="flex items-center gap-3 rounded-2xl p-3.5"
                         style={{ background: '#1A1A1A' }}>
-                        <div className="relative w-11 h-11 rounded-xl flex-shrink-0 flex items-center justify-center"
-                            style={{ background: '#2A2A2A' }}>
-                            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#555" strokeWidth="1.5">
-                                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
-                                <circle cx="12" cy="7" r="4"/>
-                            </svg>
-                            <span className="absolute -bottom-1 -right-1 w-3.5 h-3.5 rounded-full border-2 border-[#1A1A1A]"
-                                style={{ background: item.won ? '#4CD964' : '#FF3B30' }} />
-                        </div>
-                        <div className="flex-1 min-w-0">
-                            <p className="text-white font-semibold text-sm truncate">{item.name}</p>
-                            <p className="text-[#666] text-xs">{item.date}</p>
-                        </div>
+                        <Link href={item.opponent_id ? `/profil/${item.opponent_id}` : '#'}
+                            className="flex items-center gap-3 flex-1 min-w-0">
+                            <div className="relative w-11 h-11 rounded-xl flex-shrink-0 flex items-center justify-center"
+                                style={{ background: '#2A2A2A' }}>
+                                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#555" strokeWidth="1.5">
+                                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                                    <circle cx="12" cy="7" r="4"/>
+                                </svg>
+                                <span className="absolute -bottom-1 -right-1 w-3.5 h-3.5 rounded-full border-2 border-[#1A1A1A]"
+                                    style={{ background: item.won ? '#4CD964' : '#FF3B30' }} />
+                            </div>
+                            <div className="min-w-0">
+                                <p className="text-white font-semibold text-sm truncate">{item.name}</p>
+                                <p className="text-[#666] text-xs">{item.date}</p>
+                            </div>
+                        </Link>
                         <div className="flex flex-col items-end gap-1">
                             <span className="font-bold text-sm" style={{ color: item.won ? '#4CD964' : '#FF3B30' }}>
                                 {item.amount}

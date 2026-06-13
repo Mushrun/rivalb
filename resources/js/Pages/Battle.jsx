@@ -67,28 +67,28 @@ export default function Battle() {
                 ) : (
                     challenges.map(c => (
                         <div key={c.id} className="flex items-center gap-3 rounded-2xl p-3.5" style={{ background: '#1A1A1A' }}>
-                            {/* Avatar */}
-                            <div className="w-12 h-12 rounded-xl overflow-hidden flex-shrink-0 flex items-center justify-center font-bold text-white text-lg"
-                                style={{ background: '#FF3B30' }}>
-                                {c.creator.username?.[0]?.toUpperCase()}
-                            </div>
-
-                            {/* Info */}
-                            <div className="flex-1 min-w-0">
-                                <div className="flex items-center gap-1.5 mb-0.5">
-                                    <span className="text-white font-semibold text-sm truncate">{c.creator.username}</span>
-                                    <span className="text-[#555] text-xs">{c.type}</span>
+                            {/* Avatar + Info → profil */}
+                            <Link href={`/profil/${c.creator.id}`} className="flex items-center gap-3 flex-1 min-w-0">
+                                <div className="w-12 h-12 rounded-xl overflow-hidden flex-shrink-0 flex items-center justify-center font-bold text-white text-lg"
+                                    style={{ background: '#FF3B30' }}>
+                                    {c.creator.username?.[0]?.toUpperCase()}
                                 </div>
-                                <div className="flex items-center gap-1">
-                                    <ReliabilityDot value={c.creator.reliability_score} />
-                                    <span className="text-[10px] text-[#888]">{t('battle.reliability')} {c.creator.reliability_score}%</span>
-                                    <span className="text-[#555] text-xs mx-1">·</span>
-                                    <span className="text-[#888] text-xs">{c.created_at}</span>
+                                <div className="min-w-0">
+                                    <div className="flex items-center gap-1.5 mb-0.5">
+                                        <span className="text-white font-semibold text-sm truncate">{c.creator.username}</span>
+                                        <span className="text-[#555] text-xs">{c.type}</span>
+                                    </div>
+                                    <div className="flex items-center gap-1">
+                                        <ReliabilityDot value={c.creator.reliability_score} />
+                                        <span className="text-[10px] text-[#888]">{t('battle.reliability')} {c.creator.reliability_score}%</span>
+                                        <span className="text-[#555] text-xs mx-1">·</span>
+                                        <span className="text-[#888] text-xs">{c.created_at}</span>
+                                    </div>
                                 </div>
-                            </div>
+                            </Link>
 
                             {/* Amount + button */}
-                            <div className="flex flex-col items-end gap-2">
+                            <div className="flex flex-col items-end gap-2 flex-shrink-0">
                                 <span className="text-[#FF3B30] font-black text-lg">
                                     {c.bet_amount} {c.currency === 'usdt' ? 'USDT' : 'RB'}
                                 </span>

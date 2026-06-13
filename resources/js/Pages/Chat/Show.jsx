@@ -740,17 +740,18 @@ export default function ChatShow() {
                         </svg>
                     </Link>
 
-                    <div className="w-10 h-10 rounded-full flex items-center justify-center font-bold text-white flex-shrink-0"
-                        style={{ background: '#FF3B30' }}>
-                        {opponent.username?.[0]?.toUpperCase()}
-                    </div>
-
-                    <div className="flex-1 min-w-0">
-                        <p className="text-white font-bold text-sm">{opponent.username}</p>
-                        {match && (
-                            <p className="text-[#888] text-xs">{match.game} · {match.bet_amount} {match.currency === 'usdt' ? 'USDT' : 'RB'}</p>
-                        )}
-                    </div>
+                    <Link href={`/profil/${opponent.id}`} className="flex items-center gap-3 flex-1 min-w-0">
+                        <div className="w-10 h-10 rounded-full flex items-center justify-center font-bold text-white flex-shrink-0"
+                            style={{ background: '#FF3B30' }}>
+                            {opponent.username?.[0]?.toUpperCase()}
+                        </div>
+                        <div className="min-w-0">
+                            <p className="text-white font-bold text-sm">{opponent.username}</p>
+                            {match && (
+                                <p className="text-[#888] text-xs">{match.game} · {match.bet_amount} {match.currency === 'usdt' ? 'USDT' : 'RB'}</p>
+                            )}
+                        </div>
+                    </Link>
                 </div>
 
                 {/* Accordéon Combattants */}
