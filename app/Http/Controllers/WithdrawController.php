@@ -12,7 +12,7 @@ use Inertia\Inertia;
 class WithdrawController extends Controller
 {
     private const MIN_RB           = 500;
-    private const MIN_USDT         = 1.0;
+    private const MIN_USDT         = 25.0;
     private const RATE_RB_PER_USDT = 500;
 
     private const FEE_USDT         = 0.10;
