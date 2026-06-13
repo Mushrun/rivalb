@@ -85,10 +85,18 @@ class ShadowCoinService
         });
     }
 
-    public function creditUsdt(User $user, int $amount, string $type): void
+    public function creditUsdt(User $user, float $amount, string $type): Transaction
     {
-        DB::transaction(function () use ($user, $amount) {
+        return DB::transaction(function () use ($user, $amount, $type) {
             $user->increment('balance_usdt', $amount);
+
+            return Transaction::create([
+                'user_id'      => $user->id,
+                'type'         => $type,
+                'amount_usdt'  => $amount,
+                'currency'     => 'usdt',
+                'status'       => 'valide',
+            ]);
         });
     }
 }

@@ -5,12 +5,15 @@ namespace App\Http\Controllers\Auth;
 use App\Http\Controllers\Controller;
 use App\Jobs\SendWelcomeEmailJob;
 use App\Models\User;
+use App\Services\ShadowCoinService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Rules\Password;
 
 class RegisterController extends Controller
 {
+    public function __construct(private ShadowCoinService $coinService) {}
+
     public function store(Request $request)
     {
         $validated = $request->validate([
@@ -37,8 +40,8 @@ class RegisterController extends Controller
 
         $user->assignRole('player');
 
-        // Bonus de bienvenue : 5 USDT offerts à l'inscription
-        $user->increment('balance_usdt', 5.00);
+        // Bonus de bienvenue : 5 USDT depuis le portefeuille principal
+        $this->coinService->creditUsdt($user, 5.00, 'bonus_bienvenue');
 
         Auth::login($user);
 
