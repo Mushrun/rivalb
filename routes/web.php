@@ -65,10 +65,13 @@ Route::middleware('auth')->group(function () {
     Route::post('/notifications/read-all', [NotificationController::class, 'markAllRead']);
     Route::post('/notifications/{id}/read',[NotificationController::class, 'markRead']);
 
-    Route::get('/chat',              [MessageController::class, 'index']);
-    Route::get('/chat/{id}',         [MessageController::class, 'show']);
-    Route::post('/chat/{id}',        [MessageController::class, 'store']);
-    Route::get('/chat/{id}/poll',    [MessageController::class, 'poll']);
+    Route::get('/chat',                        [MessageController::class, 'index']);
+    Route::get('/chat/user/{opponentId}',      [MessageController::class, 'showConversation']);
+    Route::post('/chat/user/{opponentId}',     [MessageController::class, 'storeToUser']);
+    Route::get('/chat/user/{opponentId}/poll', [MessageController::class, 'pollUser']);
+    Route::get('/chat/{id}',                   [MessageController::class, 'show']);
+    Route::post('/chat/{id}',                  [MessageController::class, 'store']);
+    Route::get('/chat/{id}/poll',              [MessageController::class, 'poll']);
 
     Route::get('/profil',           [ProfileController::class, 'index']);
     Route::post('/profil/update',   [ProfileController::class, 'update']);

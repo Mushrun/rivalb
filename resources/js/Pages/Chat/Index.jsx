@@ -104,7 +104,7 @@ export default function ChatIndex() {
                             const s         = statusLabel[conv.status] ?? { label: conv.status, color: '#888' };
                             const hasUnread = conv.unread_count > 0;
                             return (
-                                <Link key={conv.match_id} href={`/chat/${conv.match_id}`}
+                                <Link key={conv.opponent_id} href={`/chat/user/${conv.opponent_id}`}
                                     className="flex items-center gap-3 px-4 py-3.5"
                                     style={{ borderBottom: i < filtered.length - 1 ? '1px solid #1A1A1A' : 'none' }}>
 

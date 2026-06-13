@@ -638,7 +638,7 @@ function AvisBlock({ matchId, opponent, hasReviewed }) {
 }
 
 export default function ChatShow() {
-    const { match, opponent, messages: initialMessages } = usePage().props;
+    const { match, opponent, messages: initialMessages, opponent_id } = usePage().props;
     const { t } = useTranslation();
     const statusLabel = useStatusLabel();
 
@@ -662,7 +662,7 @@ export default function ChatShow() {
 
         const poll = async () => {
             try {
-                const res = await axios.get(`/chat/${match.id}/poll?after=${lastIdRef.current}`, {
+                const res = await axios.get(`/chat/user/${opponent_id}/poll?after=${lastIdRef.current}`, {
                     headers: { 'X-CSRF-TOKEN': csrf },
                 });
                 const newMsgs = res.data.messages;
@@ -677,7 +677,7 @@ export default function ChatShow() {
 
         const interval = setInterval(poll, 2000);
         return () => clearInterval(interval);
-    }, [match.id]);
+    }, [opponent_id]);
 
     const handleSend = async () => {
         const body = text.trim();
@@ -700,7 +700,7 @@ export default function ChatShow() {
 
         try {
             const csrf = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') ?? '';
-            const response = await axios.post(`/chat/${match.id}`, { body }, {
+            const response = await axios.post(`/chat/user/${opponent_id}`, { body }, {
                 headers: { 'X-CSRF-TOKEN': csrf },
             });
             const real = response.data.message;
@@ -747,26 +747,30 @@ export default function ChatShow() {
 
                     <div className="flex-1 min-w-0">
                         <p className="text-white font-bold text-sm">{opponent.username}</p>
-                        <p className="text-[#888] text-xs">{match.game} · {match.bet_amount} {match.currency === 'usdt' ? 'USDT' : 'RB'}</p>
+                        {match && (
+                            <p className="text-[#888] text-xs">{match.game} · {match.bet_amount} {match.currency === 'usdt' ? 'USDT' : 'RB'}</p>
+                        )}
                     </div>
                 </div>
 
                 {/* Accordéon Combattants */}
-                <div className="flex-shrink-0 mx-4 mt-2 rounded-2xl overflow-hidden" style={{ border: '1px solid #1E1E2A' }}>
-                    <button onClick={() => setOpenCombattants(o => !o)}
-                        className="w-full flex items-center justify-between px-4 py-2.5"
-                        style={{ background: '#0D0D14' }}>
-                        <span className="text-[#555] text-[10px] tracking-widest font-semibold">{t('chat.fighters')}</span>
-                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#555" strokeWidth="2.5" strokeLinecap="round"
-                            style={{ transform: openCombattants ? 'rotate(180deg)' : 'rotate(0deg)', transition: 'transform 0.2s' }}>
-                            <polyline points="6 9 12 15 18 9"/>
-                        </svg>
-                    </button>
-                    {openCombattants && <PlayersCard match={match} opponent={opponent} />}
-                </div>
+                {match && (
+                    <div className="flex-shrink-0 mx-4 mt-2 rounded-2xl overflow-hidden" style={{ border: '1px solid #1E1E2A' }}>
+                        <button onClick={() => setOpenCombattants(o => !o)}
+                            className="w-full flex items-center justify-between px-4 py-2.5"
+                            style={{ background: '#0D0D14' }}>
+                            <span className="text-[#555] text-[10px] tracking-widest font-semibold">{t('chat.fighters')}</span>
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#555" strokeWidth="2.5" strokeLinecap="round"
+                                style={{ transform: openCombattants ? 'rotate(180deg)' : 'rotate(0deg)', transition: 'transform 0.2s' }}>
+                                <polyline points="6 9 12 15 18 9"/>
+                            </svg>
+                        </button>
+                        {openCombattants && <PlayersCard match={match} opponent={opponent} />}
+                    </div>
+                )}
 
                 {/* Accordéon Match */}
-                {match.status !== 'termine' && match.status !== 'annule' && (
+                {match && match.status !== 'termine' && match.status !== 'annule' && (
                     <div className="flex-shrink-0 mx-4 mt-1 rounded-2xl overflow-hidden" style={{ border: '1px solid #1E1E2A' }}>
                         <button onClick={() => setOpenMatch(o => !o)}
                             className="w-full flex items-center justify-between px-4 py-2.5"
@@ -791,7 +795,7 @@ export default function ChatShow() {
                 )}
 
                 {/* Avis — visible quand le match est terminé */}
-                {match.status === 'termine' && (
+                {match && match.status === 'termine' && (
                     <AvisBlock
                         matchId={match.id}
                         opponent={opponent}
