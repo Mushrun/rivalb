@@ -164,6 +164,7 @@ function PlayerHeader({ profile, tab, setTab, challengeCount, reviewCount, onOpe
         <>
             <TopBar />
             <div className="px-4 mt-2">
+                {/* Avatar + username + follow */}
                 <div className="flex items-center gap-4 mb-4">
                     <div className="relative">
                         <Avatar path={profile.avatar_path} username={profile.username} size={80} />
@@ -173,10 +174,6 @@ function PlayerHeader({ profile, tab, setTab, challengeCount, reviewCount, onOpe
                     <div className="flex-1">
                         <h2 className="text-white font-bold text-xl">{profile.username}</h2>
                         <p className="text-[#888] text-xs">{t('profil.member_since_label')} {profile.member_since}</p>
-                        <button onClick={onOpenFollowing}
-                            className="text-[#555] text-[11px] mt-0.5 hover:text-[#888] transition-colors">
-                            <span className="text-white font-semibold">{profile.following}</span> {t('profil.following_count')}
-                        </button>
                     </div>
                     <FollowButton
                         profileId={profile.id}
@@ -186,6 +183,23 @@ function PlayerHeader({ profile, tab, setTab, challengeCount, reviewCount, onOpe
                     />
                 </div>
 
+                {/* Stats sociales : Abonnés | Abonnements */}
+                <div className="grid grid-cols-2 gap-2 mb-2">
+                    <button onClick={onOpenFollowers}
+                        className="rounded-xl p-3 flex flex-col items-center active:opacity-70"
+                        style={{ background: '#1A1A1A' }}>
+                        <span className="font-black text-2xl text-white">{profile.followers}</span>
+                        <span className="text-[#888] text-[9px] tracking-widest font-semibold mt-1">{t('profil.followers_label').toUpperCase()}</span>
+                    </button>
+                    <button onClick={onOpenFollowing}
+                        className="rounded-xl p-3 flex flex-col items-center active:opacity-70"
+                        style={{ background: '#1A1A1A' }}>
+                        <span className="font-black text-2xl text-white">{profile.following}</span>
+                        <span className="text-[#888] text-[9px] tracking-widest font-semibold mt-1">{t('profil.following_count').toUpperCase()}</span>
+                    </button>
+                </div>
+
+                {/* Stats de combat */}
                 <div className="grid grid-cols-3 gap-2 mb-4">
                     {[
                         { label: t('profil.wins_label'),   value: profile.wins,   color: '#4CD964' },
