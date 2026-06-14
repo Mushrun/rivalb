@@ -34,16 +34,16 @@
 
             <div style="text-align:center; margin-bottom: 24px;">
                 <div class="stat">
-                    <span class="stat-value">100</span>
-                    <span class="stat-label">{{ __('email_welcome_reliability') }}</span>
+                    <span class="stat-value" style="color:#4CD964; font-size:26px;">$5 USDT</span>
+                    <span class="stat-label">{{ __('email_welcome_balance') }}</span>
                 </div>
                 <div class="stat">
-                    <span class="stat-value">0 RB</span>
-                    <span class="stat-label">{{ __('email_welcome_balance') }}</span>
+                    <span class="stat-value">100%</span>
+                    <span class="stat-label">{{ __('email_welcome_reliability') }}</span>
                 </div>
             </div>
 
-            <a href="{{ config('app.url') }}/battle" class="btn">{{ __('email_welcome_cta') }}</a>
+            <a href="{{ config('app.url') }}/challenge/create/1" class="btn">{{ __('email_welcome_cta') }}</a>
 
             <hr class="divider">
             <p class="text" style="margin:0; font-size:12px;">

@@ -17,7 +17,7 @@ class WelcomeMail extends Mailable
 
     public function envelope(): Envelope
     {
-        app()->setLocale($this->user->locale ?? 'fr');
+        app()->setLocale($this->user->locale ?? 'en');
         return new Envelope(subject: __('email_welcome_subject'));
     }
 
