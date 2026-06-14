@@ -25,9 +25,11 @@ export default function ProfilIndex() {
     const { t } = useTranslation();
 
     const reliability = profile?.reliability_score ?? 100;
-    const wins        = profile?.wins   ?? 0;
-    const losses      = profile?.losses ?? 0;
-    const total       = profile?.total  ?? 0;
+    const wins        = profile?.wins      ?? 0;
+    const losses      = profile?.losses    ?? 0;
+    const total       = profile?.total     ?? 0;
+    const followers   = profile?.followers ?? 0;
+    const following   = profile?.following ?? 0;
 
     const menuItems = [
         { icon: 'settings', label: t('profil.menu_settings'),    href: '/settings' },
@@ -48,7 +50,21 @@ export default function ProfilIndex() {
                 )}
                 <p className="text-[#888] text-sm mb-6">{t('profil.member_since')} {profile?.member_since}</p>
 
-                {/* Stats */}
+                {/* Stats sociales */}
+                <div className="w-full rounded-2xl p-4 mb-2 flex items-center justify-between"
+                    style={{ background: '#1A1A1A' }}>
+                    <div className="flex-1 flex flex-col items-center">
+                        <span className="text-white font-black text-2xl">{followers}</span>
+                        <span className="text-[#888] text-xs tracking-wider mt-0.5">{t('profil.followers_label').toUpperCase()}</span>
+                    </div>
+                    <div className="w-px h-10" style={{ background: '#2A2A2A' }}/>
+                    <div className="flex-1 flex flex-col items-center">
+                        <span className="text-white font-black text-2xl">{following}</span>
+                        <span className="text-[#888] text-xs tracking-wider mt-0.5">{t('profil.following_count').toUpperCase()}</span>
+                    </div>
+                </div>
+
+                {/* Stats de combat */}
                 <div className="w-full rounded-2xl p-4 mb-4 flex items-center justify-between"
                     style={{ background: '#1A1A1A' }}>
                     <div className="flex-1 flex flex-col items-center">

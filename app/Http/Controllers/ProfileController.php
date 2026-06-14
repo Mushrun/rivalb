@@ -220,6 +220,8 @@ class ProfileController extends Controller
             'wins'              => $wins,
             'losses'            => $total - $wins,
             'total'             => $total,
+            'followers'         => Follow::where('followed_id', $user->id)->count(),
+            'following'         => Follow::where('follower_id', $user->id)->count(),
         ];
     }
 }
