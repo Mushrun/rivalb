@@ -3,7 +3,6 @@
 namespace App\Services;
 
 use App\Models\Challenge;
-use App\Models\Follow;
 use App\Models\GameMatch;
 use App\Models\User;
 use Illuminate\Support\Facades\DB;
@@ -46,14 +45,13 @@ class ChallengeService
                 'visibility' => $data['visibility']  ?? 'public',
             ]);
 
-            // Notifier les abonnés si le défi est public
+            // Notifier tous les joueurs si le défi est public
             if (($data['visibility'] ?? 'public') === 'public') {
-                Follow::where('followed_id', $creator->id)
-                    ->with('follower')
-                    ->get()
-                    ->each(fn($f) => $this->notifService->nouveauDefiAbonnement(
-                        $f->follower, $challenge->id, $creator->username, $betAmount, $currency
-                    ));
+                User::where('id', '!=', $creator->id)->each(
+                    fn($u) => $this->notifService->nouveauDefiAbonnement(
+                        $u, $challenge->id, $creator->username, $betAmount, $currency
+                    )
+                );
             }
 
             return $challenge;
