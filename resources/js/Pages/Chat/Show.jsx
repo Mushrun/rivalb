@@ -670,6 +670,67 @@ function TransferMessage({ msg }) {
     );
 }
 
+function ConditionsCard({ match, opponent }) {
+    const { t } = useTranslation();
+    const rules = match.rules ?? {};
+
+    const conditions = [
+        { label: t('chat.cond_type'),    value: match.type?.toUpperCase() ?? '1v1' },
+        { label: t('chat.cond_game'),    value: match.game },
+        { label: t('chat.cond_bet'),     value: `${match.bet_amount} ${match.currency === 'usdt' ? 'USDT' : 'RB'}` },
+        rules.map_ban   ? { label: t('chat.cond_map'),     value: rules.map_ban }   : null,
+        rules.mode      ? { label: t('chat.cond_mode'),    value: rules.mode }      : null,
+        rules.character ? { label: t('chat.cond_char'),    value: rules.character } : null,
+    ].filter(Boolean);
+
+    return (
+        <div style={{ background: '#111118' }}>
+            <div className="px-4 py-3 flex flex-col gap-3">
+                {/* Conditions */}
+                <div>
+                    <p className="text-[#555] text-[9px] tracking-widest font-semibold mb-2">{t('chat.cond_conditions').toUpperCase()}</p>
+                    <div className="flex flex-col gap-1.5">
+                        {conditions.map(c => (
+                            <div key={c.label} className="flex items-center justify-between">
+                                <span className="text-[#666] text-xs">{c.label}</span>
+                                <span className="text-white text-xs font-bold">{c.value}</span>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+
+                <div style={{ height: '1px', background: '#1E1E2A' }} />
+
+                {/* Niveaux */}
+                <div>
+                    <p className="text-[#555] text-[9px] tracking-widest font-semibold mb-2">{t('chat.cond_levels').toUpperCase()}</p>
+                    {[
+                        { name: match.my_username, score: match.my_reliability },
+                        { name: opponent.username,  score: opponent.reliability_score },
+                    ].map(p => (
+                        <div key={p.name} className="flex items-center justify-between mb-2">
+                            <span className="text-[#AAA] text-xs font-semibold">{p.name}</span>
+                            <div className="flex items-center gap-2">
+                                <div className="w-20 h-1.5 rounded-full" style={{ background: '#2A2A3A' }}>
+                                    <div className="h-full rounded-full"
+                                        style={{
+                                            width: `${p.score}%`,
+                                            background: p.score >= 80 ? '#4CD964' : p.score >= 50 ? '#FF9500' : '#FF3B30',
+                                        }} />
+                                </div>
+                                <span className="text-xs font-bold w-8 text-right"
+                                    style={{ color: p.score >= 80 ? '#4CD964' : p.score >= 50 ? '#FF9500' : '#FF3B30' }}>
+                                    {p.score}%
+                                </span>
+                            </div>
+                        </div>
+                    ))}
+                </div>
+            </div>
+        </div>
+    );
+}
+
 function SendMoneyModal({ opponent, onClose, onSent, myBalanceRb, myBalanceUsdt }) {
     const { t } = useTranslation();
     const [currency, setCurrency] = useState('rb');
@@ -858,6 +919,7 @@ export default function ChatShow() {
 
     const [openCombattants, setOpenCombattants] = useState(false);
     const [openMatch,       setOpenMatch]       = useState(false);
+    const [openConditions,  setOpenConditions]  = useState(false);
     const [showTransfer,    setShowTransfer]    = useState(false);
 
     const { auth } = usePage().props;
@@ -941,6 +1003,22 @@ export default function ChatShow() {
                             </div>
                         </button>
                         {openMatch && <MatchCard match={match} opponent={opponent} />}
+                    </div>
+                )}
+
+                {/* Accordéon Conditions & Niveaux */}
+                {match && (
+                    <div className="flex-shrink-0 mx-4 mt-1 rounded-2xl overflow-hidden" style={{ border: '1px solid #1E1E2A' }}>
+                        <button onClick={() => setOpenConditions(o => !o)}
+                            className="w-full flex items-center justify-between px-4 py-2.5"
+                            style={{ background: '#0D0D14' }}>
+                            <span className="text-[#555] text-[10px] tracking-widest font-semibold">{t('chat.cond_title')}</span>
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#555" strokeWidth="2.5" strokeLinecap="round"
+                                style={{ transform: openConditions ? 'rotate(180deg)' : 'rotate(0deg)', transition: 'transform 0.2s' }}>
+                                <polyline points="6 9 12 15 18 9"/>
+                            </svg>
+                        </button>
+                        {openConditions && <ConditionsCard match={match} opponent={opponent} />}
                     </div>
                 )}
 

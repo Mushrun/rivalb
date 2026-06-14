@@ -180,14 +180,17 @@ class MessageController extends Controller
             $matchInfo = [
                 'id'            => $latestMatch->id,
                 'game'          => $latestMatch->challenge->game ?? 'Shadow Fight',
+                'type'          => $latestMatch->challenge->type ?? '1v1',
                 'bet_amount'    => $latestMatch->challenge->bet_amount,
                 'currency'      => $latestMatch->challenge->currency ?? 'rb',
+                'rules'         => $latestMatch->challenge->rules ?? [],
                 'status'        => $latestMatch->status,
                 'player1_ready' => $latestMatch->player1_ready,
                 'player2_ready' => $latestMatch->player2_ready,
                 'is_player1'    => $isPlayer1,
                 'my_ready'      => $isPlayer1 ? $latestMatch->player1_ready : $latestMatch->player2_ready,
                 'my_username'   => $user->username,
+                'my_reliability'  => $user->reliability_score ?? 100,
                 'my_result'     => $myResult?->claimed_result,
                 'opp_result'    => $oppResult?->claimed_result,
                 'winner_id'     => $latestMatch->winner_id,
@@ -199,7 +202,11 @@ class MessageController extends Controller
 
         return Inertia::render('Chat/Show', [
             'match'       => $matchInfo,
-            'opponent'    => ['id' => $opponent->id, 'username' => $opponent->username],
+            'opponent'    => [
+                'id'                => $opponent->id,
+                'username'          => $opponent->username,
+                'reliability_score' => $opponent->reliability_score ?? 100,
+            ],
             'messages'    => $messages,
             'opponent_id' => $opponentId,
         ]);
