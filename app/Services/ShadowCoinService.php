@@ -93,6 +93,7 @@ class ShadowCoinService
             return Transaction::create([
                 'user_id'      => $user->id,
                 'type'         => $type,
+                'amount_rb'    => 0,
                 'amount_usdt'  => $amount,
                 'currency'     => 'usdt',
                 'status'       => 'valide',
