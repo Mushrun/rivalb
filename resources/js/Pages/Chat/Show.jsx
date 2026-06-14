@@ -675,12 +675,13 @@ function ConditionsCard({ match, opponent }) {
     const rules = match.rules ?? {};
 
     const conditions = [
-        { label: t('chat.cond_type'),    value: match.type?.toUpperCase() ?? '1v1' },
-        { label: t('chat.cond_game'),    value: match.game },
-        { label: t('chat.cond_bet'),     value: `${match.bet_amount} ${match.currency === 'usdt' ? 'USDT' : 'RB'}` },
-        rules.map_ban   ? { label: t('chat.cond_map'),     value: rules.map_ban }   : null,
-        rules.mode      ? { label: t('chat.cond_mode'),    value: rules.mode }      : null,
-        rules.character ? { label: t('chat.cond_char'),    value: rules.character } : null,
+        { label: t('chat.cond_type'),     value: match.type?.toUpperCase() ?? '1v1' },
+        { label: t('chat.cond_game'),     value: match.game },
+        { label: t('chat.cond_bet'),      value: `${match.bet_amount} ${match.currency === 'usdt' ? 'USDT' : 'RB'}` },
+        rules.combat   ? { label: t('chat.cond_combat'),   value: rules.combat }   : null,
+        rules.position ? { label: t('chat.cond_position'), value: rules.position } : null,
+        rules.heros    ? { label: t('chat.cond_heroes'),   value: rules.heros }    : null,
+        rules.duree    ? { label: t('chat.cond_duration'), value: rules.duree }    : null,
     ].filter(Boolean);
 
     return (
