@@ -54,21 +54,33 @@ class HistoriqueController extends Controller
 
         $transactions = $txList->map(function ($tx) {
             [$type, $label, $sign, $method] = match ($tx->type) {
-                'depot'         => ['recharge', 'Recharge',        '+', $tx->wallet_address ? 'Crypto' : 'Mobile Money'],
-                'retrait'       => ['retrait',  'Retrait',         '-', $tx->wallet_address ? 'Crypto' : 'Mobile Money'],
-                'match_gain'    => ['recharge', 'Gain de match',   '+', 'Combat'],
-                'remboursement' => ['recharge', 'Remboursement',   '+', 'Combat'],
-                'match_perte'   => ['retrait',  'Mise de match',   '-', 'Combat'],
-                default         => ['retrait',  ucfirst($tx->type), '-', 'Système'],
+                'depot'          => ['recharge', 'Deposit',         '+', $tx->wallet_address ? 'Crypto' : 'Mobile Money'],
+                'retrait'        => ['retrait',  'Withdrawal',      '-', $tx->wallet_address ? 'Crypto' : 'Mobile Money'],
+                'match_gain'     => ['recharge', 'Match win',       '+', 'Combat'],
+                'remboursement'  => ['recharge', 'Refund',          '+', 'Combat'],
+                'match_perte'    => ['retrait',  'Match loss',      '-', 'Combat'],
+                'bonus_bienvenue'=> ['recharge', 'Welcome bonus',   '+', 'RivalBet'],
+                'transfer'       => str_starts_with($tx->note ?? '', 'From:')
+                    ? ['recharge', 'Transfer received', '+', $tx->note ?? 'Transfer']
+                    : ['retrait',  'Transfer sent',     '-', $tx->note ?? 'Transfer'],
+                default          => ['retrait',  ucfirst($tx->type), '-', 'Système'],
             };
 
+            $isUsdt  = $tx->currency === 'usdt';
+            $amount  = $isUsdt
+                ? $sign . number_format((float) ($tx->amount_usdt ?? 0), 2) . ' USDT'
+                : $sign . ($tx->amount_rb ?? 0) . ' RB';
+
             return [
-                'id'     => $tx->id,
-                'type'   => $type,
-                'label'  => $label,
-                'date'   => ucfirst($tx->created_at->isoFormat('D MMM, HH:mm')),
-                'amount' => $sign . $tx->amount_rb . ' RB',
-                'method' => $method,
+                'id'       => $tx->id,
+                'type'     => $type,
+                'label'    => $label,
+                'date'     => ucfirst($tx->created_at->isoFormat('D MMM, HH:mm')),
+                'amount'   => $amount,
+                'method'   => $method,
+                'currency' => $tx->currency ?? 'rb',
+                'status'   => $tx->status,
+                'note'     => $tx->note,
             ];
         })->values();
 

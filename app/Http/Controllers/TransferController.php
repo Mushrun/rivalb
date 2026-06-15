@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Follow;
 use App\Models\Message;
+use App\Models\Transaction;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -35,7 +36,7 @@ class TransferController extends Controller
             : (int) $validated['amount'];
 
         try {
-            DB::transaction(function () use ($sender, $receiver, $amount, $validated) {
+            DB::transaction(function () use ($sender, $receiver, $amount, $validated, $currency) {
                 if ($validated['currency'] === 'usdt') {
                     $fresh = User::lockForUpdate()->findOrFail($sender->id);
                     if ($fresh->balance_usdt < $amount) {
@@ -51,6 +52,30 @@ class TransferController extends Controller
                     $fresh->decrement('balance_rb', $amount);
                     $receiver->increment('balance_rb', $amount);
                 }
+
+                $isUsdt = $validated['currency'] === 'usdt';
+
+                // Transaction débit pour l'envoyeur
+                Transaction::create([
+                    'user_id'    => $sender->id,
+                    'type'       => 'transfer',
+                    'amount_rb'  => $isUsdt ? 0 : $amount,
+                    'amount_usdt'=> $isUsdt ? $amount : 0,
+                    'currency'   => $validated['currency'],
+                    'status'     => 'valide',
+                    'note'       => 'To: ' . $receiver->username,
+                ]);
+
+                // Transaction crédit pour le receveur
+                Transaction::create([
+                    'user_id'    => $receiver->id,
+                    'type'       => 'transfer',
+                    'amount_rb'  => $isUsdt ? 0 : $amount,
+                    'amount_usdt'=> $isUsdt ? $amount : 0,
+                    'currency'   => $validated['currency'],
+                    'status'     => 'valide',
+                    'note'       => 'From: ' . $sender->username,
+                ]);
             });
         } catch (\RuntimeException $e) {
             return response()->json(['error' => $e->getMessage()], 422);

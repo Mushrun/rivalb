@@ -237,39 +237,50 @@ function TransactionsTab({ transactions, balanceRb }) {
                     <div className="text-center py-12 text-[#555] text-sm">
                         {t('historique.no_transactions')}
                     </div>
-                ) : filtered.map(tx => (
-                    <div key={tx.id} className="flex items-center gap-3 rounded-2xl p-4"
-                        style={{ background: '#1A1A1A' }}>
-                        <div className="w-11 h-11 rounded-xl flex items-center justify-center flex-shrink-0"
-                            style={{ background: tx.type === 'recharge' ? 'rgba(76,217,100,0.1)' : 'rgba(255,59,48,0.1)' }}>
-                            {tx.type === 'recharge' ? (
-                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#4CD964" strokeWidth="2.5" strokeLinecap="round">
-                                    <line x1="12" y1="19" x2="12" y2="5"/>
-                                    <polyline points="5 12 12 5 19 12"/>
-                                </svg>
-                            ) : (
-                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#FF3B30" strokeWidth="2.5" strokeLinecap="round">
-                                    <line x1="12" y1="5" x2="12" y2="19"/>
-                                    <polyline points="19 12 12 19 5 12"/>
-                                </svg>
-                            )}
+                ) : filtered.map(tx => {
+                    const isCredit  = tx.type === 'recharge';
+                    const isTransfer = tx.label === 'Transfer received' || tx.label === 'Transfer sent';
+                    const color     = isCredit ? '#4CD964' : '#FF3B30';
+                    const bgColor   = isCredit ? 'rgba(76,217,100,0.1)' : 'rgba(255,59,48,0.1)';
+
+                    return (
+                        <div key={tx.id} className="flex items-center gap-3 rounded-2xl p-4"
+                            style={{ background: '#1A1A1A' }}>
+                            <div className="w-11 h-11 rounded-xl flex items-center justify-center flex-shrink-0"
+                                style={{ background: bgColor }}>
+                                {isTransfer ? (
+                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2" strokeLinecap="round">
+                                        <circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/>
+                                        <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/>
+                                        <line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/>
+                                    </svg>
+                                ) : isCredit ? (
+                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#4CD964" strokeWidth="2.5" strokeLinecap="round">
+                                        <line x1="12" y1="19" x2="12" y2="5"/>
+                                        <polyline points="5 12 12 5 19 12"/>
+                                    </svg>
+                                ) : (
+                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#FF3B30" strokeWidth="2.5" strokeLinecap="round">
+                                        <line x1="12" y1="5" x2="12" y2="19"/>
+                                        <polyline points="19 12 12 19 5 12"/>
+                                    </svg>
+                                )}
+                            </div>
+                            <div className="flex-1 min-w-0">
+                                <p className="font-bold text-sm" style={{ color }}>{tx.amount}</p>
+                                <p className="text-white text-xs font-semibold">{tx.label}</p>
+                                {tx.note && <p className="text-[#666] text-xs">{tx.note}</p>}
+                                <p className="text-[#555] text-xs">{tx.date}</p>
+                            </div>
+                            <div className="flex flex-col items-end gap-1 ml-3 flex-shrink-0">
+                                <span className="text-[10px] font-bold px-2 py-0.5 rounded-lg"
+                                    style={{ background: statusBg[tx.status] ?? 'rgba(76,217,100,0.12)', color: statusColor[tx.status] ?? '#4CD964' }}>
+                                    {statusLabel[tx.status] ?? (tx.status?.toUpperCase() ?? '')}
+                                </span>
+                            </div>
                         </div>
-                        <div className="flex-1 min-w-0">
-                            <p className="font-bold text-sm" style={{ color: tx.type === 'recharge' ? '#4CD964' : '#FF3B30' }}>
-                                {tx.type === 'recharge'
-                                    ? `+${tx.currency === 'usdt' ? `${tx.amount_usdt} USDT` : `${tx.amount_rb} RB`}`
-                                    : `-${tx.currency === 'usdt' ? `${parseFloat(tx.amount_usdt ?? 0).toFixed(2)} USDT` : `${tx.amount_rb} RB`}`}
-                            </p>
-                            <p className="text-[#666] text-xs">{tx.date ?? tx.created_at}</p>
-                        </div>
-                        <div className="flex flex-col items-end gap-1 ml-3 flex-shrink-0">
-                            <span className="text-[10px] font-bold px-2 py-0.5 rounded-lg"
-                                style={{ background: statusBg[tx.status] ?? 'rgba(255,149,0,0.12)', color: statusColor[tx.status] ?? '#FF9500' }}>
-                                {statusLabel[tx.status] ?? (tx.status?.toUpperCase() ?? '')}
-                            </span>
-                        </div>
-                    </div>
-                ))}
+                    );
+                })}
             </div>
         </div>
     );

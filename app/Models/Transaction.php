@@ -8,7 +8,7 @@ class Transaction extends Model
 {
     protected $fillable = [
         'user_id', 'type', 'currency', 'amount_rb', 'amount_usdt', 'amount_crypto',
-        'wallet_address', 'tx_hash', 'status', 'reject_reason',
+        'wallet_address', 'tx_hash', 'status', 'reject_reason', 'note',
     ];
 
     protected function casts(): array
