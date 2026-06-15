@@ -63,12 +63,12 @@ class ChallengeController extends Controller
     public function store(StoreChallengeRequest $request)
     {
         try {
-            $this->challengeService->create(auth()->user(), $request->validated());
+            $challenge = $this->challengeService->create(auth()->user(), $request->validated());
         } catch (\RuntimeException $e) {
             return back()->withErrors(['bet_amount' => $e->getMessage()]);
         }
 
-        return redirect('/ads')->with('success', 'Défi créé avec succès !');
+        return redirect("/defis/{$challenge->id}")->with('success', 'Défi créé avec succès !');
     }
 
     public function show(Challenge $challenge)

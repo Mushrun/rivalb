@@ -331,7 +331,10 @@
     "accept_with_amount": "ACCEPTER LE DÉFI — {{amount}} {{currency}}",
     "select_hero_singular": "Sélectionne un héros pour activer le bouton.",
     "select_hero_plural": "Sélectionne {{n}} héros pour activer le bouton.",
-    "escrow_note": "En acceptant, {{amount}} {{currency}} seront débités de ton solde et placés en séquestre."
+    "escrow_note": "En acceptant, {{amount}} {{currency}} seront débités de ton solde et placés en séquestre.",
+    "share_btn": "Partager",
+    "share_copied": "Lien copié !",
+    "share_text": "Affronte-moi sur RivalBet ! Jeu : {{game}} — Mise : {{bet}} {{currency}}"
   },
   "retrait": {
     "title": "Retirer",

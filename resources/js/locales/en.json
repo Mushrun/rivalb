@@ -331,7 +331,10 @@
     "accept_with_amount": "ACCEPT CHALLENGE — {{amount}} {{currency}}",
     "select_hero_singular": "Select a hero to enable the button.",
     "select_hero_plural": "Select {{n}} heroes to enable the button.",
-    "escrow_note": "By accepting, {{amount}} {{currency}} will be deducted from your balance and held in escrow."
+    "escrow_note": "By accepting, {{amount}} {{currency}} will be deducted from your balance and held in escrow.",
+    "share_btn": "Share",
+    "share_copied": "Link copied!",
+    "share_text": "Challenge me on RivalBet! Game: {{game}} — Bet: {{bet}} {{currency}}"
   },
   "retrait": {
     "title": "Withdraw",
