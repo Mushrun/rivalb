@@ -334,7 +334,9 @@
     "escrow_note": "En acceptant, {{amount}} {{currency}} seront débités de ton solde et placés en séquestre.",
     "share_btn": "Partager",
     "share_copied": "Lien copié !",
-    "share_text": "Affronte-moi sur RivalBet ! Jeu : {{game}} — Mise : {{bet}} {{currency}}"
+    "share_text": "Affronte-moi sur RivalBet ! Jeu : {{game}} — Mise : {{bet}} {{currency}}",
+    "waiting_opponent": "En attente d'un adversaire",
+    "waiting_opponent_sub": "Partage ce défi pour trouver un adversaire plus vite."
   },
   "retrait": {
     "title": "Retirer",

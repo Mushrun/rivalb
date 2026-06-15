@@ -334,7 +334,9 @@
     "escrow_note": "By accepting, {{amount}} {{currency}} will be deducted from your balance and held in escrow.",
     "share_btn": "Share",
     "share_copied": "Link copied!",
-    "share_text": "Challenge me on RivalBet! Game: {{game}} — Bet: {{bet}} {{currency}}"
+    "share_text": "Challenge me on RivalBet! Game: {{game}} — Bet: {{bet}} {{currency}}",
+    "waiting_opponent": "Waiting for an opponent",
+    "waiting_opponent_sub": "Share this challenge to find an opponent faster."
   },
   "retrait": {
     "title": "Withdraw",

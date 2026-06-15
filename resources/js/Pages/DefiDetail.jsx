@@ -322,6 +322,16 @@ export default function DefiDetail() {
                             {t('defi.escrow_note', { amount: challenge.bet_amount, currency: challenge.currency === 'usdt' ? 'USDT' : 'RB' })}
                         </p>
                     </>
+                ) : isCreator ? (
+                    <div className="rounded-2xl p-4 flex flex-col items-center gap-2"
+                        style={{ background: 'rgba(255,119,102,0.08)', border: '1px solid rgba(255,119,102,0.25)' }}>
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#FF7766" strokeWidth="2" strokeLinecap="round">
+                            <circle cx="12" cy="12" r="10"/>
+                            <polyline points="12 6 12 12 16 14"/>
+                        </svg>
+                        <p className="text-[#FF7766] font-bold text-sm">{t('defi.waiting_opponent')}</p>
+                        <p className="text-[#666] text-xs text-center">{t('defi.waiting_opponent_sub')}</p>
+                    </div>
                 ) : (
                     <div className="rounded-2xl p-4 text-center" style={{ background: '#1A1A1A' }}>
                         <p className="text-[#888] text-sm">

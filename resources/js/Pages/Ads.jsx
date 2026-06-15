@@ -7,7 +7,20 @@ import TopBar from '../Components/TopBar';
 export default function Ads() {
     const { myDefis = [] } = usePage().props;
     const { t } = useTranslation();
-    const [toDelete, setToDelete] = useState(null);
+    const [toDelete,  setToDelete]  = useState(null);
+    const [copiedId,  setCopiedId]  = useState(null);
+
+    const handleShare = async (ad) => {
+        const shareUrl  = `${window.location.origin}/defis/${ad.id}`;
+        const shareText = t('defi.share_text', { game: ad.game, bet: ad.bet_amount, currency: ad.currency === 'usdt' ? 'USDT' : 'RB' });
+        if (navigator.share) {
+            try { await navigator.share({ title: 'RivalBet', text: shareText, url: shareUrl }); } catch {}
+        } else {
+            await navigator.clipboard.writeText(shareUrl);
+            setCopiedId(ad.id);
+            setTimeout(() => setCopiedId(null), 2000);
+        }
+    };
 
     const statusLabel = {
         ouvert:   { label: t('ads.status_waiting'),     color: '#FF3B30' },
@@ -99,11 +112,27 @@ export default function Ads() {
                                                 </button>
                                             </div>
                                         ) : ad.can_cancel ? (
-                                            <button onClick={() => handleCancel(ad.id)}
-                                                className="px-4 py-2 rounded-xl text-white font-semibold text-xs tracking-wider"
-                                                style={{ border: '1px solid #3A3A3A', background: 'transparent' }}>
-                                                {t('ads.cancel')}
-                                            </button>
+                                            <div className="flex items-center gap-2">
+                                                <button onClick={() => handleShare(ad)}
+                                                    className="flex items-center gap-1.5 px-3 py-2 rounded-xl font-semibold text-xs tracking-wider"
+                                                    style={{
+                                                        background: copiedId === ad.id ? 'rgba(76,217,100,0.1)' : 'rgba(255,119,102,0.1)',
+                                                        color:      copiedId === ad.id ? '#4CD964' : '#FF7766',
+                                                        border:     `1px solid ${copiedId === ad.id ? 'rgba(76,217,100,0.25)' : 'rgba(255,119,102,0.25)'}`,
+                                                    }}>
+                                                    {copiedId === ad.id ? (
+                                                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"><polyline points="20 6 9 17 4 12"/></svg>
+                                                    ) : (
+                                                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
+                                                    )}
+                                                    {copiedId === ad.id ? t('defi.share_copied') : t('defi.share_btn')}
+                                                </button>
+                                                <button onClick={() => handleCancel(ad.id)}
+                                                    className="px-4 py-2 rounded-xl text-white font-semibold text-xs tracking-wider"
+                                                    style={{ border: '1px solid #3A3A3A', background: 'transparent' }}>
+                                                    {t('ads.cancel')}
+                                                </button>
+                                            </div>
                                         ) : ad.status === 'en_cours' && ad.match_id ? (
                                             <Link href={`/match/${ad.match_id}`}
                                                 className="px-4 py-2 rounded-xl font-semibold text-xs tracking-wider flex items-center gap-1.5"
