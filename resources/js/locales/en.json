@@ -274,7 +274,11 @@
     "translation_error": "Translation failed",
     "unread_one": "unread",
     "unread_other": "unread",
-    "free_fighter": "Free"
+    "free_fighter": "Free",
+    "share_victory_title": "Share your victory!",
+    "share_victory_sub": "Invite your friends via your referral link.",
+    "share_victory_btn": "Share my victory",
+    "share_victory_text": "{{username}} just won on RivalBet in {{game}}! Come challenge me 👊"
   },
   "recharge": {
     "title": "Deposit",

@@ -274,7 +274,11 @@
     "translation_error": "Échec de la traduction",
     "unread_one": "non lu",
     "unread_other": "non lus",
-    "free_fighter": "Libre"
+    "free_fighter": "Libre",
+    "share_victory_title": "Partage ta victoire !",
+    "share_victory_sub": "Invite tes amis via ton lien de parrainage.",
+    "share_victory_btn": "Partager ma victoire",
+    "share_victory_text": "{{username}} vient de gagner sur RivalBet dans {{game}} ! Viens me défier 👊"
   },
   "recharge": {
     "title": "Recharger",

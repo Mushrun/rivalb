@@ -193,10 +193,12 @@ class MessageController extends Controller
                 'my_reliability'  => $user->reliability_score ?? 100,
                 'my_result'     => $myResult?->claimed_result,
                 'opp_result'    => $oppResult?->claimed_result,
-                'winner_id'     => $latestMatch->winner_id,
-                'my_fighter'    => $isPlayer1 ? $p1FighterName : $p2FighterName,
-                'opp_fighter'   => $isPlayer1 ? $p2FighterName : $p1FighterName,
-                'has_reviewed'  => \App\Models\Review::where('reviewer_id', $user->id)->where('match_id', $latestMatch->id)->exists(),
+                'winner_id'        => $latestMatch->winner_id,
+                'is_winner'        => $latestMatch->status === 'termine' && $latestMatch->winner_id === $user->id,
+                'my_referral_code' => $user->referral_code,
+                'my_fighter'       => $isPlayer1 ? $p1FighterName : $p2FighterName,
+                'opp_fighter'      => $isPlayer1 ? $p2FighterName : $p1FighterName,
+                'has_reviewed'     => \App\Models\Review::where('reviewer_id', $user->id)->where('match_id', $latestMatch->id)->exists(),
             ];
         }
 

@@ -25,11 +25,13 @@ use App\Http\Controllers\HistoriqueController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\LandingController;
 use App\Http\Controllers\TransferController;
+use App\Http\Controllers\VictoireShareController;
 use App\Http\Controllers\WalletController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
 Route::get('/', [LandingController::class, 'index']);
+Route::get('/victoire/{match}', [VictoireShareController::class, 'show']);
 
 // Wallet routes publiques (login MetaMask sans être connecté)
 Route::get('/wallet/nonce/{address}', [WalletController::class, 'nonce']);

@@ -837,9 +837,22 @@ export default function ChatShow() {
     const { t } = useTranslation();
     const statusLabel = useStatusLabel();
 
-    const [messages, setMessages] = useState(initialMessages);
-    const [text,     setText]     = useState('');
-    const [sending,  setSending]  = useState(false);
+    const [messages,       setMessages]       = useState(initialMessages);
+    const [text,           setText]           = useState('');
+    const [sending,        setSending]        = useState(false);
+    const [copiedVictoire, setCopiedVictoire] = useState(false);
+
+    const handleShareVictory = async () => {
+        const shareUrl  = `${window.location.origin}/victoire/${match.id}`;
+        const shareText = t('chat.share_victory_text', { username: match.my_username, game: match.game });
+        if (navigator.share) {
+            try { await navigator.share({ title: 'RivalBet', text: shareText, url: shareUrl }); } catch {}
+        } else {
+            await navigator.clipboard.writeText(shareUrl);
+            setCopiedVictoire(true);
+            setTimeout(() => setCopiedVictoire(false), 2500);
+        }
+    };
     const bottomRef    = useRef();
     const lastIdRef    = useRef(initialMessages.length > 0 ? initialMessages[initialMessages.length - 1].id : 0);
     const isAtBottomRef = useRef(true);
@@ -1030,6 +1043,39 @@ export default function ChatShow() {
                         opponent={opponent}
                         hasReviewed={match.has_reviewed}
                     />
+                )}
+
+                {/* Partager la victoire */}
+                {match && match.is_winner && (
+                    <div className="mx-4 mt-1 mb-1 rounded-2xl p-4 flex flex-col gap-3"
+                        style={{ background: 'rgba(255,193,7,0.06)', border: '1px solid rgba(255,193,7,0.2)' }}>
+                        <div className="flex items-center gap-2">
+                            <span className="text-xl">🏆</span>
+                            <div>
+                                <p className="text-[#FFC107] font-bold text-sm">{t('chat.share_victory_title')}</p>
+                                <p className="text-[#666] text-xs">{t('chat.share_victory_sub')}</p>
+                            </div>
+                        </div>
+                        <button onClick={handleShareVictory}
+                            className="w-full py-2.5 rounded-xl font-bold text-sm flex items-center justify-center gap-2"
+                            style={{
+                                background: copiedVictoire ? 'rgba(76,217,100,0.15)' : 'rgba(255,193,7,0.15)',
+                                color:      copiedVictoire ? '#4CD964' : '#FFC107',
+                                border:     `1px solid ${copiedVictoire ? 'rgba(76,217,100,0.3)' : 'rgba(255,193,7,0.3)'}`,
+                            }}>
+                            {copiedVictoire ? (
+                                <>
+                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"><polyline points="20 6 9 17 4 12"/></svg>
+                                    {t('defi.share_copied')}
+                                </>
+                            ) : (
+                                <>
+                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
+                                    {t('chat.share_victory_btn')}
+                                </>
+                            )}
+                        </button>
+                    </div>
                 )}
 
                 {/* Messages */}
