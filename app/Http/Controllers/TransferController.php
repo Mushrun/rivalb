@@ -35,8 +35,10 @@ class TransferController extends Controller
             ? round((float) $validated['amount'], 4)
             : (int) $validated['amount'];
 
+        $currency = strtoupper($validated['currency']);
+
         try {
-            DB::transaction(function () use ($sender, $receiver, $amount, $validated, $currency) {
+            DB::transaction(function () use ($sender, $receiver, $amount, $validated) {
                 if ($validated['currency'] === 'usdt') {
                     $fresh = User::lockForUpdate()->findOrFail($sender->id);
                     if ($fresh->balance_usdt < $amount) {
@@ -80,8 +82,6 @@ class TransferController extends Controller
         } catch (\RuntimeException $e) {
             return response()->json(['error' => $e->getMessage()], 422);
         }
-
-        $currency = strtoupper($validated['currency']);
 
         $message = Message::create([
             'sender_id'   => $sender->id,
