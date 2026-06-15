@@ -240,6 +240,7 @@
     "send_money_success": "{{amount}} {{currency}} sent to {{name}}!",
     "send_money_error_balance": "Insufficient balance.",
     "send_money_error_amount": "Invalid amount.",
+    "send_money_error_not_friend": "You must follow this player to send funds.",
     "send_money_system_msg": "💸 {{sender}} sent {{amount}} {{currency}} to {{receiver}}",
     "cond_title": "CONDITIONS & LEVELS",
     "cond_conditions": "Match conditions",

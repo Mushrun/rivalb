@@ -757,9 +757,13 @@ function SendMoneyModal({ opponent, onClose, onSent, myBalanceRb, myBalanceUsdt 
             onClose();
         } catch (e) {
             const err = e.response?.data?.error;
-            setError(err === 'insufficient_balance'
-                ? t('chat.send_money_error_balance')
-                : t('chat.send_money_error_amount'));
+            if (err === 'insufficient_balance') {
+                setError(t('chat.send_money_error_balance'));
+            } else if (err === 'not_friend') {
+                setError(t('chat.send_money_error_not_friend'));
+            } else {
+                setError(t('chat.send_money_error_amount'));
+            }
         } finally {
             setSending(false);
         }

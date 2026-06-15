@@ -240,6 +240,7 @@
     "send_money_success": "{{amount}} {{currency}} envoyés à {{name}} !",
     "send_money_error_balance": "Solde insuffisant.",
     "send_money_error_amount": "Montant invalide.",
+    "send_money_error_not_friend": "Tu dois suivre ce joueur pour lui envoyer des fonds.",
     "send_money_system_msg": "💸 {{sender}} a envoyé {{amount}} {{currency}} à {{receiver}}",
     "cond_title": "CONDITIONS & NIVEAUX",
     "cond_conditions": "Conditions du match",
