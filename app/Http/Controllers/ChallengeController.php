@@ -187,6 +187,7 @@ class ChallengeController extends Controller
                 'type'       => $c->type,
                 'game'       => $c->game,
                 'bet_amount' => $c->bet_amount,
+                'currency'   => $c->currency ?? 'rb',
                 'status'     => $c->status,
                 'created_at' => $c->created_at->format('d M, H:i'),
                 'can_cancel' => $c->status === 'ouvert',
