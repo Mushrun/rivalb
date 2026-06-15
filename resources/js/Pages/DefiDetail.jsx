@@ -17,8 +17,9 @@ function StatBox({ label, value, color }) {
 }
 
 export default function DefiDetail() {
-    const { challenge, canJoin } = usePage().props;
+    const { challenge, canJoin, auth } = usePage().props;
     const { t } = useTranslation();
+    const isCreator = auth?.user?.id === challenge?.creator?.id;
     const [selected,  setSelected]  = useState(new Set());
     const [accepting, setAccepting] = useState(false);
     const [done,      setDone]      = useState(false);
@@ -100,21 +101,23 @@ export default function DefiDetail() {
                 <div className="flex-1">
                     <h1 className="text-white font-black text-lg">{t('defi.title')}</h1>
                 </div>
-                <button onClick={handleShare}
-                    className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl font-bold text-xs flex-shrink-0"
-                    style={{ background: copied ? 'rgba(76,217,100,0.15)' : 'rgba(255,119,102,0.15)', color: copied ? '#4CD964' : '#FF7766', border: `1px solid ${copied ? 'rgba(76,217,100,0.3)' : 'rgba(255,119,102,0.3)'}` }}>
-                    {copied ? (
-                        <>
-                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"><polyline points="20 6 9 17 4 12"/></svg>
-                            {t('defi.share_copied')}
-                        </>
-                    ) : (
-                        <>
-                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
-                            {t('defi.share_btn')}
-                        </>
-                    )}
-                </button>
+                {isCreator && (
+                    <button onClick={handleShare}
+                        className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl font-bold text-xs flex-shrink-0"
+                        style={{ background: copied ? 'rgba(76,217,100,0.15)' : 'rgba(255,119,102,0.15)', color: copied ? '#4CD964' : '#FF7766', border: `1px solid ${copied ? 'rgba(76,217,100,0.3)' : 'rgba(255,119,102,0.3)'}` }}>
+                        {copied ? (
+                            <>
+                                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"><polyline points="20 6 9 17 4 12"/></svg>
+                                {t('defi.share_copied')}
+                            </>
+                        ) : (
+                            <>
+                                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
+                                {t('defi.share_btn')}
+                            </>
+                        )}
+                    </button>
+                )}
             </div>
 
             <div className="px-4 flex flex-col gap-3 pb-6">
