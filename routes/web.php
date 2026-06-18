@@ -91,6 +91,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/parrainage',  [ParrainageController::class, 'index']);
     Route::get('/settings',    fn() => Inertia::render('Settings'));
     Route::get('/support',     fn() => Inertia::render('Support'));
+    Route::get('/docs',        fn() => Inertia::render('Docs'));
 
     Route::get('/defis/{challenge}',          [ChallengeController::class, 'show']);
     Route::post('/challenges',                [ChallengeController::class, 'store']);
