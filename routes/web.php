@@ -101,6 +101,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/match/{id}',         [MatchController::class, 'show']);
     Route::post('/match/{id}/ready',  [MatchController::class, 'setReady']);
     Route::post('/match/{id}/result', [MatchController::class, 'submitResult'])->middleware('throttle:3,1');
+    Route::post('/match/{id}/quit',   [MatchController::class, 'quit']);
     Route::post('/match/{id}/review', [ReviewController::class, 'store']);
 
     Route::post('/wallet/unlink', [WalletController::class, 'unlink']);

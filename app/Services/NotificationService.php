@@ -152,6 +152,14 @@ class NotificationService
             ));
     }
 
+    public function matchQuitte(User $user, int $challengeId, string $opponentUsername): void
+    {
+        $this->send($user, 'match_quitte', 'Opponent left',
+            "{$opponentUsername} left the match. Your challenge is open again.",
+            ['challenge_id' => $challengeId, 'username' => $opponentUsername]
+        );
+    }
+
     public function nouveauMessage(User $user, int $matchId, string $senderUsername, string $messageBody = ''): void
     {
         $this->send($user, 'nouveau_message', 'Nouveau message',

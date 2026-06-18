@@ -279,7 +279,10 @@
     "share_victory_title": "Share your victory!",
     "share_victory_sub": "Invite your friends via your referral link.",
     "share_victory_btn": "Share my victory",
-    "share_victory_text": "{{username}} just won on RivalBet in {{game}}! Come challenge me 👊"
+    "share_victory_text": "{{username}} just won on RivalBet in {{game}}! Come challenge me 👊",
+    "quit_btn": "Leave match",
+    "quit_confirm": "Are you sure you want to leave? You'll be refunded and the challenge will reopen.",
+    "quit_leaving": "Leaving..."
   },
   "recharge": {
     "title": "Deposit",

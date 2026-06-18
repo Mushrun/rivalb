@@ -284,6 +284,7 @@ function MatchCard({ match, opponent }) {
     const { t } = useTranslation();
     const [matchLink,  setMatchLink]  = useState('');
     const [submitting, setSubmitting] = useState(false);
+    const [quitting,   setQuitting]   = useState(false);
 
     if (match.status === 'termine' || match.status === 'annule') return null;
 
@@ -305,6 +306,15 @@ function MatchCard({ match, opponent }) {
             match.is_player1 ? { match_link: matchLink } : {},
             { onFinish: () => setSubmitting(false) }
         );
+    };
+
+    const handleQuit = () => {
+        if (quitting) return;
+        if (!window.confirm(t('chat.quit_confirm'))) return;
+        setQuitting(true);
+        router.post(`/match/${match.id}/quit`, {}, {
+            onFinish: () => setQuitting(false),
+        });
     };
 
     return (
@@ -376,6 +386,33 @@ function MatchCard({ match, opponent }) {
                             </div>
                         )}
                     </>
+                )}
+
+                {/* Bouton quitter — player2 uniquement, phase en_attente */}
+                {match.status === 'en_attente' && !match.is_player1 && (
+                    <button onClick={handleQuit} disabled={quitting}
+                        className="w-full rounded-xl py-2.5 font-bold text-sm flex items-center justify-center gap-2 mt-1"
+                        style={{
+                            background: quitting ? '#1A1A1A' : 'rgba(255,59,48,0.1)',
+                            color:      quitting ? '#444'    : '#FF3B30',
+                            border:     `1.5px solid ${quitting ? '#2A2A2A' : 'rgba(255,59,48,0.3)'}`,
+                        }}>
+                        {quitting ? (
+                            <>
+                                <svg className="animate-spin" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M21 12a9 9 0 1 1-6.219-8.56"/></svg>
+                                {t('chat.quit_leaving')}
+                            </>
+                        ) : (
+                            <>
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
+                                    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+                                    <polyline points="16 17 21 12 16 7"/>
+                                    <line x1="21" y1="12" x2="9" y2="12"/>
+                                </svg>
+                                {t('chat.quit_btn')}
+                            </>
+                        )}
+                    </button>
                 )}
 
                 {match.status === 'en_cours' && !match.my_result && (

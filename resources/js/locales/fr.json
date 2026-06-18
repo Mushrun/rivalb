@@ -279,7 +279,10 @@
     "share_victory_title": "Partage ta victoire !",
     "share_victory_sub": "Invite tes amis via ton lien de parrainage.",
     "share_victory_btn": "Partager ma victoire",
-    "share_victory_text": "{{username}} vient de gagner sur RivalBet dans {{game}} ! Viens me défier 👊"
+    "share_victory_text": "{{username}} vient de gagner sur RivalBet dans {{game}} ! Viens me défier 👊",
+    "quit_btn": "Quitter le match",
+    "quit_confirm": "Tu veux vraiment quitter ? Tu seras remboursé et le défi sera remis en attente.",
+    "quit_leaving": "Départ en cours..."
   },
   "recharge": {
     "title": "Recharger",

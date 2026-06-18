@@ -3,11 +3,15 @@
 namespace App\Http\Controllers;
 
 use App\Jobs\ValidateResultJob;
+use App\Models\Challenge;
 use App\Models\GameMatch;
 use App\Models\Message;
 use App\Services\MatchService;
+use App\Services\NotificationService;
+use App\Services\ShadowCoinService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class MatchController extends Controller
 {
@@ -37,6 +41,44 @@ class MatchController extends Controller
         }
 
         return redirect("/chat/{$id}");
+    }
+
+    public function quit(int $id, ShadowCoinService $coinService, NotificationService $notifService)
+    {
+        $match = GameMatch::findOrFail($id);
+        $user  = Auth::user();
+
+        if ($match->player2_id !== $user->id) {
+            return back()->withErrors(['quit' => 'Only the opponent can quit.']);
+        }
+
+        if ($match->status !== 'en_attente') {
+            return back()->withErrors(['quit' => 'Cannot quit once the match has started.']);
+        }
+
+        DB::transaction(function () use ($match, $user, $coinService, $notifService) {
+            $challenge = $match->challenge;
+            $currency  = $challenge->currency ?? 'rb';
+
+            // Refund player2
+            if ($currency === 'usdt') {
+                $coinService->creditUsdt($user, $challenge->bet_amount, 'remboursement');
+            } else {
+                $coinService->credit($user, $challenge->bet_amount, 'remboursement');
+            }
+
+            // Reopen challenge
+            $challenge->update(['status' => 'ouvert']);
+
+            // Delete match
+            $match->delete();
+
+            // Notify creator
+            $creator = $challenge->creator;
+            $notifService->matchQuitte($creator, $challenge->id, $user->username);
+        });
+
+        return redirect('/battle');
     }
 
     public function submitResult(Request $request, int $id)
