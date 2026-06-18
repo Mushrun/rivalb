@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { Link, usePage } from '@inertiajs/react';
+import { Link, router, usePage } from '@inertiajs/react';
 import { useTranslation } from 'react-i18next';
 
 function playNotifSound() {
@@ -134,6 +134,11 @@ export default function TopBar() {
                         )}
                     </Link>
                 ) : null}
+                <button onClick={() => router.visit('/docs')}
+                    className="w-8 h-8 rounded-full flex items-center justify-center font-black text-xs"
+                    style={{ background: '#1A1A1A', color: '#666', border: '1px solid #2A2A2A' }}>
+                    ?
+                </button>
             </div>
         </div>
     );
