@@ -49,7 +49,7 @@ class ChallengeService
             if (($data['visibility'] ?? 'public') === 'public') {
                 User::where('id', '!=', $creator->id)->each(
                     fn($u) => $this->notifService->nouveauDefiAbonnement(
-                        $u, $challenge->id, $creator->username, $betAmount, $currency
+                        $u, $challenge->id, $creator->username, $betAmount, $currency, $data['game'] ?? 'Shadow Fight'
                     )
                 );
             }

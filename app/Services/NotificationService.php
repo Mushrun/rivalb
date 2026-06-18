@@ -133,13 +133,23 @@ class NotificationService
         );
     }
 
-    public function nouveauDefiAbonnement(User $user, int $challengeId, string $creatorUsername, int $betAmount, string $currency = 'rb'): void
+    public function nouveauDefiAbonnement(User $user, int $challengeId, string $creatorUsername, int|float $betAmount, string $currency = 'rb', string $game = 'Shadow Fight'): void
     {
         $amountStr = $currency === 'usdt' ? "{$betAmount} USDT" : "{$betAmount} RB";
         $this->send($user, 'defi_abonnement', 'Nouveau défi',
             "{$creatorUsername} vient de publier un défi de {$amountStr}. Rejoins-le !",
             ['challenge_id' => $challengeId, 'username' => $creatorUsername]
         );
+
+        \Illuminate\Support\Facades\Mail::to($user->email)
+            ->queue(new \App\Mail\NouveauDefiMail(
+                recipient:       $user,
+                creatorUsername: $creatorUsername,
+                challengeId:     $challengeId,
+                betAmount:       $betAmount,
+                currency:        $currency,
+                game:            $game,
+            ));
     }
 
     public function nouveauMessage(User $user, int $matchId, string $senderUsername, string $messageBody = ''): void
